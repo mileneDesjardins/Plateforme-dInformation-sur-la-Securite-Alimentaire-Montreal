@@ -15,3 +15,6 @@ class Contravention:
         self.statut = statut
         self.date_statut = date_statut
         self.categorie = categorie
+
+    def set_id(self, id):
+        self.id = id
