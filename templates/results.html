@@ -11,25 +11,27 @@
         <div>
 
             {% if results %}
-                {% for result in results %}
-                    <table>
-                        <thead>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Adresse</th>
+                        <th>Date jugement</th>
+                        <th>Établissement</th>
+                        <th>Montant</th>
+                        <th>Propriétaire</th>
+                        <th>Ville</th>
+                        <th>Statut</th>
+                        <th>Date statut</th>
+                        <th>Catégorie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for result in results %}
                         <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Adresse</th>
-                            <th>Date jugement</th>
-                            <th>Établissement</th>
-                            <th>Montant</th>
-                            <th>Propriétaire</th>
-                            <th>Ville</th>
-                            <th>Statut</th>
-                            <th>Date statut</th>
-                            <th>Catégorie</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
+
                             <td>{{ result.date }}</td>
                             <td>{{ result.description }}</td>
                             <td>{{ result.adresse }}</td>
@@ -41,10 +43,12 @@
                             <td>{{ result.statut }}</td>
                             <td>{{ result.date_statut }}</td>
                             <td>{{ result.categorie }}</td>
+
                         </tr>
-                        </tbody>
-                    </table>
-                {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+
 
             {% else %}
                 <p> Aucun résultat pour les mots clés <span>{{ keywords }} </span></p>
