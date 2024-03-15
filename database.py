@@ -8,6 +8,26 @@ import contravention
 from contravention import Contravention
 
 
+
+def _build_contravention(query_result):
+    contravention = {
+        "id_poursuite": query_result[0],
+        "id_business": query_result[1],
+        "date": query_result[2],
+        "description": query_result[3],
+        "adresse": query_result[4],
+        "date_jugement": query_result[5],
+        "etablissement": query_result[6],
+        "montant": query_result[7],
+        "proprietaire": query_result[8],
+        "ville": query_result[9],
+        "statut": query_result[10],
+        "date_statut": query_result[11],
+        "categorie": query_result[12]
+    }
+    return contravention
+
+
 class Database:
     def __init__(self):
         self.connection = None
@@ -69,3 +89,14 @@ class Database:
                     print(f"Données insérées avec succès pour la ligne: {row}")
 
             self.connection.commit()
+
+    def search(self, keywords):
+        cursor = self.get_connection().cursor()
+        query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
+                 "adresse LIKE ? OR proprietaire LIKE ?")
+        param = ('%' + keywords + '%')
+        cursor.execute(query, (param, param, param))
+        all_data = cursor.fetchall()
+        return [_build_contravention(item) for item in all_data]
+
+

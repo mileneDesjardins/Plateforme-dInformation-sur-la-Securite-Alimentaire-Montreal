@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+
+
+
+
+    <div class="container">
+
+        <div>
+
+            {% if results %}
+                {% for result in results %}
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Adresse</th>
+                            <th>Date jugement</th>
+                            <th>Établissement</th>
+                            <th>Montant</th>
+                            <th>Propriétaire</th>
+                            <th>Ville</th>
+                            <th>Statut</th>
+                            <th>Date statut</th>
+                            <th>Catégorie</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ result.date }}</td>
+                            <td>{{ result.description }}</td>
+                            <td>{{ result.adresse }}</td>
+                            <td>{{ result.date_jugement }}</td>
+                            <td>{{ result.etablissement }}</td>
+                            <td>{{ result.montant }}</td>
+                            <td>{{ result.proprietaire }}</td>
+                            <td>{{ result.ville }}</td>
+                            <td>{{ result.statut }}</td>
+                            <td>{{ result.date_statut }}</td>
+                            <td>{{ result.categorie }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                {% endfor %}
+
+            {% else %}
+                <p> Aucun résultat pour les mots clés <span>{{ keywords }} </span></p>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <a target="_blank" href="https://icons8.com/icon/7695/search">Loupe</a> icon by
+    <a target="_blank" href="https://icons8.com">Icons8</a>
+{% endblock %}
