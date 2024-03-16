@@ -1,0 +1,67 @@
+#%RAML 1.0
+title: Contrevenants inspection alimentaire API
+mediaType: application/json
+baseUri: http://127.0.0.1:5000
+version: 1
+
+types:
+  Contravention:
+    type: object
+    properties:
+      id_poursuite: number
+      id_business: number
+      date: string
+      description: string
+      adresse: string
+      date_jugement: string
+      etablissement: string
+      montant: number
+      proprietaire: string
+      ville: string
+      statut: string
+      date_statut: string
+      categorie: string
+    additionalProperties: false
+    example: |
+      {
+        "id_poursuite": 100,
+        "id_business": 200,
+        "date": "2022-11-05",
+        "description": "Personnes affectées à la consommation de produits",
+        "adresse": "123 avenue Chemin, Montréal, Québec",
+        "date_jugement": "2022-12-05",
+        "etablissement": "Nom Établissment",
+        "montant": 100,
+        "proprietaire": "Nom Proprietaire",
+        "ville": "Montréal",
+        "statut": "Ouvert",
+        "date_statut": "2024-01-02",
+        "categorie": "Restaurant"
+      }
+
+/api/contrevenants:
+  get:
+    description: Récupère la liste des contrevenants ayant été émises entre date1 et date2
+    responses:
+      200:
+        body:
+          application/json:
+            type: Contravention[]
+            example: |
+              [
+                {
+                  "id_poursuite": 100,
+                  "id_business": 200,
+                  "date": "2022-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2022-12-05",
+                  "etablissement": "Nom Établissment",
+                  "montant": 100,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant"
+                }
+              ]

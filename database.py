@@ -8,7 +8,6 @@ import contravention
 from contravention import Contravention
 
 
-
 def _build_contravention(query_result):
     contravention = {
         "id_poursuite": query_result[0],
@@ -99,4 +98,10 @@ class Database:
         all_data = cursor.fetchall()
         return [_build_contravention(item) for item in all_data]
 
-
+    def get_contraventions_between(self, date1, date2):
+        cursor = self.get_connection().cursor()
+        query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ?")
+        param = (date1, date2)
+        cursor.execute(query, param)
+        all_data = cursor.fetchall()
+        return [_build_contravention(item) for item in all_data]

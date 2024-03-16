@@ -1,6 +1,7 @@
 import telechargement
 from flask import Flask, g, request, redirect
 from flask import render_template
+from flask import Flask, jsonify
 from database import Database
 
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -33,3 +34,13 @@ def search():
     keywords = request.args.get('search')
     results = get_db().search(keywords)
     return render_template('/results.html', keywords=keywords, results=results)
+
+#TODO ajouter API dans la route ?
+@app.route('/contrevenants', methods=['GET'])
+def contrevenants():
+    return render_template('index.html')
+
+
+@app.route('/doc')
+def doc():
+    return render_template('doc.html')
