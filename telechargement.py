@@ -6,8 +6,8 @@ import os
 from flask import Flask
 
 from database import Database
-from app import app # TODO Jai essaye ca au lieu de app name, tu me diras ce que tu en penses
 
+app = Flask(__name__)
 
 # Création de l'objet cursor
 with app.app_context():
