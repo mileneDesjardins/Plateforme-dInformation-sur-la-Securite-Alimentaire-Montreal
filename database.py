@@ -77,7 +77,8 @@ class Database:
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
                     print(
-                        f"Ignorer l'insertion pour id_poursuite existant: {row[0]}")
+                        f"Ignorer l'insertion pour id_poursuite existant: "
+                        f"{row[0]}")
                     continue
                 except Exception as e:
                     # Gérer les autres erreurs
