@@ -36,7 +36,7 @@ def search():
     return render_template('/results.html', keywords=keywords, results=results)
 
 #TODO ajouter API dans la route ?
-@app.route('/contrevenants', methods=['GET'])
+@app.route('/api/contrevenants', methods=['GET'])
 def contrevenants():
     return render_template('index.html')
 

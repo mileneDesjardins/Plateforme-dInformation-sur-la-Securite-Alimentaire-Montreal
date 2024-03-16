@@ -38,15 +38,32 @@ types:
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
       }
+  DateRange:
+    type: object
+    properties:
+      du: string
+      au: string
 
-/api/contrevenants:
-  get:
-    description: Récupère la liste des contrevenants ayant été émises entre date1 et date2
-    responses:
-      200:
-        body:
-          application/json:
-            type: Contravention[]
+/api:
+  /contrevenants:
+    get:
+      description: Récupère des données en fonction d'une plage de dates spécifiée.
+      queryParameters:
+        du:
+          type: string
+          description: Date de début au format YYYY-MM-DD.
+          example: "2022-05-08"
+          required: true
+        au:
+          type: string
+          description: Date de fin au format YYYY-MM-DD.
+          example: "2024-05-15"
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              type: Contravention[]
             example: |
               [
                 {
@@ -62,6 +79,22 @@ types:
                   "ville": "Montréal",
                   "statut": "Ouvert",
                   "date_statut": "2024-01-02",
-                  "categorie": "Restaurant"
+                  "categorie": "Restaurant",
+                  {
+                  "id_poursuite": 300,
+                  "id_business": 350,
+                  "date": "2020-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2020-12-05",
+                  "etablissement": "Nom Établissment",
+                  "montant": 500,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant",
+                  }
+
                 }
               ]
