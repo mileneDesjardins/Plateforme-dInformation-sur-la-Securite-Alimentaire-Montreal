@@ -8,7 +8,6 @@ import contravention
 from contravention import Contravention
 
 
-
 def _build_contravention(query_result):
     contravention = {
         "id_poursuite": query_result[0],
@@ -32,6 +31,12 @@ class Database:
     def __init__(self):
         self.connection = None
 
+    @staticmethod
+    def get_db():
+        if not hasattr(g, '_database'):
+            g._database = Database()
+        return g._database
+
     def get_connection(self):
         if self.connection is None:
             self.connection = sqlite3.connect('db/contravention.db')
@@ -41,11 +46,23 @@ class Database:
         if self.connection is not None:
             self.connection.close()
 
-    @staticmethod
-    def get_db():
-        if not hasattr(g, '_database'):
-            g._database = Database()
-        return g._database
+    def get_contraventions(self):
+        connection = self.get_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM Contravention")
+
+        contraventions = []
+        for row in cursor.fetchall():
+            (id_poursuite, id_business, date, description, adresse,
+             date_jugement, etablissement, montant, proprietaire, ville,
+             statut, date_statut, categorie) = row
+            contravention = Contravention(id_poursuite, id_business, date,
+                                          description, adresse,
+                                          date_jugement, etablissement,
+                                          montant, proprietaire, ville,
+                                          statut, date_statut, categorie)
+            contraventions.append(contravention)
+        return contraventions
 
     def insert_contraventions_from_csv(self, csv_file):
         with open(csv_file, 'r', encoding='utf-8') as file:
@@ -64,6 +81,8 @@ class Database:
                 try:
                     # Convertir la date du format YYYYMMDD en un objet datetime
                     date = datetime.strptime(row[2], '%Y%m%d').date()
+                    date_jugement = datetime.strptime(row[5], '%Y%m%d').date()
+                    date_statut = datetime.strptime(row[11], '%Y%m%d').date()
                 except ValueError:
                     # Gérer les erreurs de format de date
                     print(f"Erreur de format de date pour la ligne: {row}")
@@ -72,9 +91,10 @@ class Database:
                 try:
                     # Insérer les données dans la base de données
                     cursor.execute(insertion, (
-                        row[0], row[1], date, row[3], row[4], row[5], row[6],
+                        row[0], row[1], date, row[3], row[4], date_jugement,
+                        row[6],
                         row[7],
-                        row[8], row[9], row[10], row[11], row[12]))
+                        row[8], row[9], row[10], date_statut, row[12]))
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
                     print(
@@ -85,8 +105,6 @@ class Database:
                     print(f"Erreur lors de l'insertion pour la ligne: {row}")
                     print(f"Erreur détaillée: {e}")
                     continue
-                else:
-                    print(f"Données insérées avec succès pour la ligne: {row}")
 
             self.connection.commit()
 
@@ -98,5 +116,3 @@ class Database:
         cursor.execute(query, (param, param, param))
         all_data = cursor.fetchall()
         return [_build_contravention(item) for item in all_data]
-
-
