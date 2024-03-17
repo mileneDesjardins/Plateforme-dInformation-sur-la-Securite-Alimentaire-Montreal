@@ -18,3 +18,8 @@ class Contravention:
 
     def set_id(self, id):
         self.id = id
+
+    def etablissement(self):
+        return {
+            'etablissement' : self.etablissement,
+        }
