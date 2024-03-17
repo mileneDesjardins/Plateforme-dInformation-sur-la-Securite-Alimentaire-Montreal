@@ -23,7 +23,7 @@ def close_connection(exception):
 def index():
     return render_template('index.html')
 
-
+#A2
 @app.route('/search', methods=['GET'])
 def search():
     db = Database.get_db()
@@ -31,7 +31,7 @@ def search():
     results = db.search(keywords)
     return render_template('/results.html', keywords=keywords, results=results)
 
-
+#A3
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
     subprocess.run(["python", "telechargement.py"])
@@ -46,15 +46,24 @@ scheduler.start()  # démarre le planificateur
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
-
+#A4
 @app.route('/api/contrevenants', methods=['GET'])
 def contrevenants():
     db = Database.get_db()
     date_from = request.args.get('du')
     date_to = request.args.get('au')
     results = db.get_contraventions_between(date_from, date_to)
-    if results is None:  # TODO ou juste 200 avec json vide ?
+    if results is None:  # TODO gestion cas vide
         return "", 404
+    else:
+        return jsonify(results)
+
+@app.route('/api/etablissements', methods=['GET'])
+def etablissements():
+    db = Database.get_db()
+    results = db.get_etablissements_et_nbr_infractions()
+    if results is None:
+        return "", 404 # TODO gestion cas vide
     else:
         return jsonify(results)
 

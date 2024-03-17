@@ -125,3 +125,19 @@ class Database:
         cursor.execute(query, param)
         all_data = cursor.fetchall()
         return [_build_contravention(item) for item in all_data]
+
+    def get_etablissements_et_nbr_infractions(self):
+        connection = self.get_connection()
+        cursor = connection.cursor()
+
+        query = """
+        SELECT etablissement, COUNT(*) as nbr_infractions
+        FROM Contravention
+        GROUP BY etablissement
+        ORDER BY nbr_infractions DESC
+        """
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        return results
