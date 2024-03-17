@@ -99,3 +99,47 @@ types:
                 }
               ]
 
+/api:
+  /etablissements:
+    get:
+      description: Récupère la liste des établissements et on indique le nombre
+       d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions:
+      responses:
+        200:
+          body:
+            application/json:
+              type: EtablissementsListe
+            example: |
+              [
+                {
+                  "id_poursuite": 100,
+                  "id_business": 200,
+                  "date": "2022-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2022-12-05",
+                  "etablissement": "Nom Établissment",
+                  "montant": 100,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant",
+                  {
+                  "id_poursuite": 300,
+                  "id_business": 350,
+                  "date": "2020-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2020-12-05",
+                  "etablissement": "Nom Établissment",
+                  "montant": 500,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant",
+                  }
+
+                }
+              ]

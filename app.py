@@ -5,6 +5,7 @@ from flask import Flask, g, request, redirect
 from flask import render_template
 from flask import Flask, jsonify
 from database import Database
+from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -17,6 +18,11 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.disconnect()
+
+@app.errorhandler(JsonValidationError)
+def validation_error(e):
+    errors = [validation_error.message for validation_error in e.errors]
+    return jsonify({'error': e.message, 'errors': errors}), 400
 
 
 @app.route('/')
