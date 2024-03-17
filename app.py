@@ -55,9 +55,10 @@ atexit.register(lambda: scheduler.shutdown())
 
 @app.route('/api/contrevenants', methods=['GET'])
 def contrevenants():
+    db = Database.get_db()
     date_from = request.args.get('du')
     date_to = request.args.get('au')
-    results = get_db().get_contraventions_between(date_from, date_to)
+    results = db.get_contraventions_between(date_from, date_to)
     if results is None:  # TODO ou juste 200 avec json vide ?
         return "", 404
     else:
