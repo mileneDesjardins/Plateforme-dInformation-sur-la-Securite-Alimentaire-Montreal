@@ -43,6 +43,25 @@ types:
     properties:
       du: string
       au: string
+  EtablissementsListe:
+    type: array
+    items:
+      type: object
+      properties:
+        etablissement: string
+        nbr_infractions: number
+      additionalProperties: false
+    example: |
+      [
+        {
+          "etablissement": "Nom Établissment",
+          "nbr_infractions": 5
+        },
+        {
+          "etablissement": "Autre Établissment",
+          "nbr_infractions": 3
+        }
+      ]
 
 /api:
   /contrevenants:
@@ -79,8 +98,9 @@ types:
                   "ville": "Montréal",
                   "statut": "Ouvert",
                   "date_statut": "2024-01-02",
-                  "categorie": "Restaurant",
-                  {
+                  "categorie": "Restaurant"
+                },
+                {
                   "id_poursuite": 300,
                   "id_business": 350,
                   "date": "2020-11-05",
@@ -93,13 +113,10 @@ types:
                   "ville": "Montréal",
                   "statut": "Ouvert",
                   "date_statut": "2024-01-02",
-                  "categorie": "Restaurant",
-                  }
-
+                  "categorie": "Restaurant"
                 }
               ]
 
-/api:
   /etablissements:
     get:
       description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions.
