@@ -76,7 +76,7 @@ def etablissements():
 
 @app.route('/doc')
 def doc():
-    return render_template('doc1.html')
+    return render_template('doc.html')
 
 
 if __name__ == '__main__':
