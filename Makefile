@@ -1,8 +1,8 @@
 export FLASK_APP=app.py
 
 run:
-	flask --debug run
+	flask run
 
-doc:
+doc: doc.raml
 	raml2html --input doc.raml --output templates/doc2.html --encoding utf8
 	# NE FONCTIONNE PAS
