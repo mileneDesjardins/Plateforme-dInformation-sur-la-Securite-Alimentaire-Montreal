@@ -40,7 +40,7 @@ def search():
 
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
-    subprocess.run(["python", "chemin_vers_votre_script.py"])
+    subprocess.run(["python", "telechargement.py"])
 
 
 scheduler = BackgroundScheduler()
