@@ -1,4 +1,3 @@
-
 import subprocess
 from apscheduler.triggers.cron import CronTrigger
 
@@ -10,8 +9,8 @@ import atexit
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-
 app = Flask(__name__, static_url_path="", static_folder="static")
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -37,20 +36,19 @@ def search():
     return render_template('/results.html', keywords=keywords, results=results)
 
 
-
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
     subprocess.run(["python", "telechargement.py"])
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=extract_and_update_data, trigger=CronTrigger(hour=0, minute=0))
-scheduler.start()
+scheduler.add_job(func=extract_and_update_data,
+                  trigger=CronTrigger(hour=0,
+                                      minute=0))  # déclenchée à minuit (0 heure, 0 minute)
+scheduler.start()  # démarre le planificateur
 
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
-
-
 
 
 @app.route('/api/contrevenants', methods=['GET'])
