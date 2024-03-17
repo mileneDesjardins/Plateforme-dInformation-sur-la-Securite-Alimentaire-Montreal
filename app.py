@@ -1,6 +1,6 @@
 import subprocess
-from apscheduler.triggers.cron import CronTrigger
 
+from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect
 from flask import render_template
 from flask import Flask, jsonify
@@ -17,10 +17,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.disconnect()
-
-
-if __name__ == '__main__':
-    app.run()
 
 
 @app.route('/')
@@ -66,3 +62,7 @@ def contrevenants():
 @app.route('/doc')
 def doc():
     return render_template('doc.html')
+
+
+if __name__ == '__main__':
+    app.run()
