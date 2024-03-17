@@ -10,9 +10,7 @@ CREATE TABLE Contravention
     montant       INTEGER NOT NULL,
     proprietaire  TEXT    NOT NULL,
     ville         TEXT    NOT NULL,
-    statut        TEXT    NOT NULL CHECK (statut IN
-                                          ('Fermé changement d''exploitant',
-                                           'Ouvert', 'Fermé')),
+    statut        TEXT    NOT NULL,
     date_statut   DATE    NOT NULL,
     categorie     TEXT    NOT NULL
 );
