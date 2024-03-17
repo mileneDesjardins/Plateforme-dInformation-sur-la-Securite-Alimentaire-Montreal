@@ -98,7 +98,8 @@ class Database:
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
                     print(
-                        f"Ignorer l'insertion pour id_poursuite existant: {row[0]}")
+                        f"Ignorer l'insertion pour id_poursuite existant: "
+                        f"{row[0]}")
                     continue
                 except Exception as e:
                     # Gérer les autres erreurs
@@ -114,5 +115,13 @@ class Database:
                  "adresse LIKE ? OR proprietaire LIKE ?")
         param = ('%' + keywords + '%')
         cursor.execute(query, (param, param, param))
+        all_data = cursor.fetchall()
+        return [_build_contravention(item) for item in all_data]
+
+    def get_contraventions_between(self, date1, date2):
+        cursor = self.get_connection().cursor()
+        query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ?")
+        param = (date1, date2)
+        cursor.execute(query, param)
         all_data = cursor.fetchall()
         return [_build_contravention(item) for item in all_data]

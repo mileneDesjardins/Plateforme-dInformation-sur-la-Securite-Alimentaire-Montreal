@@ -4,6 +4,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from flask import Flask, g, request, redirect
 from flask import render_template
+from flask import Flask, jsonify
 from database import Database
 import atexit
 
@@ -50,3 +51,19 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 
+
+
+@app.route('/api/contrevenants', methods=['GET'])
+def contrevenants():
+    date_from = request.args.get('du')
+    date_to = request.args.get('au')
+    results = get_db().get_contraventions_between(date_from, date_to)
+    if results is None:  # TODO ou juste 200 avec json vide ?
+        return "", 404
+    else:
+        return jsonify(results)
+
+
+@app.route('/doc')
+def doc():
+    return render_template('doc.html')

@@ -3,7 +3,7 @@ class Contravention:
                  adresse, date_jugement, etablissement, montant,
                  proprietaire, ville, statut, date_statut, categorie):
         self.id_poursuite = id_poursuite
-        self.id_business = id_business #ANNE-SO pas le meme nom que dans CSV
+        self.id_business = id_business
         self.date = date
         self.description = description
         self.adresse = adresse
