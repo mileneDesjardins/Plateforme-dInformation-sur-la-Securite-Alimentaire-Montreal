@@ -12,7 +12,6 @@
           rel="stylesheet">
 
     <!-- Template Main CSS File -->
-
     <link href="{{ url_for('static', filename='css/style.css') }}"
           rel="stylesheet">
 </head>
@@ -27,12 +26,31 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"
-                       href="#">Accueil</a>
+                    <a class="nav-link active d-flex align-items-center"
+                       aria-current="page"
+                       href="#" style="height: 100%;">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                Accueil
+                            </div>
+                        </div>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Compte</a>
+                    <a class="nav-link d-flex align-items-center" href="#"
+                       style="height: 100%;">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                Compte
+                            </div>
+                        </div>
+                    </a>
                 </li>
+                <li class="nav-item">
+                    <a href="/connexion" class="btn btn-primary w-5 ">Se
+                        connecter</a>
+                </li>
+
             </ul>
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search"
@@ -45,14 +63,11 @@
 </nav>
 
 <div class="container-fluid">
-
     {% block content %}{% endblock %}
-
 </div>
 
 <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js') }}"></script>
 <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.esm.js') }}"></script>
 <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.js') }}"></script>
 </body>
-
 </html>
