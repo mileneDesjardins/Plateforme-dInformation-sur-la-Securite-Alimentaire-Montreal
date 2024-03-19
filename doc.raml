@@ -87,6 +87,13 @@ types:
       name: etablissements
       wrapped: true
 
+  EtablissementsListeCSV:
+    type: string
+    example: |
+      etablissement,nbr_infractions
+      Nom Établissment,5
+      Autre Établissment,3
+
 /api:
   /contrevenants:
     get:
@@ -179,3 +186,15 @@ types:
                           <nbr_infractions>3</nbr_infractions>
                       </etablissement>
                   </etablissements>
+    /csv:
+      get:
+        description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format CSV.
+        responses:
+          200:
+            body:
+              application/csv:
+                type: EtablissementsListeCSV
+                example: |
+                  Etablissement, Nbr_infractions
+                  Nom Établissement, 5
+                  Autre Établissement, 3

@@ -69,7 +69,7 @@ def contrevenants():
     else:
         return jsonify(results)
 
-
+# C1
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
     db = Database.get_db()
@@ -79,9 +79,9 @@ def etablissements():
     else:
         return jsonify(results)
 
-
+# C2
 @app.route('/api/etablissements/xml',
-           methods=['GET'])  # Nouvelle route pour XML
+           methods=['GET'])
 def etablissements_xml():
     db = Database.get_db()
     results = db.get_etablissements_et_nbr_infractions()
@@ -103,6 +103,31 @@ def etablissements_xml():
         xml_response = ET.tostring(root, encoding="utf-8")
         return Response(xml_response, content_type="application/xml")
 
+# C3
+@app.route('/api/etablissements/csv', methods=['GET'])
+def etablissements_csv():
+    db = Database.get_db()
+    results = db.get_etablissements_et_nbr_infractions()
+    if results is None:
+        return "", 404  # TODO gestion cas vide
+    else:
+        # Créer une liste de dictionnaires pour les résultats
+        data = []
+        for result in results:
+            data.append({
+                'Etablissement': result[0],
+                'Nbr_infractions': result[1]
+            })
+
+        # Créer une réponse CSV à partir des données
+        csv_data = ', '.join(data[0].keys()) + '\n'  # Écrire les noms de
+        # colonnes
+        for entry in data:
+            csv_data += ', '.join(map(str, entry.values())) + '\n'  # Écrire
+            # les valeurs de chaque entrée
+
+        # Créer un objet Response contenant le CSV
+        return Response(csv_data, content_type="text/csv")
 
 @app.route('/doc')
 def doc():
