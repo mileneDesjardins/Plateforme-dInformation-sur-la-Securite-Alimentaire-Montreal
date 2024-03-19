@@ -26,6 +26,7 @@ class User:
         }
 
 
+
 insert_schema = {
     'type': 'object',
     'required': ['prenom', 'nom', 'courriel', 'choix_etablissements',

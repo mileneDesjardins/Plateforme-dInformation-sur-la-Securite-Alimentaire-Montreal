@@ -1,7 +1,9 @@
+import hashlib
 import subprocess
+import uuid
 
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect, Response
+from flask import Flask, g, request, redirect, Response, session
 from flask import render_template
 from flask import Flask, jsonify
 from database import Database
@@ -38,7 +40,104 @@ def search():
     db = Database.get_db()
     keywords = request.args.get('search')
     results = db.search(keywords)
-    return render_template('/results.html', keywords=keywords, results=results)
+    return render_template('results.html', keywords=keywords, results=results)
+
+
+@app.route('/connection', methods=['GET', 'POST'])
+def connection():
+    titre = "Connexion"
+
+    if request.method == "GET":
+        return render_template("connection.html", titre=titre)
+    else:
+        courriel = request.form["courriel"]
+        mdp = request.form["mdp"]
+
+        if courriel == "" or mdp == "":
+            return est_incomplet()
+
+        db = Database.get_db()
+        user = db.get_user_login_infos(courriel)
+        if user is None:
+            return nexiste_pas()
+
+        mdp_hash = obtenir_mdp_hash(mdp, user)
+
+        if mdp_hash == user[3]:
+            # Accès autorisé
+            return creer_session(user)
+        else:
+            return render_template('connection.html',
+                                   erreur="Connexion impossible, veuillez "
+                                          "vérifier vos informations")
+
+
+def est_incomplet():
+    return render_template('connection.html',
+                           erreur="Veuillez remplir tous les champs")
+
+
+def nexiste_pas():
+    return render_template('connection.html',
+                           erreur="Utilisateur inexistant, veuillez "
+                                  "vérifier vos informations")
+
+
+def obtenir_mdp_hash(mdp, user):
+    salt = user[3]
+    mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
+    return mdp_hash
+
+
+def creer_session(user):
+    id_session = uuid.uuid4().hex
+    session["id"] = id_session
+    session["id_user"] = user[0]
+    session["prenom"] = user[1]
+    session["nom"] = user[2]
+    session["id_photo"] = user[7]
+    return redirect('/', 302)
+
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    titre = 'Creation utilisateur'
+    if request.method == "GET":
+        return render_template("create_user.html", titre=titre)
+    else:
+        prenom, nom, courriel, choix_etablissements, mdp = (obtenir_infos())
+
+    # Vérifier que les champs ne soient pas vides
+    if (prenom == "" or nom == "" or courriel == "" or not
+    choix_etablissements or mdp == ""):
+        return render_template("create_user.html", titre=titre,
+                               erreur="Tous les champs sont obligatoires.")
+
+    # Génération d'un salt et hachage du mot de passe
+    mdp_salt = uuid.uuid4().hex
+    mdp_hash = hashlib.sha512(
+        str(mdp + mdp_salt).encode("utf-8")).hexdigest()
+
+    # Stockage des informations de l'utilisateur
+    db = Database.get_db()
+    db.create_user(prenom, nom, courriel, choix_etablissements, mdp_hash,
+                   mdp_salt)
+
+    # Redirection vers une page de confirmation
+    return redirect('/confirmation_user', 302)
+
+
+def obtenir_infos():
+    prenom = request.form['prenom']
+    nom = request.form['nom']
+    courriel = request.form["courriel"]
+    choix_etablissements = request.form.getlist(
+        "choix_etablissements")  # récupérer les valeurs d'un champ de form
+    # pour une liste de valeurs
+    mdp = request.form["mdp"]
+    # photo = request.files["photo"]
+    # photo_data = photo.stream.read()
+    return prenom, nom, courriel, choix_etablissements, mdp
 
 
 # A3
@@ -69,6 +168,7 @@ def contrevenants():
     else:
         return jsonify(results)
 
+
 # C1
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
@@ -78,6 +178,7 @@ def etablissements():
         return "", 404  # TODO gestion cas vide
     else:
         return jsonify(results)
+
 
 # C2
 @app.route('/api/etablissements/xml',
@@ -97,11 +198,13 @@ def etablissements_xml():
             nom = ET.SubElement(etablissement, "nom")
             nom.text = result[0]  # Insérer le nom de l'établissement
             nbr_infractions = ET.SubElement(etablissement, "nbr_infractions")
-            nbr_infractions.text = str(result[1])  # Insérer le nombre d'infractions
+            nbr_infractions.text = str(
+                result[1])  # Insérer le nombre d'infractions
 
         # Créer un objet Response contenant le XML
         xml_response = ET.tostring(root, encoding="utf-8")
         return Response(xml_response, content_type="application/xml")
+
 
 # C3
 @app.route('/api/etablissements/csv', methods=['GET'])
@@ -128,6 +231,7 @@ def etablissements_csv():
 
         # Créer un objet Response contenant le CSV
         return Response(csv_data, content_type="text/csv")
+
 
 @app.route('/doc')
 def doc():
