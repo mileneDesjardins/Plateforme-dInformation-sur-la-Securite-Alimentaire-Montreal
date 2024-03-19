@@ -1,5 +1,9 @@
-Makefile
 .idea/
+
+.DS_Store
+*.swp
+__pycache__/
+
 #### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
