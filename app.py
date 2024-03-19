@@ -113,7 +113,7 @@ def create_user():
         return render_template("create_user.html", titre=titre,
                                erreur="Tous les champs sont obligatoires.")
 
-    # Génération d'un sel et hachage du mot de passe
+    # Génération d'un salt et hachage du mot de passe
     mdp_salt = uuid.uuid4().hex
     mdp_hash = hashlib.sha512(
         str(mdp + mdp_salt).encode("utf-8")).hexdigest()
