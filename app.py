@@ -43,7 +43,7 @@ def search():
     return render_template('results.html', keywords=keywords, results=results)
 
 
-@app.route('/connexion', methods=['GET', 'POST'])
+@app.route('/connection', methods=['GET', 'POST'])
 def connection():
     titre = "Connexion"
 
@@ -97,6 +97,47 @@ def creer_session(user):
     session["nom"] = user[2]
     session["id_photo"] = user[7]
     return redirect('/', 302)
+
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    titre = 'Creation utilisateur'
+    if request.method == "GET":
+        return render_template("create_user.html", titre=titre)
+    else:
+        prenom, nom, courriel, choix_etablissements, mdp = (obtenir_infos())
+
+    # Vérifier que les champs ne soient pas vides
+    if (prenom == "" or nom == "" or courriel == "" or not
+    choix_etablissements or mdp == ""):
+        return render_template("create_user.html", titre=titre,
+                               erreur="Tous les champs sont obligatoires.")
+
+    # Génération d'un sel et hachage du mot de passe
+    mdp_salt = uuid.uuid4().hex
+    mdp_hash = hashlib.sha512(
+        str(mdp + mdp_salt).encode("utf-8")).hexdigest()
+
+    # Stockage des informations de l'utilisateur
+    db = Database.get_db()
+    db.create_user(prenom, nom, courriel, choix_etablissements, mdp_hash,
+                   mdp_salt)
+
+    # Redirection vers une page de confirmation
+    return redirect('/confirmation_user', 302)
+
+
+def obtenir_infos():
+    prenom = request.form['prenom']
+    nom = request.form['nom']
+    courriel = request.form["courriel"]
+    choix_etablissements = request.form.getlist(
+        "choix_etablissements")  # récupérer les valeurs d'un champ de form
+    # pour une liste de valeurs
+    mdp = request.form["mdp"]
+    # photo = request.files["photo"]
+    # photo_data = photo.stream.read()
+    return prenom, nom, courriel, choix_etablissements, mdp
 
 
 # A3
