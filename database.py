@@ -110,6 +110,8 @@ class Database:
             self.connection.commit()
 
     def search(self, keywords):
+        if keywords is None:
+            return []
         cursor = self.get_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
