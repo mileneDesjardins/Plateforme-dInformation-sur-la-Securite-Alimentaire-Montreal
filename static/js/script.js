@@ -1,7 +1,7 @@
 function onFastSearchSubmit(){
     let date1 = document.getElementById('date-du').value
     let date2 = document.getElementById('date-au').value
-    console.log(date1)
+
     let resultAffiche = document.getElementById("result-fast-search")
     let apiUrl = `/api/contrevenants?du=${date1}&au=${date2}`;
     console.log(apiUrl)
