@@ -43,6 +43,7 @@ types:
     properties:
       du: string
       au: string
+
   EtablissementsListe:
     type: array
     items:
@@ -62,6 +63,29 @@ types:
           "nbr_infractions": 3
         }
       ]
+
+  EtablissementsListeXML:
+    type: array
+    items:
+      type: object
+      properties:
+        etablissement: string
+        nbr_infractions: number
+      additionalProperties: false
+    example: |
+      [
+        {
+          "etablissement": "Nom Établissment",
+          "nbr_infractions": 5
+        },
+        {
+          "etablissement": "Autre Établissment",
+          "nbr_infractions": 3
+        }
+      ]
+    xml:
+      name: etablissements
+      wrapped: true
 
 /api:
   /contrevenants:
@@ -135,4 +159,23 @@ types:
                     "etablissement": "Autre Établissment",
                     "nbr_infractions": 3
                   }
-                ]
+    /xml:
+      get:
+        description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format XML.
+        responses:
+          200:
+            body:
+              application/xml:
+                type: EtablissementsListeXML
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <etablissements>
+                      <etablissement>
+                          <nom>Nom Établissment</nom>
+                          <nbr_infractions>5</nbr_infractions>
+                      </etablissement>
+                      <etablissement>
+                          <nom>Autre Établissment</nom>
+                          <nbr_infractions>3</nbr_infractions>
+                      </etablissement>
+                  </etablissements>

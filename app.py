@@ -1,12 +1,13 @@
 import subprocess
 
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect
+from flask import Flask, g, request, redirect, Response
 from flask import render_template
 from flask import Flask, jsonify
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
+import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -19,6 +20,7 @@ def close_connection(exception):
     if db is not None:
         db.disconnect()
 
+
 @app.errorhandler(JsonValidationError)
 def validation_error(e):
     errors = [validation_error.message for validation_error in e.errors]
@@ -29,7 +31,8 @@ def validation_error(e):
 def index():
     return render_template('index.html')
 
-#A2
+
+# A2
 @app.route('/search', methods=['GET'])
 def search():
     db = Database.get_db()
@@ -37,7 +40,8 @@ def search():
     results = db.search(keywords)
     return render_template('/results.html', keywords=keywords, results=results)
 
-#A3
+
+# A3
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
     subprocess.run(["python", "telechargement.py"])
@@ -52,7 +56,8 @@ scheduler.start()  # démarre le planificateur
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
-#A4
+
+# A4
 @app.route('/api/contrevenants', methods=['GET'])
 def contrevenants():
     db = Database.get_db()
@@ -64,14 +69,39 @@ def contrevenants():
     else:
         return jsonify(results)
 
+
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
     db = Database.get_db()
     results = db.get_etablissements_et_nbr_infractions()
     if results is None:
-        return "", 404 # TODO gestion cas vide
+        return "", 404  # TODO gestion cas vide
     else:
         return jsonify(results)
+
+
+@app.route('/api/etablissements/xml',
+           methods=['GET'])  # Nouvelle route pour XML
+def etablissements_xml():
+    db = Database.get_db()
+    results = db.get_etablissements_et_nbr_infractions()
+    if results is None:
+        return "", 404  # TODO gestion cas vide
+    else:
+        # Créer l'élément racine du XML
+        root = ET.Element("etablissements")
+
+        # Parcourir les résultats et les ajouter au XML
+        for result in results:
+            etablissement = ET.SubElement(root, "etablissement")
+            nom = ET.SubElement(etablissement, "nom")
+            nom.text = result[0]  # Insérer le nom de l'établissement
+            nbr_infractions = ET.SubElement(etablissement, "nbr_infractions")
+            nbr_infractions.text = str(result[1])  # Insérer le nombre d'infractions
+
+        # Créer un objet Response contenant le XML
+        xml_response = ET.tostring(root, encoding="utf-8")
+        return Response(xml_response, content_type="application/xml")
 
 
 @app.route('/doc')
