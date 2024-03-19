@@ -67,7 +67,7 @@ def connection():
             # Accès autorisé
             return creer_session(user)
         else:
-            return render_template('connexion.html',
+            return render_template('connection.html',
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
 
@@ -78,7 +78,7 @@ def est_incomplet():
 
 
 def nexiste_pas():
-    return render_template('connexion.html',
+    return render_template('connection.html',
                            erreur="Utilisateur inexistant, veuillez "
                                   "vérifier vos informations")
 

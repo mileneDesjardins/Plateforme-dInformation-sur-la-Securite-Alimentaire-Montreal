@@ -14,6 +14,12 @@
     <!-- Template Main CSS File -->
     <link href="{{ url_for('static', filename='css/style.css') }}"
           rel="stylesheet">
+    <style>
+        /* Ajoutez ce style pour créer un espace au-dessus du contenu */
+        body {
+            padding-top: 56px; /* hauteur de la navbar */
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -28,7 +34,7 @@
                 <li class="nav-item">
                     <a class="nav-link active d-flex align-items-center"
                        aria-current="page"
-                       href="#" style="height: 100%;">
+                       href="/" style="height: 100%;">
                         <div class="container">
                             <div class="row justify-content-center">
                                 Accueil
