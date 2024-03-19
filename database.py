@@ -29,7 +29,8 @@ def _build_contravention(query_result):
 
 class Database:
     def __init__(self):
-        self.connection = None
+        self.contravention_connection = None
+        self.user_connection = None
 
     @staticmethod
     def get_db():
@@ -37,17 +38,21 @@ class Database:
             g._database = Database()
         return g._database
 
-    def get_connection(self):
-        if self.connection is None:
-            self.connection = sqlite3.connect('db/contravention.db')
-        return self.connection
-
     def disconnect(self):
-        if self.connection is not None:
-            self.connection.close()
+        if self.contravention_connection is not None:
+            self.contravention_connection.close()
+        if self.user_connection is not None:
+            self.user_connection.close()
+
+    # CONTRAVENTION
+    def get_contravention_connection(self):
+        if self.contravention_connection is None:
+            self.contravention_connection = sqlite3.connect(
+                'db/contravention.db')
+        return self.contravention_connection
 
     def get_contraventions(self):
-        connection = self.get_connection()
+        connection = self.get_contravention_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM Contravention")
 
@@ -67,7 +72,7 @@ class Database:
     def insert_contraventions_from_csv(self, csv_file):
         with open(csv_file, 'r', encoding='utf-8') as file:
             contenu = csv.reader(file)
-            cursor = self.get_connection().cursor()
+            cursor = self.get_contravention_connection().cursor()
             insertion = (
                 "INSERT INTO Contravention(id_poursuite, id_business, date, "
                 "description, adresse, date_jugement, etablissement, montant, "
@@ -107,10 +112,10 @@ class Database:
                     print(f"Erreur détaillée: {e}")
                     continue
 
-            self.connection.commit()
+            self.contravention_connection.commit()
 
     def search(self, keywords):
-        cursor = self.get_connection().cursor()
+        cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
         param = ('%' + keywords + '%')
@@ -119,7 +124,7 @@ class Database:
         return [_build_contravention(item) for item in all_data]
 
     def get_contraventions_between(self, date1, date2):
-        cursor = self.get_connection().cursor()
+        cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ?")
         param = (date1, date2)
         cursor.execute(query, param)
@@ -127,7 +132,7 @@ class Database:
         return [_build_contravention(item) for item in all_data]
 
     def get_etablissements_et_nbr_infractions(self):
-        connection = self.get_connection()
+        connection = self.get_contravention_connection()
         cursor = connection.cursor()
 
         query = """
@@ -141,3 +146,17 @@ class Database:
         results = cursor.fetchall()
 
         return results
+
+    # USER
+    def get_user_connection(self):
+        if self.user_connection is None:
+            self.user_connection = sqlite3.connect('db/user.db')
+        return self.user_connection
+
+    def get_user_login_infos(self, courriel):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute((
+            "SELECT * FROM user "
+            "WHERE courriel=?"),
+            (courriel,))
+        return cursor.fetchone()
