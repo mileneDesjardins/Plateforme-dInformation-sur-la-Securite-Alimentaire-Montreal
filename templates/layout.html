@@ -34,11 +34,20 @@
                     <a class="nav-link" href="#">Compte</a>
                 </li>
             </ul>
+
+
+            <form>
+                <input type="date" name="date-du" id="date-du">
+                <input type="date" name="date-au" id="date-au">
+                <button id="fast-search" class="btn btn-outline-success" type="button">Search</button>
+            </form>
+
+
+
             <form class="d-flex" action="/search" method="GET">
                 <input class="form-control me-2" type="search"
                        placeholder="Search" aria-label="Search" name="search">
-                <button class="btn btn-outline-success" type="submit">Search
-                </button>
+                <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
     </div>
@@ -51,8 +60,9 @@
 </div>
 
 <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js') }}"></script>
-<script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.esm.js') }}"></script>
 <script src="{{ url_for('static', filename='vendor/bootstrap-5.3.3-dist/js/bootstrap.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/script.js') }}"></script>
+
 </body>
 
 </html>

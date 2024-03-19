@@ -63,10 +63,12 @@ def contrevenants():
     db = Database.get_db()
     date_from = request.args.get('du')
     date_to = request.args.get('au')
+    print(date_from, date_to)
     results = db.get_contraventions_between(date_from, date_to)
     if results is None:  # TODO gestion cas vide
         return "", 404
     else:
+        print(results)
         return jsonify(results)
 
 # C1
