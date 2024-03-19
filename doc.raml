@@ -30,7 +30,7 @@ types:
         "description": "Personnes affectées à la consommation de produits",
         "adresse": "123 avenue Chemin, Montréal, Québec",
         "date_jugement": "2022-12-05",
-        "etablissement": "Nom Établissment",
+        "etablissement": "Nom Établissement",
         "montant": 100,
         "proprietaire": "Nom Proprietaire",
         "ville": "Montréal",
@@ -55,11 +55,11 @@ types:
     example: |
       [
         {
-          "etablissement": "Nom Établissment",
+          "etablissement": "Nom Établissement",
           "nbr_infractions": 5
         },
         {
-          "etablissement": "Autre Établissment",
+          "etablissement": "Autre Établissement",
           "nbr_infractions": 3
         }
       ]
@@ -75,11 +75,11 @@ types:
     example: |
       [
         {
-          "etablissement": "Nom Établissment",
+          "etablissement": "Nom Établissement",
           "nbr_infractions": 5
         },
         {
-          "etablissement": "Autre Établissment",
+          "etablissement": "Autre Établissement",
           "nbr_infractions": 3
         }
       ]
@@ -90,14 +90,14 @@ types:
   EtablissementsListeCSV:
     type: string
     example: |
-      etablissement,nbr_infractions
-      Nom Établissment,5
-      Autre Établissment,3
+      Etablissement, Nbr_infractions
+      Nom Établissement, 5
+      Autre Établissement, 3
 
 /api:
   /contrevenants:
     get:
-      description: Récupère des données en fonction d'une plage de dates spécifiée.
+      description: Récupère des données en fonction d'une plage de dates spécifiées.
       queryParameters:
         du:
           type: string
@@ -123,7 +123,7 @@ types:
                   "description": "Personnes affectées à la consommation de produits",
                   "adresse": "123 avenue Chemin, Montréal, Québec",
                   "date_jugement": "2022-12-05",
-                  "etablissement": "Nom Établissment",
+                  "etablissement": "Nom Établissement",
                   "montant": 100,
                   "proprietaire": "Nom Proprietaire",
                   "ville": "Montréal",
@@ -138,7 +138,7 @@ types:
                   "description": "Personnes affectées à la consommation de produits",
                   "adresse": "123 avenue Chemin, Montréal, Québec",
                   "date_jugement": "2020-12-05",
-                  "etablissement": "Nom Établissment",
+                  "etablissement": "Nom Établissement",
                   "montant": 500,
                   "proprietaire": "Nom Proprietaire",
                   "ville": "Montréal",
@@ -159,11 +159,11 @@ types:
               example: |
                 [
                   {
-                    "etablissement": "Nom Établissment",
+                    "etablissement": "Nom Établissement",
                     "nbr_infractions": 5
                   },
                   {
-                    "etablissement": "Autre Établissment",
+                    "etablissement": "Autre Établissement",
                     "nbr_infractions": 3
                   }
     /xml:
@@ -178,11 +178,11 @@ types:
                   <?xml version="1.0" encoding="UTF-8"?>
                   <etablissements>
                       <etablissement>
-                          <nom>Nom Établissment</nom>
+                          <nom>Nom Établissement</nom>
                           <nbr_infractions>5</nbr_infractions>
                       </etablissement>
                       <etablissement>
-                          <nom>Autre Établissment</nom>
+                          <nom>Autre Établissement</nom>
                           <nbr_infractions>3</nbr_infractions>
                       </etablissement>
                   </etablissements>
