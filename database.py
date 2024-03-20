@@ -150,6 +150,15 @@ class Database:
 
         return results
 
+
+    def get_distinct_etablissements(self):
+        connection = self.get_contravention_connection()
+        cursor = connection.cursor()
+        query = ("SELECT DISTINCT etablissement FROM Contravention ORDER BY etablissement")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        return [item[0] for item in results]
+
     # USER
     def get_user_connection(self):
         if self.user_connection is None:

@@ -31,7 +31,8 @@ def validation_error(e):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    etablissements = Database.get_db().get_distinct_etablissements()
+    return render_template('index.html', etablissements=etablissements)
 
 
 # A2
