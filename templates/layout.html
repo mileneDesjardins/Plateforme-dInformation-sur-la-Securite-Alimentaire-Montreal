@@ -63,13 +63,6 @@
             </ul>
 
 
-            <form>
-                <input type="date" name="date-du" id="date-du">
-                <input type="date" name="date-au" id="date-au">
-                <button id="btn-fast-search" class="btn btn-outline-success" type="button">Search</button>
-            </form>
-
-
 
             <form class="d-flex" action="/search" method="GET">
                 <input class="form-control me-2" type="search"
@@ -99,5 +92,6 @@
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.js') }}"></script>
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.esm.js') }}"></script>
 <script src="{{ url_for('static', filename='/js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/validations.js') }}"></script>
 </body>
 </html>

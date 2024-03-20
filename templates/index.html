@@ -25,16 +25,28 @@
     </div>
 
 
+
+    <form>
+        <label for="start-date">Start</label>
+        <input type="date" name="start-date" id="start-date">
+        <div class="invalid-feedback d-block" id="error-start-date"></div>
+        <label for="end-date">End</label>
+        <input type="date" name="end-date" id="end-date">
+        <div class="invalid-feedback d-block" id="error-end-date"></div>
+        <button id="btn-fast-search" class="btn btn-outline-success" type="button">Search</button>
+    </form>
+
+
     <!-- Button trigger modal -->
     <label for="select-etablissement">Établissement</label>
     <select name="etablissement" id="select-etablissement">
 
         {% for etablissement in etablissements %}
-            <option id="{{ etablissement }}" value="{{ etablissement }}">{{ etablissement }}</option>
+            <option value="{{ etablissement }}">{{ etablissement }}</option>
         {% endfor %}
 
     </select>
-    <button type="select" id="btn-info-etablissement" class="btn btn-primary" data-bs-toggle="modal"
+    <button type="button" id="btn-info-etablissement" class="btn btn-primary" data-bs-toggle="modal"
             data-bs-target="#staticBackdrop">
         Search
     </button>
@@ -42,7 +54,7 @@
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div id="test" class="modal-content">
 
             </div>

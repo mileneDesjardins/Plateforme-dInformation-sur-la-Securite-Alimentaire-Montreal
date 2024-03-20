@@ -1,10 +1,13 @@
 function onFastSearchSubmit() {
-    let date1 = document.getElementById('date-du').value;
-    let date2 = document.getElementById('date-au').value;
+    let startDate = document.getElementById('start-date').value;
+    let endDate = document.getElementById('end-date').value;
 
+    if (!areValidDates('start-date', 'end-date')) {
+        return;
+    }
     let resultAffiche = document.getElementById("result-fast-search");
     resultAffiche.innerHTML = '';
-    let apiUrl = `/api/contrevenants/start/${date1}/end/${date2}`;
+    let apiUrl = `/api/contrevenants/start/${startDate}/end/${endDate}`;
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -120,6 +123,7 @@ function OnGetInfoEtablissementSubmit() {
             console.log("Erreur côté serveur", err);
         });
 }
+
 
 
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
