@@ -158,11 +158,11 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
-# A4 TODO Milene t'en pense quoi ?
+# A4 TODO tellement pas sur
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
-    # TODO valider dates ISO
+    # TODO valider dates ISO ?
     results = db.get_contraventions_between(date1, date2)
     return jsonify(results)
 
