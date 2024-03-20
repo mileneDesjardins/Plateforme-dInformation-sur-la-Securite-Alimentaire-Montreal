@@ -26,16 +26,16 @@
 
 
     <!-- Button trigger modal -->
-    <label for="cars">Établissement</label>
+    <label for="select-etablissement">Établissement</label>
     <select name="etablissement" id="select-etablissement">
 
-    {% for etablissement in etablissements %}
-    <option>{{ etablissement }}</option>
-    {% endfor %}
+        {% for etablissement in etablissements %}
+            <option id="{{ etablissement }}" value="{{ etablissement }}">{{ etablissement }}</option>
+        {% endfor %}
 
     </select>
     <button type="select" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Établissements
+        Search
     </button>
 
     <!-- Modal -->
@@ -47,7 +47,7 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div id="modal-body-etablissement" class="modal-body">
                     ...
                 </div>
                 <div class="modal-footer">

@@ -169,6 +169,15 @@ def contrevenants():
     else:
         return jsonify(results)
 
+#A6
+@app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
+def info_etablissements(etablissement):
+    db = Database.get_db()
+    #resultat_requete = request.args.get('etablissement')
+    etablissement = db.get_info_etablissement(etablissement)
+
+    return jsonify(etablissement)
+
 
 # C1
 @app.route('/api/etablissements', methods=['GET'])

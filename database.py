@@ -117,7 +117,7 @@ class Database:
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
         if keywords is None:
-            return [] #TODO try catch ?
+            return []  # TODO try catch ?
         cursor = self.get_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
@@ -150,14 +150,22 @@ class Database:
 
         return results
 
-
     def get_distinct_etablissements(self):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        query = ("SELECT DISTINCT etablissement FROM Contravention ORDER BY etablissement")
+        query = (
+            "SELECT DISTINCT etablissement FROM Contravention ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
         return [item[0] for item in results]
+
+    def get_info_etablissement(self, etablissement):
+        connection = self.get_contravention_connection()
+        cursor = connection.cursor()
+        query = ("SELECT * FROM Contravention WHERE etablissement = ?")
+        cursor.execute(query, (etablissement,))
+        contraventions = cursor.fetchall()
+        return [_build_contravention(item) for item in contraventions]
 
     # USER
     def get_user_connection(self):
