@@ -158,24 +158,20 @@ atexit.register(lambda: scheduler.shutdown())
 
 
 # A4
-@app.route('/api/contrevenants', methods=['GET'])
-def contrevenants():
+@app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
+def contrevenants(date1, date2):
     db = Database.get_db()
-    date_from = request.args.get('du')
-    date_to = request.args.get('au')
-    results = db.get_contraventions_between(date_from, date_to)
-    if results is None:  # TODO gestion cas vide
-        return "", 404
-    else:
-        return jsonify(results)
+    # TODO valider dates ISO
+    print(date1, date2)
+    results = db.get_contraventions_between(date1, date2)
+    return jsonify(results)
 
-#A6
+
+# A6
 @app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
 def info_etablissements(etablissement):
     db = Database.get_db()
-    #resultat_requete = request.args.get('etablissement')
     etablissement = db.get_info_etablissement(etablissement)
-
     return jsonify(etablissement)
 
 

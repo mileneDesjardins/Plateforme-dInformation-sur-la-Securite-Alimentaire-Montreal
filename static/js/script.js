@@ -5,7 +5,7 @@ function onFastSearchSubmit() {
 
     let resultAffiche = document.getElementById("result-fast-search");
     resultAffiche.innerHTML = '';
-    let apiUrl = `/api/contrevenants?du=${date1}&au=${date2}`;
+    let apiUrl = `/api/contrevenants/start/${date1}/end/${date2}`;
 
     fetch(apiUrl)
         .then(response => response.json())
