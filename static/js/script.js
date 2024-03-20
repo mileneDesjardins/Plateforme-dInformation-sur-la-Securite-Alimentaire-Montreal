@@ -1,4 +1,3 @@
-
 function onFastSearchSubmit() {
     let date1 = document.getElementById('date-du').value;
     let date2 = document.getElementById('date-au').value;
@@ -97,7 +96,31 @@ function creerCelluleDonnee(texte) {
 }
 
 
+function OnGetInfoEtablissementSubmit() {
+    let etablissement = document.getElementById('select-etablissement').value;
+    let apiUrl = `/api/info-etablissement/${etablissement}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            let modalURL = `/modal`;
+            return fetch(modalURL, {
+                method: 'POST',  // Méthode POST pour envoyer des données JSON
+                headers: {
+                    'Content-Type': 'application/json'  // Type de contenu JSON
+                },
+                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
+            });
+        })
+        .then(response => response.text())
+        .then(htmlContent => {
+            document.getElementById('test').innerHTML = htmlContent;
+        })
+        .catch(err => {
+            console.log("Erreur côté serveur", err);
+        });
+}
 
 
-
-document.getElementById('fast-search').addEventListener("click", onFastSearchSubmit);
+document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
+document.getElementById('btn-info-etablissement').addEventListener("click", OnGetInfoEtablissementSubmit);

@@ -1,4 +1,5 @@
 import hashlib
+import json
 import subprocess
 import uuid
 
@@ -157,12 +158,11 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
-# A4
+# A4 TODO Milene t'en pense quoi ?
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
     # TODO valider dates ISO
-    print(date1, date2)
     results = db.get_contraventions_between(date1, date2)
     return jsonify(results)
 
@@ -173,6 +173,14 @@ def info_etablissements(etablissement):
     db = Database.get_db()
     etablissement = db.get_info_etablissement(etablissement)
     return jsonify(etablissement)
+
+
+@app.route('/modal', methods=['POST'])
+def modal_etablissements():
+    """ NOTE pour documentation : Recoit JSON de l'etablissement'"""
+    infos_obtenues = request.get_json()
+    return render_template('modal_etablissement.html',
+                           results=infos_obtenues)
 
 
 # C1
