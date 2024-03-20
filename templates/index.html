@@ -24,44 +24,56 @@
         </div>
     </div>
 
+    <div class="container">
+
+        <div class="row ">
+            <!-- Fast search with date range -->
+            <form>
+                <div class="col-md-2">
+                    <label for="start-date">Start</label>
+                    <input type="date" name="start-date" id="start-date" class="form-control">
+                    <div class="invalid-feedback d-block" id="error-start-date"></div>
+                </div>
+
+                <div class=" col-md-2">
+                    <label for="end-date">End</label>
+                    <input type="date" name="end-date" id="end-date" class="form-control">
+                    <div class="invalid-feedback d-block" id="error-end-date"></div>
+                </div>
+
+                <div class="col-md-2">
+                    <button id="btn-fast-search" class="btn btn-outline-success" type="button">Search</button>
+                </div>
+
+            </form>
 
 
-    <form>
-        <label for="start-date">Start</label>
-        <input type="date" name="start-date" id="start-date">
-        <div class="invalid-feedback d-block" id="error-start-date"></div>
-        <label for="end-date">End</label>
-        <input type="date" name="end-date" id="end-date">
-        <div class="invalid-feedback d-block" id="error-end-date"></div>
-        <button id="btn-fast-search" class="btn btn-outline-success" type="button">Search</button>
-    </form>
+            <!-- Search information by etablissement -->
 
+            <div class="col-md-4 ">
+                <label for="select-etablissement">Établissement</label>
+                <select name="etablissement" id="select-etablissement" class="form-control">
+                    {% for etablissement in etablissements %}
+                        <option value="{{ etablissement }}">{{ etablissement }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" id="btn-info-etablissement" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop">
+                    Search
+                </button>
+            </div>
+        </div>
 
-    <!-- Button trigger modal -->
-    <label for="select-etablissement">Établissement</label>
-    <select name="etablissement" id="select-etablissement">
-
-        {% for etablissement in etablissements %}
-            <option value="{{ etablissement }}">{{ etablissement }}</option>
-        {% endfor %}
-
-    </select>
-    <button type="button" id="btn-info-etablissement" class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
-        Search
-    </button>
-
+    </div>
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-            <div id="test" class="modal-content">
+            <div id="modal-content" class="modal-content">
 
             </div>
         </div>
     </div>
-
-
 
 
     <div class="section text-center">

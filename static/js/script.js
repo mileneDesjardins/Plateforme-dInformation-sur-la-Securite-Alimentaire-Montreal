@@ -117,7 +117,7 @@ function OnGetInfoEtablissementSubmit() {
         })
         .then(response => response.text())
         .then(htmlContent => {
-            document.getElementById('test').innerHTML = htmlContent;
+            document.getElementById('modal-content').innerHTML = htmlContent;
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
