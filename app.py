@@ -14,8 +14,10 @@ import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-app = Flask(__name__, static_url_path="", static_folder="static")
+from schema import inspection_insert_schema
 
+app = Flask(__name__, static_url_path="", static_folder="static")
+schema = JsonSchema(app)
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -171,6 +173,7 @@ def contrevenants(date1, date2):
 @app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
 def info_etablissements(etablissement):
     db = Database.get_db()
+    # TODO valider
     etablissement = db.get_info_etablissement(etablissement)
     return jsonify(etablissement)
 
@@ -181,6 +184,13 @@ def modal_etablissements():
     infos_obtenues = request.get_json()
     return render_template('modal_etablissement.html',
                            results=infos_obtenues)
+
+
+@app.route('/api/demande-inspection', methods=['POST'])
+@schema.validate(inspection_insert_schema)
+def demande_inspection():
+    demande = request.get_json()
+    return "TODO"  # TODO
 
 
 # C1
