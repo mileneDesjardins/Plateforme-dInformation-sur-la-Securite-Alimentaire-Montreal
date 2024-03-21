@@ -14,10 +14,12 @@ import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -189,8 +191,21 @@ def modal_etablissements():
 @app.route('/api/demande-inspection', methods=['POST'])
 @schema.validate(inspection_insert_schema)
 def demande_inspection():
-    demande = request.get_json()
-    return "TODO"  # TODO
+    try:
+        demande = request.get_json()
+        nouvelle_demande = DemandeInspection(None, demande["etablissement"],
+                                             demande["adresse"],
+                                             demande["ville"],
+                                             demande["date_visite"],
+                                             demande["nom_client"],
+                                             demande["prenom_client"],
+                                             demande["description"])
+        Database.get_db().insert_demande_inspection(nouvelle_demande)
+        return "Utilisateur ajouté", 201
+    except Exception as e:
+        return jsonify(
+            error="Une erreur est survenue sur le serveur. Veuillez "
+                  "réessayer plus tard"), 500
 
 
 # C1
