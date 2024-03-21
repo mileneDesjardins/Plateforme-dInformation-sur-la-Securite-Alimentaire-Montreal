@@ -14,7 +14,8 @@ inspection_insert_schema = {
             'type': 'string'
         },
         'date_visite': {
-            'type': 'string'
+            'type': 'string',
+            'format': 'date-time'
         },
         'nom_client': {
             'type': 'string'
