@@ -94,6 +94,36 @@ types:
       Nom Établissement, 5
       Autre Établissement, 3
 
+  DemandeInspection:
+    type: object
+    properties:
+      id: number
+      etablissement: string
+      adresse: string
+      ville: string
+      date_visite: string
+      nom_client: string
+      prenom_client: string
+      description: string
+
+    additionalProperties: false
+    example: |
+      {
+        "id_poursuite": 100,
+        "id_business": 200,
+        "date": "2022-11-05",
+        "description": "Personnes affectées à la consommation de produits",
+        "adresse": "123 avenue Chemin, Montréal, Québec",
+        "date_jugement": "2022-12-05",
+        "etablissement": "Nom Établissement",
+        "montant": 100,
+        "proprietaire": "Nom Proprietaire",
+        "ville": "Montréal",
+        "statut": "Ouvert",
+        "date_statut": "2024-01-02",
+        "categorie": "Restaurant"
+      }
+
 /api:
   /contrevenants:
     get:
@@ -198,3 +228,25 @@ types:
                   Etablissement, Nbr_infractions
                   Nom Établissement, 5
                   Autre Établissement, 3
+
+    /demande-inspection:
+      post:
+        description: Crée une demande d'inspection à la ville.
+        responses:
+          201:
+            body:
+              application/json
+                type: DemandeInspection
+                example: |
+                {
+                 "id": 45,
+                 "etablissement": Restaurant XYZ,
+                 "adresse": "123 rue LeChemin",
+                 "ville": "VilleCity",
+                 "date_visite": "2022-11-05",
+                 "nom_client": "Joe",
+                 "prenom_client": "Dane",
+                 "Description": "Aliments insalubres",
+                }
+
+
