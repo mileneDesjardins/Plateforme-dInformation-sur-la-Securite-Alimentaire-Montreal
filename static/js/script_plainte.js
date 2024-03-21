@@ -44,8 +44,8 @@ function sendQueryPlainte(json) {
         window.location.href = '/plainte-envoyee';
 
     } else {
-        // afficher erreur survenue avec serveur
-        console.log("ererur");
+        // afficher autres erreurs
+        console.log("erreur");
     }
 
 }
