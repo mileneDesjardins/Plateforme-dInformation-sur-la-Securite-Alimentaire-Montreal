@@ -54,7 +54,8 @@ def search():
 
 @app.route('/plainte')
 def plainte():
-    return render_template('plainte.html')
+    script = "/js/script_plainte.js"
+    return render_template('plainte.html', script=script)
 
 
 @app.route('/connection', methods=['GET', 'POST'])
