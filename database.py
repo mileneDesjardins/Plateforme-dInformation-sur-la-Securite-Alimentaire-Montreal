@@ -1,4 +1,5 @@
 import datetime
+import json
 import sqlite3
 import csv
 from flask import g
@@ -6,6 +7,7 @@ from datetime import datetime
 
 import contravention
 from contravention import Contravention
+from demande_inspection import DemandeInspection
 
 
 def _build_contravention(query_result):
@@ -31,6 +33,7 @@ class Database:
     def __init__(self):
         self.contravention_connection = None
         self.user_connection = None
+        self.demandes_inspection_connection = None
 
     @staticmethod
     def get_db():
@@ -38,7 +41,7 @@ class Database:
             g._database = Database()
         return g._database
 
-    def disconnect(self):
+    def disconnect(self):  # TODO je pense quil manque des disconnect?
         if self.contravention_connection is not None:
             self.contravention_connection.close()
         if self.user_connection is not None:
@@ -115,10 +118,9 @@ class Database:
             self.contravention_connection.commit()
 
     def search(self, keywords):
-        cursor = self.get_contravention_connection().cursor()
         if keywords is None:
             return []  # TODO try catch ?
-        cursor = self.get_connection().cursor()
+        cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
         param = ('%' + keywords + '%')
@@ -180,3 +182,29 @@ class Database:
             "WHERE courriel=?"),
             (courriel,))
         return cursor.fetchone()
+
+    # DEMANDE D'INSERTION
+
+    def get_demandes_inspection_connection(self):
+        if self.demandes_inspection_connection is None:
+            self.demandes_inspection_connection = sqlite3.connect(
+                'db/demandes_inspection.db')
+        return self.demandes_inspection_connection
+
+    def disconnect(self):
+        if self.demandes_inspection_connection is not None:
+            self.demandes_inspection_connection.close()
+
+    def insert_demande_inspection(self, demande_inspection):
+        cursor = self.get_demandes_inspection_connection().cursor()
+        query = (
+            "INSERT INTO Demandes_Inspection (etablissement, adresse, ville, "
+            "date_visite, nom_client, prenom_client, description ) "
+            "VALUES (?, ?,?,?,?,?,?)")
+        params = (
+            demande_inspection.etablissement, demande_inspection.adresse,
+            demande_inspection.ville,
+            demande_inspection.date_visite, demande_inspection.nom_client,
+            demande_inspection.prenom_client, demande_inspection.description)
+        cursor.execute(query, params)
+        self.demandes_inspection_connection.commit()
