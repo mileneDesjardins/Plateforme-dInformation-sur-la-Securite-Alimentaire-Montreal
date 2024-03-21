@@ -249,6 +249,18 @@ types:
                    "prenom_client": "Dane",
                    "Description": "Aliments insalubres",
                   }
+          400:
+            description: Une erreur reliée au schéma JSON a été rencontrée.
+            body:
+              application/json:
+                example: |
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                    "'ville' is a required property",
+                    "Additional properties are not allowed ('vlle' was unexpected)"
+                    ]
+                  }
           500:
             description: Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.
 
