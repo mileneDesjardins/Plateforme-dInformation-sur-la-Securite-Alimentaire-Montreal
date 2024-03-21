@@ -37,7 +37,10 @@ def validation_error(e):
 @app.route('/')
 def index():
     etablissements = Database.get_db().get_distinct_etablissements()
-    return render_template('index.html', etablissements=etablissements)
+    script = "/js/script_accueil.js"
+    print(script)
+    return render_template('index.html', etablissements=etablissements,
+                           script=script)
 
 
 # A2
@@ -47,6 +50,11 @@ def search():
     keywords = request.args.get('search')
     results = db.search(keywords)
     return render_template('results.html', keywords=keywords, results=results)
+
+
+@app.route('/plainte')
+def plainte():
+    return render_template('plainte.html')
 
 
 @app.route('/connection', methods=['GET', 'POST'])

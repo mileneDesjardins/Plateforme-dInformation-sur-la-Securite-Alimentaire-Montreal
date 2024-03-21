@@ -43,10 +43,8 @@ function creerTable(data, resultAffiche) {
     table.classList.add("table", "table-striped", "table-bordered", "table-sm");
     const thead = creerEnteteTable();
     const tbody = creerCorpsTable(data);
-
     table.appendChild(thead);
     table.appendChild(tbody);
-
     resultAffiche.appendChild(table);
 }
 
