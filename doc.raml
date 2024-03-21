@@ -234,19 +234,22 @@ types:
         description: Crée une demande d'inspection à la ville.
         responses:
           201:
+            description: La demande d'inspection a bien été créée.
             body:
-              application/json
+              application/json:
                 type: DemandeInspection
                 example: |
-                {
-                 "id": 45,
-                 "etablissement": Restaurant XYZ,
-                 "adresse": "123 rue LeChemin",
-                 "ville": "VilleCity",
-                 "date_visite": "2022-11-05",
-                 "nom_client": "Joe",
-                 "prenom_client": "Dane",
-                 "Description": "Aliments insalubres",
-                }
+                  {
+                   "id": 45,
+                   "etablissement": Restaurant XYZ,
+                   "adresse": "123 rue LeChemin",
+                   "ville": "VilleCity",
+                   "date_visite": "2022-11-05",
+                   "nom_client": "Joe",
+                   "prenom_client": "Dane",
+                   "Description": "Aliments insalubres",
+                  }
+          500:
+            description: Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.
 
 
