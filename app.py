@@ -57,6 +57,9 @@ def plainte():
     script = "/js/script_plainte.js"
     return render_template('plainte.html', script=script)
 
+@app.route('/plainte-envoyee')
+def plainte_envoyee():
+    return render_template('plainte_confirmation.html')
 
 @app.route('/connection', methods=['GET', 'POST'])
 def connection():

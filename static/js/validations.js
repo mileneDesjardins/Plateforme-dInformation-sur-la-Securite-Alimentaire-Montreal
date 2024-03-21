@@ -33,6 +33,20 @@ function areValidDates(startDateID, endDateID) {
     return isValid;
 }
 
+function isValidDate(dateID) {
+    clearMessagesError();
+    let plainteDate = document.getElementById(dateID).value;
+    let isValid = true;
+    if (isEmpty(plainteDate)) {
+        isValid = false;
+        handleError(dateID, MSG_ERROR_EMPTY);
+    }
+    if (isEmpty(plainteDate)) {
+        isValid = false;
+        handleError(dateID, MSG_ERROR_EMPTY);
+    }
+    return isValid;
+}
 
 function isEmpty(date) {
     return date == null || date === "";
