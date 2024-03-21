@@ -1,28 +1,59 @@
 # Correction projet INF5190-H24
 
-## Nom et/ou Code permanent I guess
+## Milene Desjarins - DESM31559704
 
-### Fonctionnalite 1 10xp
+### A1 10xp
 
 #### Comment tester blabla
 
+### A2 5xp
 
-### Fonctionnalite 2 56xp
+#### Comment tester reblabla
+
+### C1 10xp
+
+#### Comment tester reblabla
+
+### C2 5xp
+
+#### Comment tester reblabla
+
+### C3 5xp
+
+#### Comment tester reblabla
+
+### E1 15xp
+
+#### Comment tester reblabla
+
+### E2 15xp
 
 #### Comment tester reblabla
 
 
 
+## Anne-Sophie Abel-Levesque ABEA05619105
 
-
-## Nom et/ou Code permanent I guess
-
-### Fonctionnalite 3 10xp
+### A2 10xp
 
 #### Comment tester blabla
 
-
-### Fonctionnalite 4 56xp
+### A4 10xp
 
 #### Comment tester reblabla
 
+### A5 10xp
+
+#### Comment tester reblabla
+
+### A6 10xp
+
+#### Comment tester reblabla
+
+### D1 15xp
+
+#### Comment tester reblabla
+
+### D2 5xp
+
+#### Comment tester reblabla
