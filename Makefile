@@ -12,3 +12,4 @@ doc: doc.raml
 	raml2html --input doc.raml --output templates/doc.html --encoding utf8
 	# NE FONCTIONNE PAS
 
+rdoc: doc run
