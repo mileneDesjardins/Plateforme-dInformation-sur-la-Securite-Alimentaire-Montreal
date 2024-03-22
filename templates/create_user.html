@@ -37,12 +37,15 @@
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <h3 class="h6 mb-1 fw-normal">Veuillez sélectionner au
+                        <h3 class="h6 mb-1 fw-normal" style="text-align:
+                        left; padding-left: 10px">Veuillez
+                            sélectionner au
                             moins un
                             établissements à surveiller</h3>
                         <select name="choix_etablissements[]"
                                 class="form-select"
-                                aria-label="Choix des établissements" multiple>
+                                aria-label="Choix des établissements"
+                                multiple size="13">
                             {% for etablissement in etablissements %}
                                 <option value="{{ etablissement }}">{{ etablissement }}</option>
                             {% endfor %}
