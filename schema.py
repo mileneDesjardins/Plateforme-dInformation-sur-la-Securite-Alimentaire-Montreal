@@ -1,8 +1,7 @@
-
-
 inspection_insert_schema = {
     'type': 'object',
-    'required':  ['etablissement', 'adresse', 'ville', 'date_visite', 'nom_client', 'prenom_client',  'description'],
+    'required': ['etablissement', 'adresse', 'ville', 'date_visite',
+                 'nom_complet_client', 'description'],
     'properties': {
         'etablissement': {
             'type': 'string'
@@ -17,10 +16,7 @@ inspection_insert_schema = {
             'type': 'string',
             'format': 'date-time'
         },
-        'nom_client': {
-            'type': 'string'
-        },
-        'prenom_client': {
+        'nom_complet_client': {
             'type': 'string'
         },
         'description': {
