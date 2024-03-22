@@ -27,12 +27,6 @@ def _build_contravention(query_result):
     return contravention
 
 
-def _build_demande(demande):
-    return DemandeInspection(demande[0], demande[1], demande[2],
-                             demande[3], demande[4], demande[5],
-                             demande[6], demande[7])
-
-
 class Database:
     def __init__(self):
         self.contravention_connection = None
@@ -215,17 +209,19 @@ class Database:
         self.demandes_inspection_connection.commit()
 
     def get_demande_inspection(self, id_demande):
-        cursor = self.demandes_inspection_connection().cursor()
-        query = "SELECT * FROM Demande_Inspection WHERE id = ?"
+        cursor = self.get_demandes_inspection_connection().cursor()
+        query = "SELECT * FROM Demandes_Inspection WHERE id = ?"
         cursor.execute(query, (id_demande,))
         demande = cursor.fetchone()
-        if len(demande) is 0:
+        if len(demande) == 0:
             return None
         else:
-            return _build_demande(demande)
+            return DemandeInspection(demande[0], demande[1], demande[2],
+                                     demande[3], demande[4], demande[5],
+                                     demande[6], demande[7])
 
     def delete_demande_inspection(self, demande_inspection):
-        connection = self.demandes_inspection_connection()
-        query = "DELETE FROM Demande_Inspection WHERE id = ?"
-        connection.execute(query, (demande_inspection,))
+        connection = self.get_demandes_inspection_connection()
+        query = "DELETE FROM Demandes_Inspection WHERE id = ?"
+        connection.execute(query, (demande_inspection.id,))
         connection.commit()
