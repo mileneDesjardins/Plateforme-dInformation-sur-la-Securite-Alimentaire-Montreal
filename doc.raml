@@ -263,5 +263,10 @@ types:
                   }
           500:
             description: Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.
-
-
+      delete:
+        description: Supprime une demande d'inspection à la ville selon le ID spécifié en paramètre.
+        responses:
+          200:
+            description : La demande d'inspection a bien été supprimée.
+          404:
+            description : Le ID spécifié ne correspond à aucune demande d'inspection.
