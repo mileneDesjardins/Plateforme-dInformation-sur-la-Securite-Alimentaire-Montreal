@@ -1,11 +1,9 @@
 import datetime
-import json
 import sqlite3
 import csv
 from flask import g
 from datetime import datetime
 
-import contravention
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
@@ -27,6 +25,12 @@ def _build_contravention(query_result):
         "categorie": query_result[12]
     }
     return contravention
+
+
+def _build_demande(demande):
+    return DemandeInspection(demande[0], demande[1], demande[2],
+                             demande[3], demande[4], demande[5],
+                             demande[6], demande[7])
 
 
 class Database:
@@ -130,7 +134,7 @@ class Database:
 
     def get_contraventions_between(self, date1, date2):
         cursor = self.get_contravention_connection().cursor()
-        query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ?")
+        query = "SELECT * FROM Contravention WHERE date >= ? AND date <= ?"
         param = (date1, date2)
         cursor.execute(query, param)
         all_data = cursor.fetchall()
@@ -156,7 +160,8 @@ class Database:
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
-            "SELECT DISTINCT etablissement FROM Contravention ORDER BY etablissement")
+            "SELECT DISTINCT etablissement FROM Contravention "
+            "ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
         return [item[0] for item in results]
@@ -164,7 +169,7 @@ class Database:
     def get_info_etablissement(self, etablissement):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        query = ("SELECT * FROM Contravention WHERE etablissement = ?")
+        query = "SELECT * FROM Contravention WHERE etablissement = ?"
         cursor.execute(query, (etablissement,))
         contraventions = cursor.fetchall()
         return [_build_contravention(item) for item in contraventions]
@@ -191,7 +196,7 @@ class Database:
                 'db/demandes_inspection.db')
         return self.demandes_inspection_connection
 
-    def disconnect(self):
+    def disconnect_demandes_inspection(self):
         if self.demandes_inspection_connection is not None:
             self.demandes_inspection_connection.close()
 
@@ -200,7 +205,7 @@ class Database:
         query = (
             "INSERT INTO Demandes_Inspection (etablissement, adresse, ville, "
             "date_visite, nom_client, prenom_client, description ) "
-            "VALUES (?, ?,?,?,?,?,?)")
+            "VALUES (?,?,?,?,?,?,?)")
         params = (
             demande_inspection.etablissement, demande_inspection.adresse,
             demande_inspection.ville,
@@ -208,3 +213,19 @@ class Database:
             demande_inspection.prenom_client, demande_inspection.description)
         cursor.execute(query, params)
         self.demandes_inspection_connection.commit()
+
+    def get_demande_inspection(self, id_demande):
+        cursor = self.demandes_inspection_connection().cursor()
+        query = "SELECT * FROM Demande_Inspection WHERE id = ?"
+        cursor.execute(query, (id_demande,))
+        demande = cursor.fetchone()
+        if len(demande) is 0:
+            return None
+        else:
+            return _build_demande(demande)
+
+    def delete_demande_inspection(self, demande_inspection):
+        connection = self.demandes_inspection_connection()
+        query = "DELETE FROM Demande_Inspection WHERE id = ?"
+        connection.execute(query, (demande_inspection,))
+        connection.commit()
