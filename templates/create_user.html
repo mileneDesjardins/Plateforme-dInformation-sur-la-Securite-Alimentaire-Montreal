@@ -17,25 +17,15 @@
             <div class="container" style="max-width: 20%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="text" name="prenom" class="form-control"
-                               placeholder="Prénom" aria-label="Prénom"
-                               {% if erreur %}value="{{ request.form.prenom }}"{% endif %}>
+                        <input type="text" name="nom_complet"
+                               class="form-control"
+                               placeholder="Nom complet"
+                               aria-label="Nom complet"
+                               {% if erreur %}value="{{ request.form
+                               .nom_complet }}"{% endif %}>
                     </div>
                 </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="text" name="nom" class="form-control"
-                               placeholder="Nom" aria-label="Nom"
-                               {% if erreur %}value="{{ request.form.nom }}"{% endif %}>
-                    </div>
-                </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="text" name="username" class="form-control"
-                               placeholder="Username" aria-label="username"
-                               {% if erreur %}value="{{ request.form.username }}"{% endif %}>
-                    </div>
-                </div>
+
                 <div class="row g-3 py-1">
                     <div class="col">
                         <input type="email" name="courriel"
@@ -47,16 +37,30 @@
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="password" name="mdp" class="form-control"
-                               placeholder="Mot de passe" aria-label="mdp">
+                        <h3 class="h6 mb-1 fw-normal">Veuillez sélectionner au
+                            moins un
+                            établissements à surveiller</h3>
+                        <select name="choix_etablissements[]"
+                                class="form-select"
+                                aria-label="Choix des établissements" multiple>
+                            {% for etablissement in etablissements %}
+                                <option value="{{ etablissement }}">{{ etablissement }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
-                        <input type="file" name="photo" class="form-control"
-                               aria-label="photo">
+                        <input type="password" name="mdp" class="form-control"
+                               placeholder="Mot de passe" aria-label="mdp">
                     </div>
                 </div>
+                {#                <div class="row g-3 py-1">#}
+                {#                    <div class="col">#}
+                {#                        <input type="file" name="photo" class="form-control"#}
+                {#                               aria-label="photo">#}
+                {#                    </div>#}
+                {#                </div>#}
                 {% if erreur %}
                     <div class="alert alert-danger" role="alert">
                         {{ erreur }}

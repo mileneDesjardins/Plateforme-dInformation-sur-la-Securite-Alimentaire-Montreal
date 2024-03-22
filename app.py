@@ -129,13 +129,15 @@ def creer_session(user):
 @app.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     titre = 'Creation utilisateur'
+    db = Database.get_db()
     if request.method == "GET":
-        return render_template("create_user.html", titre=titre)
+        etablissements = db.get_distinct_etablissements()
+        return render_template("create_user.html", titre=titre, etablissements=etablissements)
     else:
-        prenom, nom, courriel, choix_etablissements, mdp = (obtenir_infos())
+        nom_complet, courriel, choix_etablissements, mdp = (obtenir_infos())
 
     # Vérifier que les champs ne soient pas vides
-    if (prenom == "" or nom == "" or courriel == "" or not
+    if (nom_complet == "" or courriel == "" or not
     choix_etablissements or mdp == ""):
         return render_template("create_user.html", titre=titre,
                                erreur="Tous les champs sont obligatoires.")
@@ -146,8 +148,8 @@ def create_user():
         str(mdp + mdp_salt).encode("utf-8")).hexdigest()
 
     # Stockage des informations de l'utilisateur
-    db = Database.get_db()
-    db.create_user(prenom, nom, courriel, choix_etablissements, mdp_hash,
+
+    db.create_user(nom_complet, courriel, choix_etablissements, mdp_hash,
                    mdp_salt)
 
     # Redirection vers une page de confirmation
@@ -155,8 +157,7 @@ def create_user():
 
 
 def obtenir_infos():
-    prenom = request.form['prenom']
-    nom = request.form['nom']
+    nom_complet = request.form['nom_complet']
     courriel = request.form["courriel"]
     choix_etablissements = request.form.getlist(
         "choix_etablissements")  # récupérer les valeurs d'un champ de form
@@ -164,7 +165,7 @@ def obtenir_infos():
     mdp = request.form["mdp"]
     # photo = request.files["photo"]
     # photo_data = photo.stream.read()
-    return prenom, nom, courriel, choix_etablissements, mdp
+    return nom_complet, courriel, choix_etablissements, mdp
 
 
 # A3
