@@ -1,67 +1,63 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
-    <header class="mb-5">
-        <nav class="navbar navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand ">Titre</a>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Rechercher</button>
-                </form>
+    <div class="container">
+        <div class="section mt-5">
+            <div class="px-4 py-5 my-5 text-center">
+                {% if error is defined %}
+                    <h2 class="display-5 text-body-emphasis">{{ error }}</h2>
+                {% endif %}
             </div>
-        </nav>
-    </header>
 
 
-    {% if results %}
-        <div>
-            <h2 class="text-center">Résultats obtenus pour les mots-clés : <span class="text-secondary">{{ keywords }}</span></h2>
         </div>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered table-sm">
-                <thead class="table-dark ">
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Adresse</th>
-                    <th>Date jugement</th>
-                    <th>Établissement</th>
-                    <th>Montant</th>
-                    <th>Propriétaire</th>
-                    <th>Ville</th>
-                    <th>Statut</th>
-                    <th>Date statut</th>
-                    <th>Catégorie</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for result in results %}
+
+        {% if results %}
+            <div class="">
+                <h2 class="text-center">Résultats obtenus pour les mots-clés : <span
+                        class="text-secondary">{{ keywords }}</span></h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-sm">
+                    <thead class="table-dark ">
                     <tr>
-
-                        <td>{{ result.date }}</td>
-                        <td>{{ result.description }}</td>
-                        <td>{{ result.adresse }}</td>
-                        <td>{{ result.date_jugement }}</td>
-                        <td>{{ result.etablissement }}</td>
-                        <td>{{ result.montant }}</td>
-                        <td>{{ result.proprietaire }}</td>
-                        <td>{{ result.ville }}</td>
-                        <td>{{ result.statut }}</td>
-                        <td>{{ result.date_statut }}</td>
-                        <td>{{ result.categorie }}</td>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Adresse</th>
+                        <th>Date jugement</th>
+                        <th>Établissement</th>
+                        <th>Montant</th>
+                        <th>Propriétaire</th>
+                        <th>Ville</th>
+                        <th>Statut</th>
+                        <th>Date statut</th>
+                        <th>Catégorie</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for result in results %}
+                        <tr>
 
-        </div>
-    {% else %}
-        <p> Aucun résultat pour les mots clés <span>{{ keywords }} </span></p>
-    {% endif %}
+                            <td>{{ result.date }}</td>
+                            <td>{{ result.description }}</td>
+                            <td>{{ result.adresse }}</td>
+                            <td>{{ result.date_jugement }}</td>
+                            <td>{{ result.etablissement }}</td>
+                            <td>{{ result.montant }}</td>
+                            <td>{{ result.proprietaire }}</td>
+                            <td>{{ result.ville }}</td>
+                            <td>{{ result.statut }}</td>
+                            <td>{{ result.date_statut }}</td>
+                            <td>{{ result.categorie }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
 
+            </div>
+        {% elif results and error is not defined %}
+            <p> Aucun résultat pour les mots clés <span>{{ keywords }} </span></p>
+        {% endif %}
 
-    <a target="_blank" href="https://icons8.com/icon/7695/search">Loupe</a> icon by
-    <a target="_blank" href="https://icons8.com">Icons8</a>
+    </div>
 {% endblock %}

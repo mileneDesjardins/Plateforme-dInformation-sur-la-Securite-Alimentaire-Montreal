@@ -46,10 +46,17 @@ def index():
 # A2
 @app.route('/search', methods=['GET'])
 def search():
-    db = Database.get_db()
-    keywords = request.args.get('search')
-    results = db.search(keywords)
-    return render_template('results.html', keywords=keywords, results=results)
+    try:
+        keywords = request.args.get('search')
+        if keywords is None or len(keywords) == 0:
+            print("nice")
+        results = Database.get_db().db.search(keywords)
+        return render_template('results.html', keywords=keywords,
+                               results=results)
+    except Exception as e:
+        error = "Une erreur est survenue, veuillez réessayer plus tard."
+        return render_template('results.html',
+                               error=error)
 
 
 @app.route('/plainte')
