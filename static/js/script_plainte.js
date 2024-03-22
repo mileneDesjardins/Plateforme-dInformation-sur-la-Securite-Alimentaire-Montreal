@@ -43,9 +43,11 @@ function sendQueryPlainte(json) {
     if (xhr.status === 201) {
         window.location.href = '/plainte-envoyee';
 
-    } else {
+    } else if (xhr.status === 400) {
         // afficher autres erreurs
-        console.log("erreur");
+        console.log("erreur format et/ou structure JSON");
+    } else {
+        console.log("erreur serveur")
     }
 
 }
