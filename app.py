@@ -222,6 +222,21 @@ def demande_inspection():
                   "réessayer plus tard"), 500
 
 
+@app.route('/api/demande-inspection/<id_demande>', methods=['DELETE'])
+@schema.validate(inspection_insert_schema)
+def supprimer_inspection(id_demande):
+    try:
+        demande = Database.get_db().get_demande_inspection(id_demande)
+        if demande is None:
+            return jsonify("La demande ", id_demande, " n'existe pas."), 404
+        Database.get_db().delete_demande_inspection(demande)
+        return jsonify("La demande a bien été supprimée."), 200
+    except Exception as e:
+        return jsonify(
+            error="Une erreur est survenue sur le serveur. Veuillez "
+                  "réessayer plus tard"), 500
+
+
 # C1
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
