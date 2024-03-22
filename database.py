@@ -212,7 +212,8 @@ class Database:
         cursor = self.get_demandes_inspection_connection().cursor()
         query = "SELECT * FROM Demandes_Inspection WHERE id = ?"
         cursor.execute(query, (id_demande,))
-        demande = cursor.fetchone()
+        demande = cursor.fetchall()
+
         if len(demande) == 0:
             return None
         else:
