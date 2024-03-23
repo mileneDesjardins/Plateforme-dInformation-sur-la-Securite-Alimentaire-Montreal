@@ -4,6 +4,7 @@ import csv
 from flask import g
 from datetime import datetime
 
+from IDRessourceNonTrouve import IDRessourceNonTrouve
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
@@ -168,28 +169,50 @@ class Database:
         contraventions = cursor.fetchall()
         return [_build_contravention(item) for item in contraventions]
 
-    def update_date(self, contravention):
-        if contravention.date is not None:
+    def get_info_poursuite(self, id_business, id_poursuite):
+        cursor = self.get_contravention_connection().cursor()
+        query = ("SELECT * FROM Contravention WHERE id_business = ? "
+                 "AND id_poursuite=?")
+        cursor.execute(query, (id_business, id_poursuite))
+        info_poursuite = cursor.fetchall()
+        if len(info_poursuite) == 0:
+            print("on")
+            return None
+        return _build_contravention(info_poursuite)
+
+    def get_info_etablissements(self, id_business):
+        connection = self.get_contravention_connection()
+        cursor = connection.cursor()
+        query = "SELECT * FROM Contravention WHERE id_business = ?"
+        cursor.execute(query, (id_business,))
+        info_etablissement = cursor.fetchall()
+        return _build_contravention(info_etablissement)
+
+    def update_date(self, contrevenant):
+        if contrevenant.date is not None:
+            if self.get_info_poursuite(contrevenant.id_business,
+                                       contrevenant.id_poursuite) is None:
+                raise IDRessourceNonTrouve()
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET date = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (
-                contravention.date, datetime.now(), contravention.id_business,
-                contravention.id_poursuite))
+                contrevenant.date, datetime.now(), contrevenant.id_business,
+                contrevenant.id_poursuite))
             connection.commit()
 
-    def update_description(self, contravention):
-        if contravention.description is not None:
+    def update_description(self, contrevenant):
+        if contrevenant.description is not None:
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET description = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
-            cursor.execute(query, (contravention.description, datetime.now(),
-                                   contravention.id_business,
-                                   contravention.id_poursuite))
+            cursor.execute(query, (contrevenant.description, datetime.now(),
+                                   contrevenant.id_business,
+                                   contrevenant.id_poursuite))
             connection.commit()
 
     def update_adresse(self, contravention):

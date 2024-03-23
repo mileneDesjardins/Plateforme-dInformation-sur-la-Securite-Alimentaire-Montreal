@@ -8,6 +8,7 @@ from flask import Flask, g, request, redirect, Response, session
 from flask import render_template
 from flask import Flask, jsonify
 
+from IDRessourceNonTrouve import IDRessourceNonTrouve
 from contravention import Contravention
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
@@ -209,7 +210,7 @@ def info_etablissements(etablissement):
 def modifier_etablissement():
     modifs_request = request.get_json()
 
-    contravention = Contravention(
+    contrevenant = Contravention(
         id_poursuite=modifs_request.get("id_poursuite"),
         id_business=modifs_request.get('id_business'),
         date=modifs_request.get('date'),
@@ -224,13 +225,15 @@ def modifier_etablissement():
         date_statut=modifs_request.get('date_statut'),
         categorie=modifs_request.get('categorie')
     )
-    print("ok")
     try:
-        Database.get_db().update_fields(contravention)#TODO retourner json au complet ?
-        return jsonify("Les modifications ont bien été apportées")
+        Database.get_db().update_fields(contrevenant)
+        return jsonify("Les modifications ont bien été apportées"), 200
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
+        print(e)
         return jsonify(
-            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
+            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard."), 500
 
 
 @app.route('/modal', methods=['POST'])
