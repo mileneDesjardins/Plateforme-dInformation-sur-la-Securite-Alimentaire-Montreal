@@ -38,6 +38,22 @@ types:
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
       }
+
+  Contrevenant:
+    type: object
+    properties:
+      adresse?: string
+      etablissement?: string
+      proprietaire?: string
+      ville?: string
+      statut?: string
+      date_statut?: string
+    additionalProperties: false
+    example: |
+      {
+        "ville": "Laval"
+      }
+
   DateRange:
     type: object
     properties:
@@ -177,6 +193,43 @@ types:
                   "categorie": "Restaurant"
                 }
               ]
+  /contrevenant/{id_business}:
+    uriParameters:
+    id_business:
+      description: L'identifiant unique de l'établissement contrevenant à modifier
+      type: integer
+    patch:
+      description: Modifie partiellement un ou plusieurs contrevenants, selon les modifications spécifiées.
+        body:
+          application/json:
+            type: ContraventionUpdate
+      responses:
+        200:
+          body:
+            application/json:
+              type: Contrevenant[]
+            example: |
+              [
+                {
+                  "id_business": 200,
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                }
+              ]
+        400:
+          description: Une erreur reliée au schéma JSON a été rencontrée.
+          body:
+            application/json:
+            example: |
+              {
+                "error": "Error validating against schema",
+                "errors": [
+                  "'id_business' is a required property"
+                ]
+              }
+        404:
+          description: Le ou les ids ne correspondent a aucun contrevenant. Aucune modification n'a été apportée.
+    delete:
+
 
   /etablissements:
     get:
@@ -261,8 +314,7 @@ types:
                     "Additional properties are not allowed ('vlle' was unexpected)"
                     ]
                   }
-          500:
-            description: Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.
+
       delete:
         description: Supprime une demande d'inspection à la ville selon le ID spécifié en paramètre.
         responses:

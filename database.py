@@ -176,7 +176,6 @@ class Database:
         cursor.execute(query, (id_business, id_poursuite))
         info_poursuite = cursor.fetchall()
         if len(info_poursuite) == 0:
-            print("on")
             return None
         return _build_contravention(info_poursuite)
 
@@ -185,161 +184,172 @@ class Database:
         cursor = connection.cursor()
         query = "SELECT * FROM Contravention WHERE id_business = ?"
         cursor.execute(query, (id_business,))
-        info_etablissement = cursor.fetchall()
+        info_etablissement = cursor.fetchone()
         return _build_contravention(info_etablissement)
 
-    def update_date(self, contrevenant):
+    def update_date(self, id_business, contrevenant):
         if contrevenant.date is not None:
-            self.validates_all_ids(contrevenant)
+            self.validates_all_ids(id_business, contrevenant)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET date = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (
-                contrevenant.date, datetime.now(), contrevenant.id_business,
+                contrevenant.date, datetime.now(), id_business,
                 contrevenant.id_poursuite))
             connection.commit()
 
-    def validates_all_ids(self, contrevenant):
-        if self.get_info_poursuite(contrevenant.id_business,
-                                   contrevenant.id_poursuite) is None:
+    def validates_all_ids(self, id_business, contrevenant):
+        cursor = self.get_contravention_connection().cursor()
+        cursor.execute(("SELECT * FROM Contravention WHERE id_poursuite =?"
+                        "AND id_business =?"), (contrevenant.id_poursuite,
+                                                id_business))
+        results = cursor.fetchall()
+        if len(results) == 0:
             raise IDRessourceNonTrouve()
 
-    def validates_id_business(self, contrevenant):
-        if self.get_info_contravention_by_id(contrevenant.id_business) is None:
+    def validates(self, id_business):
+        cursor = self.get_contravention_connection().cursor()
+        query = ("SELECT COUNT(*)  FROM Contravention WHERE id_business=?")
+        cursor.execute(query, (id_business,))
+        count = cursor.fetchone()
+
+        if count[0] == 0:
             raise IDRessourceNonTrouve()
 
-    def update_description(self, contrevenant):
+    def update_description(self, id_business, contrevenant):
         if contrevenant.description is not None:
-            self.validates_all_ids(contrevenant)
+            self.validates_all_ids(id_business, contrevenant)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET description = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (contrevenant.description, datetime.now(),
-                                   contrevenant.id_business,
+                                   id_business,
                                    contrevenant.id_poursuite))
             connection.commit()
 
-    def update_adresse(self, contrevenant):
+    def update_adresse(self, id_business, contrevenant):
         if contrevenant.adresse is not None:
-            self.validates_id_business(contrevenant)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET adresse = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contrevenant.adresse, datetime.now(),
-                                   contrevenant.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_date_jugement(self, contrevenant):
+    def update_date_jugement(self, id_business, contrevenant):
         if contrevenant.date_jugement is not None:
-            self.validates_all_ids(contrevenant)
+            self.validates_all_ids(id_business, contrevenant)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET date_jugement = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (contrevenant.date_jugement, datetime.now(),
-                                   contrevenant.id_business,
+                                   id_business,
                                    contrevenant.id_poursuite))
             connection.commit()
 
-    def update_nom_etablissement(self, contrevenant):
+    def update_nom_etablissement(self, id_business, contrevenant):
         if contrevenant.etablissement is not None:
-            self.validates_id_business(contrevenant.id_business)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET etablissement = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contrevenant.etablissement, datetime.now(),
-                                   contrevenant.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_montant(self, contravention):
+    def update_montant(self, id_business, contravention):
         if contravention.montant is not None:
-            self.validates_all_ids(contravention)
+            self.validates_all_ids(id_business, contravention)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET montant = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (contravention.montant, datetime.now(),
-                                   contravention.id_business,
+                                   id_business,
                                    contravention.id_poursuite))
             connection.commit()
 
-    def update_proprietaire(self, contravention):
+    def update_proprietaire(self, id_business, contravention):
         if contravention.proprietaire is not None:
-            self.validates_id_business(contravention.id_business)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET proprietaire = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contravention.proprietaire, datetime.now(),
-                                   contravention.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_ville(self, contravention):
+    def update_ville(self, id_business, contravention):
         if contravention.ville is not None:
-            self.validates_id_business(contravention.id_business)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET ville = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contravention.ville, datetime.now(),
-                                   contravention.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_statut(self, contravention):
+    def update_statut(self, id_business, contravention):
         if contravention.statut is not None:
-            self.validates_id_business(contravention)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET statut = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contravention.statut, datetime.now(),
-                                   contravention.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_date_statut(self, contravention):
+    def update_date_statut(self, id_business, contravention):
         if contravention.date_statut is not None:
-            self.validates_id_business(contravention.id_business)
+            self.validates(id_business)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET date_statut = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contravention.date_statut, datetime.now(),
-                                   contravention.id_business))
+                                   id_business))
             connection.commit()
 
-    def update_categorie(self, contravention):
+    def update_categorie(self, id_business, contravention):
         if contravention.categorie is not None:
-            self.validates_all_ids(contravention)
+            self.validates_all_ids(id_business, contravention)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET categorie = ?, "
                      "timestamp_modif=? WHERE id_business = ? "
                      "AND id_poursuite=? ")
             cursor.execute(query, (contravention.categorie, datetime.now(),
-                                   contravention.id_business,
+                                   id_business,
                                    contravention.id_poursuite))
             connection.commit()
 
-    def update_fields(self, contravention):
-        self.update_date(contravention)
-        self.update_description(contravention)
-        self.update_adresse(contravention)
-        self.update_date_jugement(contravention)
-        self.update_nom_etablissement(contravention)
-        self.update_montant(contravention)
-        self.update_proprietaire(contravention)
-        self.update_ville(contravention)
-        self.update_statut(contravention)
-        self.update_date_statut(contravention)
-        self.update_categorie(contravention)
+    def update_info_contrevenant(self, id_business, contravention):
+        self.update_adresse(id_business, contravention)
+        self.update_nom_etablissement(id_business, contravention)
+        self.update_proprietaire(id_business, contravention)
+        self.update_ville(id_business, contravention)
+        self.update_statut(id_business, contravention)
+        self.update_date_statut(id_business, contravention)
+
+    def update_info_contravention(self, id_business, contravention):
+        self.update_date(id_business, contravention)
+        self.update_description(id_business, contravention)
+        self.update_date_jugement(id_business, contravention)
+        self.update_montant(id_business, contravention)
+        self.update_categorie(id_business, contravention)
 
     # USER
     def get_user_connection(self):

@@ -18,7 +18,8 @@ import xml.etree.ElementTree as ET
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from demande_inspection import DemandeInspection
-from schema import inspection_insert_schema
+from schema import inspection_insert_schema, contrevenant_update_schema, \
+    contravention_update_schema
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
@@ -197,7 +198,7 @@ def contrevenants(date1, date2):
     return jsonify(results)
 
 
-# A6
+# A6 TODO changer pour /api/contravention/<etablissement>
 @app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
 def info_etablissements(etablissement):
     db = Database.get_db()
@@ -206,10 +207,26 @@ def info_etablissements(etablissement):
     return jsonify(etablissement)
 
 
-@app.route('/api/contrevenants', methods=['PATCH'])
-def modifier_etablissement():
+@app.route('/api/contrevenant/<id_business>', methods=['PATCH'])
+@schema.validate(contrevenant_update_schema)
+def modifify_contrevenant(id_business):
     modifs_request = request.get_json()
+    contrevenant = build_contravention(modifs_request)
+    try:
+        Database.get_db().update_info_contrevenant(id_business, contrevenant)
+        modified= Database.get_db().get_info_contravention_by_id(id_business)
+        return jsonify(modified), 200
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifiée.", e.message), 404
 
+
+@app.route('/api/poursuite/', methods=['PATCH'])
+@schema.validate(contravention_update_schema)
+def modify_contravention():
+    return ""
+
+
+def build_contravention(modifs_request):
     contrevenant = Contravention(
         id_poursuite=modifs_request.get("id_poursuite"),
         id_business=modifs_request.get('id_business'),
@@ -225,15 +242,7 @@ def modifier_etablissement():
         date_statut=modifs_request.get('date_statut'),
         categorie=modifs_request.get('categorie')
     )
-    try:
-        Database.get_db().update_fields(contrevenant)
-        return jsonify("Les modifications ont bien été apportées"), 200
-    except IDRessourceNonTrouve as e:
-        return jsonify("La ressource n'a pu être modifiée.", e.message), 404
-    except Exception as e:
-        print(e)
-        return jsonify(
-            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard."), 500
+    return contrevenant
 
 
 @app.route('/modal', methods=['POST'])
@@ -255,7 +264,6 @@ def demande_inspection():
                                              demande["date_visite"],
                                              demande["nom_complet_client"],
                                              demande["description"])
-        print(nouvelle_demande.description)
         Database.get_db().insert_demande_inspection(nouvelle_demande)
         return "Utilisateur ajouté", 201
     except Exception as e:
