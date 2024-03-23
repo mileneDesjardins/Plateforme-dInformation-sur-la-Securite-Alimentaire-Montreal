@@ -153,11 +153,11 @@ class Database:
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
-            "SELECT DISTINCT etablissement FROM Contravention "
+            "SELECT DISTINCT id_business, etablissement FROM Contravention "
             "ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
-        return [item[0] for item in results]
+        return results
 
     def get_info_etablissement(self, etablissement):
         connection = self.get_contravention_connection()

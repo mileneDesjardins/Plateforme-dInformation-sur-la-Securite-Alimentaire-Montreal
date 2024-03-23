@@ -47,7 +47,8 @@
                                 aria-label="Choix des établissements"
                                 multiple size="13">
                             {% for etablissement in etablissements %}
-                                <option value="{{ etablissement }}">{{ etablissement }}</option>
+                                <option value="{{ etablissement[0] }}">
+                                    {{ etablissement[1] }}</option>
                             {% endfor %}
                         </select>
                     </div>

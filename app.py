@@ -99,6 +99,7 @@ def connection():
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
 
+
 @app.route('/api/new-user', methods=['GET', 'POST'])
 @schema.validate(valider_new_user_schema)
 def creer_user():
@@ -107,13 +108,26 @@ def creer_user():
     try:
         data = request.get_json()
         new_user = User(None, data["nom_complet"], titre,
-                                         data["courriel"],
-                                         data["choix_etablissements"],
-                                         data["mdp_hash"],
-                                         data["mdp_salt"])
-        db.create_user
+                        data["courriel"],
+                        data["choix_etablissements"],
+                        data["mdp_hash"],
+                        data["mdp_salt"])
 
+        db.create_user(new_user)
 
+        """
+        201 Created : Ce code est renvoyé lorsqu'une nouvelle ressource a été 
+        créée avec succès.
+        """
+        return (
+            "L'utilisateur " + data[
+                "nom_complet"] + " a été ajouté avec succès.",
+            201)
+
+    except Exception as e:
+        return jsonify(
+            error="Une erreur interne s'est produite. L'erreur a été "
+                  "signalée à l'équipe de développement."), 500
 
 
 def est_incomplet():
@@ -149,7 +163,8 @@ def create_user():
     db = Database.get_db()
     if request.method == "GET":
         etablissements = db.get_distinct_etablissements()
-        return render_template("create_user.html", titre=titre, etablissements=etablissements)
+        return render_template("create_user.html", titre=titre,
+                               etablissements=etablissements)
     else:
         nom_complet, courriel, choix_etablissements, mdp = (obtenir_infos())
 
@@ -207,7 +222,7 @@ def contrevenants(date1, date2):
     db = Database.get_db()
     # TODO valider dates ISO ?
     results = db.get_contraventions_between(date1, date2)
-    return  (results)
+    return (results)
 
 
 # A6
