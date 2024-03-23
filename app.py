@@ -98,6 +98,10 @@ def connection():
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
 
+@app.route('/api/user', methods=['GET', 'POST'])
+def connection():
+    titre = "Connexion"
+
 
 def est_incomplet():
     return render_template('connection.html',
@@ -190,7 +194,7 @@ def contrevenants(date1, date2):
     db = Database.get_db()
     # TODO valider dates ISO ?
     results = db.get_contraventions_between(date1, date2)
-    return jsonify(results)
+    return  (results)
 
 
 # A6
