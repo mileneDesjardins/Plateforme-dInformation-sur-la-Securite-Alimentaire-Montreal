@@ -202,7 +202,7 @@ def contrevenants(date1, date2):
 def info_etablissements(etablissement):
     db = Database.get_db()
     # TODO valider
-    etablissement = db.get_info_etablissement(etablissement)
+    etablissement = db.get_info_contravention_by_name(etablissement)
     return jsonify(etablissement)
 
 
