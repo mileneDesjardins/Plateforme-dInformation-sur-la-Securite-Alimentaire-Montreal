@@ -7,6 +7,8 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session
 from flask import render_template
 from flask import Flask, jsonify
+
+from contravention import Contravention
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
@@ -132,7 +134,8 @@ def create_user():
     db = Database.get_db()
     if request.method == "GET":
         etablissements = db.get_distinct_etablissements()
-        return render_template("create_user.html", titre=titre, etablissements=etablissements)
+        return render_template("create_user.html", titre=titre,
+                               etablissements=etablissements)
     else:
         nom_complet, courriel, choix_etablissements, mdp = (obtenir_infos())
 
@@ -200,6 +203,34 @@ def info_etablissements(etablissement):
     # TODO valider
     etablissement = db.get_info_etablissement(etablissement)
     return jsonify(etablissement)
+
+
+@app.route('/api/contrevenants', methods=['PATCH'])
+def modifier_etablissement():
+    modifs_request = request.get_json()
+
+    contravention = Contravention(
+        id_poursuite=modifs_request.get("id_poursuite"),
+        id_business=modifs_request.get('id_business'),
+        date=modifs_request.get('date'),
+        description=modifs_request.get('description'),
+        adresse=modifs_request.get('adresse'),
+        date_jugement=modifs_request.get('date_jugement'),
+        etablissement=modifs_request.get('etablissement'),
+        montant=modifs_request.get('montant'),
+        proprietaire=modifs_request.get('proprietaire'),
+        ville=modifs_request.get('ville'),
+        statut=modifs_request.get('statut'),
+        date_statut=modifs_request.get('date_statut'),
+        categorie=modifs_request.get('categorie')
+    )
+    print("ok")
+    try:
+        Database.get_db().update_fields(contravention)#TODO retourner json au complet ?
+        return jsonify("Les modifications ont bien été apportées")
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
 
 
 @app.route('/modal', methods=['POST'])

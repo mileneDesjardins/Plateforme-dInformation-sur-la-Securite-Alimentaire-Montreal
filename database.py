@@ -168,16 +168,6 @@ class Database:
         contraventions = cursor.fetchall()
         return [_build_contravention(item) for item in contraventions]
 
-    def update_adresse(self, contravention):
-        if contravention.adresse is not None:
-            connection = self.get_contravention_connection()
-            cursor = connection.cursor()
-            query = ("UPDATE Contravention SET adresse = ?, "
-                     "timestamp_modif=? WHERE id_business = ? ")
-            cursor.execute(query, (contravention.adresse, datetime.now(),
-                                   contravention.id_business))
-            connection.commit()
-
     def update_date(self, contravention):
         if contravention.date is not None:
             connection = self.get_contravention_connection()
@@ -200,6 +190,16 @@ class Database:
             cursor.execute(query, (contravention.description, datetime.now(),
                                    contravention.id_business,
                                    contravention.id_poursuite))
+            connection.commit()
+
+    def update_adresse(self, contravention):
+        if contravention.adresse is not None:
+            connection = self.get_contravention_connection()
+            cursor = connection.cursor()
+            query = ("UPDATE Contravention SET adresse = ?, "
+                     "timestamp_modif=? WHERE id_business = ? ")
+            cursor.execute(query, (contravention.adresse, datetime.now(),
+                                   contravention.id_business))
             connection.commit()
 
     def update_date_jugement(self, contravention):
@@ -256,13 +256,23 @@ class Database:
                                    contravention.id_business))
             connection.commit()
 
-    def update_statuts(self, contravention):
+    def update_statut(self, contravention):
         if contravention.statut is not None:
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET statut = ?, "
                      "timestamp_modif=? WHERE id_business = ? ")
             cursor.execute(query, (contravention.statut, datetime.now(),
+                                   contravention.id_business))
+            connection.commit()
+
+    def update_date_statut(self, contravention):
+        if contravention.date_statut is not None:
+            connection = self.get_contravention_connection()
+            cursor = connection.cursor()
+            query = ("UPDATE Contravention SET date_statut = ?, "
+                     "timestamp_modif=? WHERE id_business = ? ")
+            cursor.execute(query, (contravention.date_statut, datetime.now(),
                                    contravention.id_business))
             connection.commit()
 
@@ -277,6 +287,19 @@ class Database:
                                    contravention.id_business,
                                    contravention.id_poursuite))
             connection.commit()
+
+    def update_fields(self, contravention):
+        self.update_date(contravention)
+        self.update_description(contravention)
+        self.update_adresse(contravention)
+        self.update_date_jugement(contravention)
+        self.update_nom_etablissement(contravention)
+        self.update_montant(contravention)
+        self.update_proprietaire(contravention)
+        self.update_ville(contravention)
+        self.update_statut(contravention)
+        self.update_date_statut(contravention)
+        self.update_categorie(contravention)
 
     # USER
     def get_user_connection(self):
