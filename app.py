@@ -219,9 +219,9 @@ def demande_inspection():
                                              demande["adresse"],
                                              demande["ville"],
                                              demande["date_visite"],
-                                             demande["nom_client"],
-                                             demande["prenom_client"],
+                                             demande["nom_complet_client"],
                                              demande["description"])
+        print(nouvelle_demande.description)
         Database.get_db().insert_demande_inspection(nouvelle_demande)
         return "Utilisateur ajouté", 201
     except Exception as e:

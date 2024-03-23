@@ -196,13 +196,14 @@ class Database:
         cursor = self.get_demandes_inspection_connection().cursor()
         query = (
             "INSERT INTO Demandes_Inspection (etablissement, adresse, ville, "
-            "date_visite, nom_client, prenom_client, description ) "
-            "VALUES (?,?,?,?,?,?,?)")
+            "date_visite, nom_complet_client, description ) "
+            "VALUES (?,?,?,?,?,?)")
         params = (
             demande_inspection.etablissement, demande_inspection.adresse,
             demande_inspection.ville,
-            demande_inspection.date_visite, demande_inspection.nom_client,
-            demande_inspection.prenom_client, demande_inspection.description)
+            demande_inspection.date_visite,
+            demande_inspection.nom_complet_client,
+            demande_inspection.description)
         cursor.execute(query, params)
         self.demandes_inspection_connection.commit()
 
