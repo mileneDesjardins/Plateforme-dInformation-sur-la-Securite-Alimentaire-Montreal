@@ -77,8 +77,8 @@ class Database:
             insertion = (
                 "INSERT INTO Contravention(id_poursuite, id_business, date, "
                 "description, adresse, date_jugement, etablissement, montant, "
-                "proprietaire, ville, statut, date_statut, categorie) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                "proprietaire, ville, statut, date_statut, categorie, timestamp_csv) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
             # Ignorer la première ligne (en-tête)
             next(contenu)
@@ -95,12 +95,14 @@ class Database:
                     continue
 
                 try:
+                    current_time = datetime.now()
                     # Insérer les données dans la base de données
                     cursor.execute(insertion, (
                         row[0], row[1], date, row[3], row[4], date_jugement,
                         row[6],
                         row[7],
-                        row[8], row[9], row[10], date_statut, row[12]))
+                        row[8], row[9], row[10], date_statut, row[12],
+                        current_time), )
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
                     print(
