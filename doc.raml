@@ -288,34 +288,35 @@ types:
           404:
             description : Le ID spécifié ne correspond à aucune demande d'inspection.
 
-    /new-user:
-      post:
-        description: Crée un nouveau profil d'utilisateur.
+  /new-user:
+    post:
+      description: Crée un nouveau profil d'utilisateur.
+      body:
+        application/json:
+          type: user
+          example: |
+            {
+              "nom_complet": "John Doe",
+              "courriel": "john.doe@example.com",
+              "choix_etablissements": ["Restaurant A", "Café B"],
+              "mot_de_passe": "mot_de_passe_secret"
+            }
+    responses:
+      201:
+        description: Le profil utilisateur a été créé avec succès.
         body:
           application/json:
-            type: user
             example: |
               {
-                "nom_complet": "John Doe",
-                "courriel": "john.doe@example.com",
-                "choix_etablissements": ["Restaurant A", "Café B"],
-                "mot_de_passe": "mot_de_passe_secret"
+                "message": "Profil utilisateur créé avec succès."
               }
-      responses:
-        201:
-          description: Le profil utilisateur a été créé avec succès.
-          body:
-            application/json:
-              example: |
-                {
-                  "message": "Profil utilisateur créé avec succès."
-                }
-        400:
-          description: Les données fournies sont invalides ou manquantes.
-          body:
-            application/json:
-              example: |
-                {
-                  "error": "Données invalides ou manquantes.",
-                  "details": "Veuillez vérifier les données fournies et réessayer."
-                }
+      400:
+        description: Les données fournies sont invalides ou manquantes.
+        body:
+          application/json:
+            example: |
+              {
+                "error": "Données invalides ou manquantes.",
+                "details": "Veuillez vérifier les données fournies et réessayer
+               ."
+              }
