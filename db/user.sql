@@ -9,6 +9,4 @@ CREATE TABLE User(
     CONSTRAINT fk_photo
         FOREIGN KEY (id_photo)
         REFERENCES photo(id_photo)
-
-
 )

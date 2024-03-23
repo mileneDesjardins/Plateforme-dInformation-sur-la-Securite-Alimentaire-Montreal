@@ -15,7 +15,8 @@ import xml.etree.ElementTree as ET
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from demande_inspection import DemandeInspection
-from schema import inspection_insert_schema
+from schema import inspection_insert_schema, valider_new_user_schema
+from user import User
 
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
@@ -98,10 +99,21 @@ def connection():
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
 
-@app.route('/api/user', methods=['GET', 'POST'])
-@schema.validate(valider_nouvel_utilisateur_schema)
+@app.route('/api/new-user', methods=['GET', 'POST'])
+@schema.validate(valider_new_user_schema)
 def creer_user():
-    titre = "Création d'un compte"
+    titre = "Création de compte"
+    db = Database.get_db()
+    try:
+        data = request.get_json()
+        new_user = User(None, data["nom_complet"], titre,
+                                         data["courriel"],
+                                         data["choix_etablissements"],
+                                         data["mdp_hash"],
+                                         data["mdp_salt"])
+        db.create_user
+
+
 
 
 def est_incomplet():
