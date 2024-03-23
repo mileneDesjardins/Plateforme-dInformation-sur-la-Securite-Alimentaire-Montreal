@@ -99,8 +99,9 @@ def connection():
                                           "vérifier vos informations")
 
 @app.route('/api/user', methods=['GET', 'POST'])
-def connection():
-    titre = "Connexion"
+@schema.validate(valider_nouvel_utilisateur_schema)
+def creer_user():
+    titre = "Création d'un compte"
 
 
 def est_incomplet():

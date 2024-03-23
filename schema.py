@@ -25,3 +25,20 @@ inspection_insert_schema = {
     },
     'additionalProperties': False
 }
+
+valider_new_user_schema = {
+    "type": "object",
+    "properties": {
+        "nom_complet": {"type": "string"},
+        "courriel": {"type": "string"},
+        "choix_etablissements": {
+            "type": "array",
+            "items": {"type": "integer"}
+        },
+        "mdp_hash": {"type": "string"},
+        "mdp_salt": {"type": "string"}
+    },
+    "required": ["nom_complet", "courriel", "choix_etablissements", "mdp_hash", "mdp_salt"],
+    "additionalProperties": False
+}
+
