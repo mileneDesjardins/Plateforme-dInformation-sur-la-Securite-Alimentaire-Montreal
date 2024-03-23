@@ -35,10 +35,9 @@ valider_new_user_schema = {
             "type": "array",
             "items": {"type": "integer"}
         },
-        "mdp_hash": {"type": "string"},
-        "mdp_salt": {"type": "string"}
+        "mdp": {"type": "string"},
     },
-    "required": ["nom_complet", "courriel", "choix_etablissements", "mdp_hash", "mdp_salt"],
+    "required": ["nom_complet", "courriel", "choix_etablissements", "mdp"],
     "additionalProperties": False
 }
 

@@ -129,15 +129,15 @@ types:
       nom_complet: string
       courriel: string
       choix_etablissements: array
-      mot_de_passe: string
+      mdp: string
 
     additionalProperties: false
     example: |
       {
         "nom_complet": "John Doe",
         "courriel": "john.doe@example.com",
-        "choix_etablissements": ["Restaurant A", "Café B"],
-        "mot_de_passe": "mot_de_passe_secret"
+        "choix_etablissements": [6119, 9150],
+        "mpd": "mot_de_passe_secret"
       }
 
 
@@ -298,8 +298,8 @@ types:
             {
               "nom_complet": "John Doe",
               "courriel": "john.doe@example.com",
-              "choix_etablissements": ["Restaurant A", "Café B"],
-              "mot_de_passe": "mot_de_passe_secret"
+              "choix_etablissements": [6119, 9150],
+              "mdp": "mot_de_passe_secret"
             }
     responses:
       201:

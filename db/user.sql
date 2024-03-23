@@ -1,3 +1,4 @@
+
 CREATE TABLE User(
     id_user INTEGER NOT NULL PRIMARY KEY,
     nom_complet varchar(50) NOT NULL,

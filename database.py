@@ -179,7 +179,8 @@ class Database:
         cursor = connection.cursor()
         choix_etablissements_json = json.dumps(user.choix_etablissements)
         cursor.execute(
-            "INSERT INTO User (nom_complet, courriel, choix_etablissements, mdp_hash, mdp_salt) "
+            "INSERT INTO User (nom_complet, courriel, "
+            "choix_etablissements, mdp_hash, mdp_salt)"
             "VALUES (?, ?, ?, ?, ?)",
             (user.nom_complet, user.courriel, choix_etablissements_json,
              user.mdp_hash,
