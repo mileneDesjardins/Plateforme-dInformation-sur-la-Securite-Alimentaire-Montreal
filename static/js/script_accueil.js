@@ -13,7 +13,8 @@ function onFastSearchSubmit() {
         .then(response => response.json())
         .then(data => {
             let tableURL = `/search-by-dates`;
-            return fetchRoute(tableURL, data);
+            occurences = countContraventions(data);
+            return fetchTemplate(tableURL, occurences);
         })
         .then(response => response.text())
         .then(htmlContent => {
@@ -25,17 +26,6 @@ function onFastSearchSubmit() {
         });
 }
 
-
-function fetchRoute(URL, objectToSend) {
-    return fetch(URL, {
-        method: 'POST',  // Méthode POST pour envoyer des données JSON
-        headers: {
-            'Content-Type': 'application/json'  // Type de contenu JSON
-        },
-        body: JSON.stringify(objectToSend)  // Envoyer l'objet JSON dans le corps de la requête
-    });
-}
-
 function OnGetInfoEtablissementSubmit() {
     let etablissement = document.getElementById('select-etablissement').value;
     let apiUrl = `/api/info-etablissement/${etablissement}`;
@@ -44,7 +34,7 @@ function OnGetInfoEtablissementSubmit() {
         .then(response => response.json())
         .then(data => {
             let modalURL = `/modal`;
-            return fetchRoute(modalURL, data);
+            return fetchTemplate(modalURL, data);
         })
         .then(response => response.text())
         .then(htmlContent => {
@@ -53,6 +43,17 @@ function OnGetInfoEtablissementSubmit() {
         .catch(err => {
             console.log("Erreur côté serveur", err);
         });
+}
+
+
+function fetchTemplate(URL, objectToSend) {
+    return fetch(URL, {
+        method: 'POST',  // Méthode POST pour envoyer des données JSON
+        headers: {
+            'Content-Type': 'application/json'  // Type de contenu JSON
+        },
+        body: JSON.stringify(objectToSend)  // Envoyer l'objet JSON dans le corps de la requête
+    });
 }
 
 
@@ -70,8 +71,6 @@ function countContraventions(contraventions) {
 
     return occurenceEtablissements;
 }
-
-
 
 
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
