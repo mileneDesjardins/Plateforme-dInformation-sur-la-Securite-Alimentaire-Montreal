@@ -195,11 +195,12 @@ def search_by_date(start, end):
                            start=start, end=end)
 
 
-@app.route('/modal-dates/<id_business>', methods=['GET'])
-def modal_dates(id_business):
-    contrevenant = Database.get_db().get_info_contrevenant_by_id(id_business)
+@app.route('/modal-dates/<id_business>/<start>/<end>', methods=['GET'])
+def modal_dates(start, end, id_business):
+    contrevenant = (Database.get_db().
+                    get_contraventions_business_between(start, end,
+                                                        id_business))
     return render_template('modal_modifier.html', results=contrevenant)
-
 
 
 def count_contraventions(contraventions):

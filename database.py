@@ -8,7 +8,8 @@ from IDRessourceNonTrouve import IDRessourceNonTrouve
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
-#TODO remplacer par lautre
+
+# TODO remplacer par lautre
 def _build_contravention_dict(query_result):
     contravention = {
         "id_poursuite": query_result[0],
@@ -46,8 +47,6 @@ def _build_contravention(modifs_request):
         categorie=modifs_request.get('categorie')
     )
     return contrevenant
-
-
 
 
 class Database:
@@ -157,6 +156,15 @@ class Database:
         all_data = cursor.fetchall()
         return [_build_contravention_dict(item) for item in all_data]
 
+    def get_contraventions_business_between(self, date1, date2, id_business):
+        cursor = self.get_contravention_connection().cursor()
+        query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ? "
+                 "AND id_business=?")
+        param = (date1, date2, id_business)
+        cursor.execute(query, param)
+        all_data = cursor.fetchall()
+        return [_build_contravention_dict(item) for item in all_data]
+
     def get_etablissements_et_nbr_infractions(self):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
@@ -208,9 +216,6 @@ class Database:
         cursor.execute(query, (id_business,))
         info_etablissement = cursor.fetchall()
         return [_build_contravention_dict(item) for item in info_etablissement]
-
-
-
 
     def update_date(self, id_business, id_poursuite, contrevenant):
         if contrevenant.date is not None:
@@ -438,5 +443,3 @@ class Database:
         query = "DELETE FROM Demandes_Inspection WHERE id = ?"
         connection.execute(query, (demande_inspection.id,))
         connection.commit()
-
-

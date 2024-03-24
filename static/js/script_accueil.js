@@ -43,15 +43,14 @@ function OnGetInfoEtablissementSubmit() {
         });
 }
 
-function openModalModifier(id_business) {
-    let apiURL = `/modal-dates/${id_business}`;
+function openModalModifier(id_business, startDate, endDate) {
+    let apiURL = `/modal-dates/${id_business}/${startDate}/${endDate}`;
     fetch(apiURL)
         .then(response => response.text())
         .then(htmlContent => {
-            console.log(htmlContent);
             document.getElementById("modal-content-modif").innerHTML = htmlContent;
             let modal = new bootstrap.Modal(document.getElementById('modal-date'));
-            modal.show();
+            modal.show(modal);
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
@@ -77,7 +76,9 @@ function addEventListenersOnCells() {
     document.querySelectorAll('#table-dates-results td.cursor-pointer').forEach(cell => {
         cell.addEventListener("click", function () {
             let id_business = cell.getAttribute("data-id-business")
-            openModalModifier(id_business);
+            let startDate = document.getElementById('start-date').value;
+            let endDate = document.getElementById('end-date').value;
+            openModalModifier(id_business, startDate, endDate);
         });
     });
 }
