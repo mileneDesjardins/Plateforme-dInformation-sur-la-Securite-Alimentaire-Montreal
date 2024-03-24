@@ -215,6 +215,9 @@ def modifify_contrevenant(id_business):
         return jsonify(modified), 200
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
 
 
 @app.route('/api/contravention/<id_business>/<id_poursuite>',
@@ -229,7 +232,10 @@ def modify_contravention(id_business, id_poursuite):
             id_business, id_poursuite)
         return jsonify(modified)
     except IDRessourceNonTrouve as e:
-        return jsonify("La ressource n'a pu être modifée.", e.message), 400
+        return jsonify("La ressource n'a pu être modifée.", e.message), 404
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
 
 
 @app.route('/modal', methods=['POST'])
