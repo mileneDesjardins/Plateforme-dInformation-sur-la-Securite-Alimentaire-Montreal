@@ -182,6 +182,7 @@ def connection():
                                           "vérifier vos informations")
 
 @app.route('/disconnection')
+@login_required
 def disconnection():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
@@ -211,6 +212,38 @@ def creer_session(user):
     session["nom_complet"] = user[1]
     session["choix_etablissements"] = user[3]
     return redirect('/', 302)
+
+@app.route('/compte/<id_user>', methods=['GET', 'POST'])
+@login_required
+def compte(id_user):
+    titre = 'Compte'
+    db = Database()
+
+    if request.method == 'GET':
+        user = db.get_user_by_id(id_user)
+        if not user:
+            return render_template('404.html'), 404
+        return render_template('compte.html', titre=titre,
+                               user=user)
+
+    elif request.method == 'POST':
+        # Récupérer les informations soumises dans le formulaire
+        new_etablissements = request.form.getlist('choix_etablissements')
+        nouvelle_photo = request.files.get('photo')
+
+        # Mettre à jour les établissements choisis pour l'utilisateur
+        if new_etablissements:
+            db.update_user_etablissements(id_user, new_etablissements)
+
+        # Rediriger vers la page de tous les utilisateurs
+        return redirect(url_for('confirmation_modifs_user'))
+
+@app.route('/confirmation-modifs-user', methods=['GET'])
+def confirmation_modifs_user():
+    titre = 'Modifications enregistrées'
+    return render_template('confirmation_modifs_user.html', titre=titre)
+
+
 
 
 # A3
