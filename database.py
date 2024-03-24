@@ -197,7 +197,6 @@ class Database:
         return cursor.fetchone()
 
     # DEMANDE D'INSERTION
-
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:
             self.demandes_inspection_connection = sqlite3.connect(

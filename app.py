@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import subprocess
 import uuid
 
@@ -7,6 +8,8 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
+from flask.cli import load_dotenv
+
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
@@ -18,8 +21,10 @@ from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
 
+load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 @app.teardown_appcontext
@@ -37,11 +42,19 @@ def validation_error(e):
 
 @app.route('/')
 def index():
+    titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
     print(script)
-    return render_template('index.html', etablissements=etablissements,
-                           script=script)
+
+    if "id" in session:
+        nom_complet = session.get('nom_complet')
+    else:
+        nom_complet = None
+    return render_template('index.html',
+                           titre=titre, script=script,
+                           etablissements=etablissements, nom_complet=nom_complet
+                           )
 
 
 # A2
@@ -160,13 +173,18 @@ def connection():
 
         mdp_hash = obtenir_mdp_hash(mdp, user)
 
-        if mdp_hash == user[3]:
+        if mdp_hash == user[4]:
             # Accès autorisé
             return creer_session(user)
         else:
             return render_template('connection.html',
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
+
+@app.route('/disconnection')
+def disconnection():
+    session.clear()  # Supprime toutes les données de la session
+    return redirect("/")
 
 
 def est_incomplet():
@@ -181,7 +199,7 @@ def nexiste_pas():
 
 
 def obtenir_mdp_hash(mdp, user):
-    salt = user[3]
+    salt = user[5]
     mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
     return mdp_hash
 
@@ -190,9 +208,8 @@ def creer_session(user):
     id_session = uuid.uuid4().hex
     session["id"] = id_session
     session["id_user"] = user[0]
-    session["prenom"] = user[1]
-    session["nom"] = user[2]
-    session["id_photo"] = user[7]
+    session["nom_complet"] = user[1]
+    session["choix_etablissements"] = user[3]
     return redirect('/', 302)
 
 

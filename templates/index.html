@@ -14,6 +14,28 @@
 
 
                 <div class="container">
+                    {% if nom_complet is not none %}
+                        <h1 class="display-4 fw-bold text-body-emphasis">
+                            Bienvenue {{ nom_complet }}</h1>
+                        <p class="lead mb-4">Votre Contenu, Votre Style, Votre
+                            Voix</p>
+                        <a href="/disconnection">
+                            <button type="disconnection"
+                                    class="btn btn-outline-secondary btn-lg px-4">
+                                Se
+                                déconnecter
+                            </button>
+                        </a>
+                    {% else %}
+                        <h1 class="display-4 fw-bold text-body-emphasis">
+                            Bienvenue</h1>
+                        <p class="lead mb-4">Votre Contenu, Votre Style, Votre
+                            Voix</p>
+                        <div class="container"
+                             style="max-width: 20%; text-align: center;">
+                        </div>
+
+                    {% endif %}
 
                     <div class="row ">
                         <!-- Fast search with date range -->
