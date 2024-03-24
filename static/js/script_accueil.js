@@ -12,7 +12,45 @@ function onFastSearchSubmit() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            creerTable(data, resultAffiche);
+            let tableURL = `/search-by-dates`;
+            return fetch(tableURL, {
+                method: 'POST',  // Méthode POST pour envoyer des données JSON
+                headers: {
+                    'Content-Type': 'application/json'  // Type de contenu JSON
+                },
+                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
+            });
+        })
+        .then(response => response.text())
+        .then(htmlContent => {
+            document.getElementById('result-fast-search').innerHTML = htmlContent;
+
+        })
+        .catch(err => {
+            console.log("Erreur côté serveur", err);
+        });
+}
+
+
+function OnGetInfoEtablissementSubmit() {
+    let etablissement = document.getElementById('select-etablissement').value;
+    let apiUrl = `/api/info-etablissement/${etablissement}`;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            let modalURL = `/modal`;
+            return fetch(modalURL, {
+                method: 'POST',  // Méthode POST pour envoyer des données JSON
+                headers: {
+                    'Content-Type': 'application/json'  // Type de contenu JSON
+                },
+                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
+            });
+        })
+        .then(response => response.text())
+        .then(htmlContent => {
+            document.getElementById('modal-content').innerHTML = htmlContent;
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
@@ -95,33 +133,6 @@ function creerCelluleDonnee(texte) {
     td.textContent = texte;
     return td;
 }
-
-
-function OnGetInfoEtablissementSubmit() {
-    let etablissement = document.getElementById('select-etablissement').value;
-    let apiUrl = `/api/info-etablissement/${etablissement}`;
-
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            let modalURL = `/modal`;
-            return fetch(modalURL, {
-                method: 'POST',  // Méthode POST pour envoyer des données JSON
-                headers: {
-                    'Content-Type': 'application/json'  // Type de contenu JSON
-                },
-                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
-            });
-        })
-        .then(response => response.text())
-        .then(htmlContent => {
-            document.getElementById('modal-content').innerHTML = htmlContent;
-        })
-        .catch(err => {
-            console.log("Erreur côté serveur", err);
-        });
-}
-
 
 
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);

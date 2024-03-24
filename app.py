@@ -1,6 +1,7 @@
 import hashlib
 import subprocess
 import uuid
+from urllib.parse import unquote
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import g, request, redirect, Response, session
@@ -8,7 +9,7 @@ from flask import render_template
 from flask import Flask, jsonify
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-from database import Database, build_contravention
+from database import Database, _build_contravention
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
@@ -40,7 +41,6 @@ def validation_error(e):
 def index():
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
-    print(script)
     return render_template('index.html', etablissements=etablissements,
                            script=script)
 
@@ -51,8 +51,7 @@ def search():
     try:
         keywords = request.args.get('search')
         if keywords is None or len(keywords) == 0:
-            print("nice")
-        results = Database.get_db().db.search(keywords)
+            results = Database.get_db().db.search(keywords)
         return render_template('results.html', keywords=keywords,
                                results=results)
     except Exception as e:
@@ -187,6 +186,12 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
+@app.route('/search-by-dates', methods=['POST'])
+def search_by_date():
+    infos_obtenues = request.get_json()
+    return render_template('search-by-dates.html', results=infos_obtenues)
+
+
 # A4 TODO rechanger route
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
@@ -233,9 +238,6 @@ def modify_contravention(id_business, id_poursuite):
         return jsonify(modified)
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
-    except Exception as e:
-        return jsonify(
-            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
 
 
 @app.route('/modal', methods=['POST'])

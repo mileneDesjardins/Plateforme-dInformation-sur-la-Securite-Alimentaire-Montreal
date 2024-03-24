@@ -9,7 +9,7 @@ from contravention import Contravention
 from demande_inspection import DemandeInspection
 
 #TODO remplacer par lautre
-def _build_contravention(query_result):
+def _build_contravention_dict(query_result):
     contravention = {
         "id_poursuite": query_result[0],
         "id_business": query_result[1],
@@ -28,7 +28,8 @@ def _build_contravention(query_result):
     return contravention
 
 
-def build_contravention(modifs_request):
+def _build_contravention(modifs_request):
+    """NOTE : permet de retourner NONE si l'element nest pas dans la requete """
     contrevenant = Contravention(
         id_poursuite=modifs_request.get("id_poursuite"),
         id_business=modifs_request.get('id_business'),
@@ -146,7 +147,7 @@ class Database:
         param = ('%' + keywords + '%')
         cursor.execute(query, (param, param, param))
         all_data = cursor.fetchall()
-        return [_build_contravention(item) for item in all_data]
+        return [_build_contravention_dict(item) for item in all_data]
 
     def get_contraventions_between(self, date1, date2):
         cursor = self.get_contravention_connection().cursor()
@@ -154,7 +155,7 @@ class Database:
         param = (date1, date2)
         cursor.execute(query, param)
         all_data = cursor.fetchall()
-        return [_build_contravention(item) for item in all_data]
+        return [_build_contravention_dict(item) for item in all_data]
 
     def get_etablissements_et_nbr_infractions(self):
         connection = self.get_contravention_connection()
@@ -188,7 +189,7 @@ class Database:
         query = "SELECT * FROM Contravention WHERE etablissement = ?"
         cursor.execute(query, (etablissement,))
         contraventions = cursor.fetchall()
-        return [_build_contravention(item) for item in contraventions]
+        return [_build_contravention_dict(item) for item in contraventions]
 
     def get_info_poursuite(self, id_business, id_poursuite):
         cursor = self.get_contravention_connection().cursor()
@@ -198,7 +199,7 @@ class Database:
         info_poursuite = cursor.fetchone()
         if len(info_poursuite) == 0:
             return None
-        return _build_contravention(info_poursuite)
+        return _build_contravention_dict(info_poursuite)
 
     def get_info_contrevenant_by_id(self, id_business):
         connection = self.get_contravention_connection()
@@ -206,7 +207,7 @@ class Database:
         query = "SELECT * FROM Contravention WHERE id_business = ?"
         cursor.execute(query, (id_business,))
         info_etablissement = cursor.fetchone()
-        return _build_contravention(info_etablissement)
+        return _build_contravention_dict(info_etablissement)
 
     def update_date(self, id_business, id_poursuite, contrevenant):
         if contrevenant.date is not None:
@@ -358,7 +359,7 @@ class Database:
             connection.commit()
 
     def update_contrevenant(self, id_business, modif_request):
-        contrevenant = build_contravention(modif_request)
+        contrevenant = _build_contravention(modif_request)
         self.update_adresse(id_business, contrevenant)
         self.update_nom_etablissement(id_business, contrevenant)
         self.update_proprietaire(id_business, contrevenant)
@@ -368,7 +369,7 @@ class Database:
 
     def update_info_contravention(self, id_business, id_poursuite,
                                   modif_request):
-        contravention = build_contravention(modif_request)
+        contravention = _build_contravention(modif_request)
         self.update_date(id_business, id_poursuite, contravention)
         self.update_description(id_business, id_poursuite, contravention)
         self.update_date_jugement(id_business, id_poursuite, contravention)
