@@ -1,13 +1,15 @@
 // Fonction pour créer le JSON à partir des données du formulaire
 function createJson() {
-    var formData = new FormData(document.querySelector('form'));
+    var formData = new FormData(document.getElementById('user-form'));
     var selectedIds = Array.from(formData.getAll('choix_etablissements')).map(Number); // Convertir les chaînes en entiers
+
     var jsonData = {
         nom_complet: formData.get('nom_complet') || '', // Assurer que les valeurs sont des chaînes
         courriel: formData.get('courriel') || '',
         mdp: formData.get('mdp') || '',
         choix_etablissements: selectedIds
     };
+
     return jsonData;
 }
 
