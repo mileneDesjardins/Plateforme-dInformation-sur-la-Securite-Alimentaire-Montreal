@@ -206,8 +206,11 @@ class Database:
         cursor = connection.cursor()
         query = "SELECT * FROM Contravention WHERE id_business = ?"
         cursor.execute(query, (id_business,))
-        info_etablissement = cursor.fetchone()
-        return _build_contravention_dict(info_etablissement)
+        info_etablissement = cursor.fetchall()
+        return [_build_contravention_dict(item) for item in info_etablissement]
+
+
+
 
     def update_date(self, id_business, id_poursuite, contrevenant):
         if contrevenant.date is not None:

@@ -5,8 +5,7 @@ function onFastSearchSubmit() {
     if (!areValidDates('start-date', 'end-date')) {
         return;
     }
-    let resultAffiche = document.getElementById("result-fast-search");
-    resultAffiche.innerHTML = '';
+    document.getElementById("result-fast-search").innerHTML = '';
     let apiUrl = `/api/contrevenants/start/${startDate}/end/${endDate}`;
 
     fetch(apiUrl)
@@ -18,11 +17,7 @@ function onFastSearchSubmit() {
         .then(response => response.text())
         .then(htmlContent => {
             document.getElementById('result-fast-search').innerHTML = htmlContent;
-            document.querySelectorAll('#table-dates-results td').forEach(cell => {
-                cell.addEventListener("click", function () {
-                    console.log("ok");
-                });
-            });
+            addEventListenersOnCells();
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
@@ -48,6 +43,21 @@ function OnGetInfoEtablissementSubmit() {
         });
 }
 
+function openModalModifier(id_business) {
+    let apiURL = `/modal-dates/${id_business}`;
+    fetch(apiURL)
+        .then(response => response.text())
+        .then(htmlContent => {
+            console.log(htmlContent);
+            document.getElementById("modal-content-modif").innerHTML = htmlContent;
+            let modal = new bootstrap.Modal(document.getElementById('modal-date'));
+            modal.show();
+        })
+        .catch(err => {
+            console.log("Erreur côté serveur", err);
+        })
+}
+
 
 function fetchTemplate(URL, objectToSend) {
     return fetch(URL, {
@@ -62,5 +72,15 @@ function fetchTemplate(URL, objectToSend) {
 
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
 document.getElementById('btn-info-etablissement').addEventListener("click", OnGetInfoEtablissementSubmit);
+
+function addEventListenersOnCells() {
+    document.querySelectorAll('#table-dates-results td.cursor-pointer').forEach(cell => {
+        cell.addEventListener("click", function () {
+            let id_business = cell.getAttribute("data-id-business")
+            openModalModifier(id_business);
+        });
+    });
+}
+
 
 
