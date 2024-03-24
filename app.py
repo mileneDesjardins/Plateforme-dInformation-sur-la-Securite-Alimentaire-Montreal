@@ -201,15 +201,13 @@ def modal_dates(id_business):
     return render_template('modal_modifier.html', results=contrevenant)
 
 
+
 def count_contraventions(contraventions):
-    occurrences = {}
-    for item in contraventions:
-        id = item.get('id_business')
-        etablissement = item.get('etablissement')
-        if id in occurrences:
-            occurrences[id]['count'] += 1
-        else:
-            occurrences[id] = {'count': 1, 'etablissement': etablissement}
+    occurrences = {item['id_business']: {'count': sum(
+        1 for c in contraventions if c['id_business'] == item['id_business']),
+        'etablissement': item[
+            'etablissement']} for item in
+        contraventions}
     return occurrences
 
 
