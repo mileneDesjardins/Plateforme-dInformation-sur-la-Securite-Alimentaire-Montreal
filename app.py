@@ -187,17 +187,31 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
-@app.route('/search-by-dates', methods=['POST'])
-def search_by_date():
+@app.route('/search-by-dates/<start>/<end>', methods=['POST'])
+def search_by_date(start, end):
     infos_obtenues = request.get_json()
-    return render_template('search-by-dates.html', results=infos_obtenues)
+    occurences = count_contraventions(infos_obtenues)
+    return render_template('search-by-dates.html', results=occurences,
+                           start=start, end=end)
+
+
+def count_contraventions(contraventions):
+    occurrences = {}
+    for item in contraventions:
+        id = item.get('id_business')
+        etablissement = item.get('etablissement')
+        if id in occurrences:
+            occurrences[id]['count'] += 1
+        else:
+            occurrences[id] = {'count': 1, 'etablissement': etablissement}
+    return occurrences
 
 
 # A4 TODO rechanger route
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
-    # TODO valider dates ISO ?
+    # TODO valider dates ISO
     results = db.get_contraventions_between(date1, date2)
     return jsonify(results)
 

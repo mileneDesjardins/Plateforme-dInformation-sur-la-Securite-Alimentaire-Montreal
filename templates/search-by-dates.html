@@ -3,7 +3,7 @@
         <h2 class="text-center">Résultats</h2>
     </div>
     <div class="table-responsive">
-        <table class="table table-striped table-bordered table-sm table-hover">
+        <table id="table-dates-results" class="table table-striped table-bordered table-sm table-hover">
             <thead class="table-dark ">
             <tr>
                 <th>Établissement</th>
@@ -13,8 +13,8 @@
             <tbody>
             {% for key, value in results.items() %}
                 <tr>
-                    <td class="cursor-pointer">{{ key }}</td>
-                    <td>{{ value }}</td>
+                    <td class="cursor-pointer" data-id-business="{{ key }}">{{ value['etablissement'] }}</td>
+                    <td>{{ value['count'] }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -22,5 +22,5 @@
 
     </div>
 {% else %}
-    <p> Aucun résultat pour les dates du <span>{{ date1 }}</span> au <span>{{ date2 }}</span>.</p>
+    <p> Aucun résultat pour les dates du <span class="fw-bold">{{ start }}</span> au <span class="fw-bold">{{ end }}</span>.</p>
 {% endif %}

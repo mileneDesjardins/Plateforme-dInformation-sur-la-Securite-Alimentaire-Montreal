@@ -12,14 +12,17 @@ function onFastSearchSubmit() {
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            let tableURL = `/search-by-dates`;
-            occurences = countContraventions(data);
-            return fetchTemplate(tableURL, occurences);
+            let tableURL = `/search-by-dates/${startDate}/${endDate}`;
+            return fetchTemplate(tableURL, data);
         })
         .then(response => response.text())
         .then(htmlContent => {
             document.getElementById('result-fast-search').innerHTML = htmlContent;
-
+            document.querySelectorAll('#table-dates-results td').forEach(cell => {
+                cell.addEventListener("click", function () {
+                    console.log("ok");
+                });
+            });
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
@@ -57,21 +60,7 @@ function fetchTemplate(URL, objectToSend) {
 }
 
 
-function countContraventions(contraventions) {
-    let occurenceEtablissements = {};
-
-    Object.values(contraventions).forEach(contravention => {
-        let etablissement = contravention.etablissement;
-        if (occurenceEtablissements.hasOwnProperty(etablissement)) {
-            occurenceEtablissements[etablissement]++;
-        } else {
-            occurenceEtablissements[etablissement] = 1;
-        }
-    });
-
-    return occurenceEtablissements;
-}
-
-
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
 document.getElementById('btn-info-etablissement').addEventListener("click", OnGetInfoEtablissementSubmit);
+
+
