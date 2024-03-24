@@ -1,5 +1,6 @@
 function onSubmitNewUser() {
     // Créer le JSON à envoyer
+    console.log("fffff");
     var jsonToSend = createJson();
 
     // Envoyer la requête à la route /api/new-user
@@ -35,8 +36,10 @@ function createJson() {
     formData.forEach(function (value, key) {
         jsonData[key] = value;
     });
+    console.log(jsonData);
+    console.log("allo");
     return JSON.stringify(jsonData);
 }
 
 // Ajouter un écouteur d'événements au clic sur le bouton de soumission du formulaire
-document.getElementById('btn-submit-plainte').addEventListener("click", onSubmitNewUser);
+document.getElementById('btn-submit-user').addEventListener("click", onSubmitNewUser);
