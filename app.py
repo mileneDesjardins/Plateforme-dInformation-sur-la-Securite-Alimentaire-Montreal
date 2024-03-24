@@ -1,16 +1,14 @@
 import hashlib
-import json
 import subprocess
 import uuid
 
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect, Response, session
+from flask import g, request, redirect, Response, session
 from flask import render_template
 from flask import Flask, jsonify
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-from contravention import Contravention
-from database import Database
+from database import Database, build_contravention
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
@@ -203,7 +201,7 @@ def contrevenants(date1, date2):
 def info_etablissements(etablissement):
     db = Database.get_db()
     # TODO valider
-    etablissement = db.get_info_contravention_by_name(etablissement)
+    etablissement = db.get_info_contrevenant_by_name(etablissement)
     return jsonify(etablissement)
 
 
@@ -211,10 +209,9 @@ def info_etablissements(etablissement):
 @schema.validate(contrevenant_update_schema)
 def modifify_contrevenant(id_business):
     modifs_request = request.get_json()
-    contrevenant = build_contravention(modifs_request)
     try:
-        Database.get_db().update_info_contrevenant(id_business, contrevenant)
-        modified = Database.get_db().get_info_contravention_by_id(id_business)
+        Database.get_db().update_contrevenant(id_business, modifs_request)
+        modified = Database.get_db().get_info_contrevenant_by_id(id_business)
         return jsonify(modified), 200
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
@@ -225,33 +222,14 @@ def modifify_contrevenant(id_business):
 @schema.validate(contravention_update_schema)
 def modify_contravention(id_business, id_poursuite):
     modifs_request = request.get_json()
-    contravention = build_contravention(modifs_request)
     try:
-        Database.get_db().update_info_contravention(id_business, id_poursuite, contravention)
-        modified = Database.get_db().get_info_contravention_by_id(id_business),id_poursuite
+        Database.get_db().update_info_contravention(id_business, id_poursuite,
+                                                    modifs_request)
+        modified = Database.get_db().get_info_poursuite(
+            id_business, id_poursuite)
         return jsonify(modified)
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 400
-
-
-# TODO mettre vers database
-def build_contravention(modifs_request):
-    contrevenant = Contravention(
-        id_poursuite=modifs_request.get("id_poursuite"),
-        id_business=modifs_request.get('id_business'),
-        date=modifs_request.get('date'),
-        description=modifs_request.get('description'),
-        adresse=modifs_request.get('adresse'),
-        date_jugement=modifs_request.get('date_jugement'),
-        etablissement=modifs_request.get('etablissement'),
-        montant=modifs_request.get('montant'),
-        proprietaire=modifs_request.get('proprietaire'),
-        ville=modifs_request.get('ville'),
-        statut=modifs_request.get('statut'),
-        date_statut=modifs_request.get('date_statut'),
-        categorie=modifs_request.get('categorie')
-    )
-    return contrevenant
 
 
 @app.route('/modal', methods=['POST'])

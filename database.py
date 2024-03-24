@@ -8,7 +8,7 @@ from IDRessourceNonTrouve import IDRessourceNonTrouve
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
-
+#TODO remplacer par lautre
 def _build_contravention(query_result):
     contravention = {
         "id_poursuite": query_result[0],
@@ -26,6 +26,27 @@ def _build_contravention(query_result):
         "categorie": query_result[12]
     }
     return contravention
+
+
+def build_contravention(modifs_request):
+    contrevenant = Contravention(
+        id_poursuite=modifs_request.get("id_poursuite"),
+        id_business=modifs_request.get('id_business'),
+        date=modifs_request.get('date'),
+        description=modifs_request.get('description'),
+        adresse=modifs_request.get('adresse'),
+        date_jugement=modifs_request.get('date_jugement'),
+        etablissement=modifs_request.get('etablissement'),
+        montant=modifs_request.get('montant'),
+        proprietaire=modifs_request.get('proprietaire'),
+        ville=modifs_request.get('ville'),
+        statut=modifs_request.get('statut'),
+        date_statut=modifs_request.get('date_statut'),
+        categorie=modifs_request.get('categorie')
+    )
+    return contrevenant
+
+
 
 
 class Database:
@@ -161,7 +182,7 @@ class Database:
         results = cursor.fetchall()
         return [item[0] for item in results]
 
-    def get_info_contravention_by_name(self, etablissement):
+    def get_info_contrevenant_by_name(self, etablissement):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = "SELECT * FROM Contravention WHERE etablissement = ?"
@@ -179,7 +200,7 @@ class Database:
             return None
         return _build_contravention(info_poursuite)
 
-    def get_info_contravention_by_id(self, id_business):
+    def get_info_contrevenant_by_id(self, id_business):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = "SELECT * FROM Contravention WHERE id_business = ?"
@@ -336,16 +357,18 @@ class Database:
                                    id_poursuite))
             connection.commit()
 
-    def update_info_contrevenant(self, id_business, contravention):
-        self.update_adresse(id_business, contravention)
-        self.update_nom_etablissement(id_business, contravention)
-        self.update_proprietaire(id_business, contravention)
-        self.update_ville(id_business, contravention)
-        self.update_statut(id_business, contravention)
-        self.update_date_statut(id_business, contravention)
+    def update_contrevenant(self, id_business, modif_request):
+        contrevenant = build_contravention(modif_request)
+        self.update_adresse(id_business, contrevenant)
+        self.update_nom_etablissement(id_business, contrevenant)
+        self.update_proprietaire(id_business, contrevenant)
+        self.update_ville(id_business, contrevenant)
+        self.update_statut(id_business, contrevenant)
+        self.update_date_statut(id_business, contrevenant)
 
     def update_info_contravention(self, id_business, id_poursuite,
-                                  contravention):
+                                  modif_request):
+        contravention = build_contravention(modif_request)
         self.update_date(id_business, id_poursuite, contravention)
         self.update_description(id_business, id_poursuite, contravention)
         self.update_date_jugement(id_business, id_poursuite, contravention)
@@ -411,3 +434,5 @@ class Database:
         query = "DELETE FROM Demandes_Inspection WHERE id = ?"
         connection.execute(query, (demande_inspection.id,))
         connection.commit()
+
+
