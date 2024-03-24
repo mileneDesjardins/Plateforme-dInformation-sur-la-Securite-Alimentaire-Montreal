@@ -189,7 +189,7 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
-# A4 TODO route ok ?
+# A4 TODO rechanger route
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
@@ -198,7 +198,7 @@ def contrevenants(date1, date2):
     return jsonify(results)
 
 
-# A6 TODO changer pour /api/contravention/<etablissement>
+# A6 TODO changer pour /api/contrevenant/<nom_etablissement>
 @app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
 def info_etablissements(etablissement):
     db = Database.get_db()
@@ -214,18 +214,27 @@ def modifify_contrevenant(id_business):
     contrevenant = build_contravention(modifs_request)
     try:
         Database.get_db().update_info_contrevenant(id_business, contrevenant)
-        modified= Database.get_db().get_info_contravention_by_id(id_business)
+        modified = Database.get_db().get_info_contravention_by_id(id_business)
         return jsonify(modified), 200
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
 
 
-@app.route('/api/poursuite/', methods=['PATCH'])
+@app.route('/api/contravention/<id_business>/<id_poursuite>',
+           methods=['PATCH'])
 @schema.validate(contravention_update_schema)
-def modify_contravention():
-    return ""
+def modify_contravention(id_business, id_poursuite):
+    modifs_request = request.get_json()
+    contravention = build_contravention(modifs_request)
+    try:
+        Database.get_db().update_info_contravention(id_business, id_poursuite, contravention)
+        modified = Database.get_db().get_info_contravention_by_id(id_business),id_poursuite
+        return jsonify(modified)
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifée.", e.message), 400
 
 
+# TODO mettre vers database
 def build_contravention(modifs_request):
     contrevenant = Contravention(
         id_poursuite=modifs_request.get("id_poursuite"),
