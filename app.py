@@ -75,13 +75,11 @@ def plainte_envoyee():
 def create_user():
     titre = 'Création utilisateur'
     db = Database.get_db()
+    script = "/js/script_create_user.js"
     if request.method == "GET":
         etablissements = db.get_distinct_etablissements()
         return render_template("create_user.html", titre=titre,
-                               etablissements=etablissements)
-    else:
-        script = "/js/script_create_user.js"
-        return render_template('create_user.html', script=script)
+                               etablissements=etablissements, script=script)
 
 
 @app.route('/api/new-user', methods=['POST'])

@@ -10,7 +10,7 @@
                   transform="translate(-46 -28)"></path>
         </svg>
     </div>
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" action="/api/new-user">
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Création d'un compte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
@@ -49,7 +49,7 @@
                             moins un
                             établissements à surveiller</h3>
 
-                        <select name="choix_etablissements[]"
+                        <select name="choix_etablissements"
                                 class="form-select"
                                 aria-label="Choix des établissements"
                                 multiple size="13">
