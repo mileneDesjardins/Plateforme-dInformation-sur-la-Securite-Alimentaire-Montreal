@@ -1,4 +1,4 @@
-function onPlainteSubmit() {
+function onSubmitPlainte() {
     /*
     * if (!isValidDate('plainte-date')) {
         return;
@@ -46,4 +46,4 @@ function sendQueryPlainte(json) {
 
 }
 
-document.getElementById('btn-submit-plainte').addEventListener("click", onPlainteSubmit);
+document.getElementById('btn-submit-plainte').addEventListener("click", onSubmitPlainte);
