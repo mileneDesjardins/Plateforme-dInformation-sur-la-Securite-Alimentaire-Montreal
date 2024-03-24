@@ -13,13 +13,7 @@ function onFastSearchSubmit() {
         .then(response => response.json())
         .then(data => {
             let tableURL = `/search-by-dates`;
-            return fetch(tableURL, {
-                method: 'POST',  // Méthode POST pour envoyer des données JSON
-                headers: {
-                    'Content-Type': 'application/json'  // Type de contenu JSON
-                },
-                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
-            });
+            return fetchRoute(tableURL, data);
         })
         .then(response => response.text())
         .then(htmlContent => {
@@ -32,6 +26,16 @@ function onFastSearchSubmit() {
 }
 
 
+function fetchRoute(URL, objectToSend) {
+    return fetch(URL, {
+        method: 'POST',  // Méthode POST pour envoyer des données JSON
+        headers: {
+            'Content-Type': 'application/json'  // Type de contenu JSON
+        },
+        body: JSON.stringify(objectToSend)  // Envoyer l'objet JSON dans le corps de la requête
+    });
+}
+
 function OnGetInfoEtablissementSubmit() {
     let etablissement = document.getElementById('select-etablissement').value;
     let apiUrl = `/api/info-etablissement/${etablissement}`;
@@ -40,13 +44,7 @@ function OnGetInfoEtablissementSubmit() {
         .then(response => response.json())
         .then(data => {
             let modalURL = `/modal`;
-            return fetch(modalURL, {
-                method: 'POST',  // Méthode POST pour envoyer des données JSON
-                headers: {
-                    'Content-Type': 'application/json'  // Type de contenu JSON
-                },
-                body: JSON.stringify(data)  // Envoyer l'objet JSON dans le corps de la requête
-            });
+            return fetchRoute(modalURL, data);
         })
         .then(response => response.text())
         .then(htmlContent => {
