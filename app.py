@@ -20,6 +20,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
+from authorization_decorator import login_required
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -48,12 +49,14 @@ def index():
     print(script)
 
     if "id" in session:
+        id_user = session.get("id_user")
         nom_complet = session.get('nom_complet')
     else:
         nom_complet = None
     return render_template('index.html',
                            titre=titre, script=script,
-                           etablissements=etablissements, nom_complet=nom_complet
+                           etablissements=etablissements,
+                           nom_complet=nom_complet, id_user=id_user
                            )
 
 
@@ -213,11 +216,12 @@ def creer_session(user):
     session["choix_etablissements"] = user[3]
     return redirect('/', 302)
 
-@app.route('/compte/<id_user>', methods=['GET', 'POST'])
+@app.route('/compte', methods=['GET', 'POST'])
 @login_required
-def compte(id_user):
+def compte():
     titre = 'Compte'
     db = Database()
+    id_user = session["id_user"]
 
     if request.method == 'GET':
         user = db.get_user_by_id(id_user)
@@ -234,9 +238,22 @@ def compte(id_user):
         # Mettre à jour les établissements choisis pour l'utilisateur
         if new_etablissements:
             db.update_user_etablissements(id_user, new_etablissements)
+            session["choix_etablissements"] = new_etablissements
+
+        # Enregistrer la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
+        if nouvelle_photo:
+            photo_data = nouvelle_photo.read()
+            id_photo = db.create_photo(photo_data)
+            db.update_user_photo(id_user, id_photo)
 
         # Rediriger vers la page de tous les utilisateurs
         return redirect(url_for('confirmation_modifs_user'))
+
+@app.route('/photo/<id_photo>')
+def photo(id_photo):
+    photo_data = Database.get_db().get_photo(id_photo)
+    if photo_data:
+        return Response(photo_data, mimetype='application/octet-stream')
 
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():

@@ -196,6 +196,15 @@ class Database:
         )
         connection.commit()
 
+    def get_user_by_id(self, id_user):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM User WHERE id_user = ?",
+            (id_user,)
+        )
+        return cursor.fetchone()
+
     def get_user_login_infos(self, courriel):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
@@ -238,10 +247,18 @@ class Database:
     def create_photo(self, photo_data):
         id_photo = str(uuid.uuid4())
         connection = self.get_photo_connection()
-        connection.execute("insert into photos(id_photo, data) values(?, ?)",
+        connection.execute("insert into Photo(id_photo, data) values(?, ?)",
                            [id_photo, sqlite3.Binary(photo_data)])
         connection.commit()
         return id_photo
+
+    def update_user_photo(self, id_user, nouveau_id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE User SET id_photo=? WHERE id_user=?",
+            (nouveau_id_photo, id_user)
+        )
+        connection.commit()
 
     # DEMANDE D'INSERTION
     def get_demandes_inspection_connection(self):
