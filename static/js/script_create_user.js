@@ -52,6 +52,7 @@ function onSubmitNewUser(event) {
     }
 
     // Envoyer la requête à la route /api/new-user
+    console.log('Envoi des données au serveur...');
     fetch('/api/new-user', {
         method: 'POST',
         headers: {
@@ -69,7 +70,6 @@ function onSubmitNewUser(event) {
         })
         .then(data => {
             console.log('Données créées avec succès:', data);
-            onCreateUserSubmit();
             window.location.href = '/confirmation-new-user';
         })
         .catch(error => {
