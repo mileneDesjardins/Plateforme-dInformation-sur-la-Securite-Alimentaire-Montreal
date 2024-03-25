@@ -1,32 +1,78 @@
 <div class="modal-header">
     <h1 class="modal-title fs-5" id="modal-dates">{{ results[0].etablissement }}</h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
 </div>
 <div id="modal-body-etablissement" class="modal-body">
+
+    <div class="text-left col-5">
+        <table class="table table-borderless table-sm">
+            <tbody>
+            <tr>
+                <td><label for="modif-proprietaire">Propriétaire</label></td>
+                <td><input type="text" id="modif-proprietaire" value="{{ results[0].proprietaire }}"></td>
+            </tr>
+            <tr>
+                <td><label for="modif-adresse">Adresse</label></td>
+                <td><input type="text" id="modif-adresse" value="{{ results[0].adresse }}"></td>
+            </tr>
+            <tr>
+                <td><label for="modif-ville">Ville</label></td>
+                <td><input type="text" id="modif-ville" value="{{ results[0].ville }}"></td>
+            </tr>
+            <tr>
+                <td><label for="modif-statut">Statut</label></td>
+                <td><input type="text" id="modif-statut" value="{{ results[0].statut }}"></td>
+            </tr>
+            <tr>
+                <td><label for="modif-date_statut">Mise à jour statut</label></td>
+                <td><input type="text" id="modif-date_statut" value="{{ results[0].date_statut }}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-bordered table-sm">
-            <thead class="table-dark ">
+            <thead class="table-dark">
             <tr>
-                <th>Id business</th>
-                <th>Adresse</th>
-                <th>Date infraction</th>
+                <th>Date visite</th>
+                <th>Date jugement</th>
+                <th>Montant</th>
                 <th>Catégorie</th>
                 <th>Description</th>
-
             </tr>
             </thead>
             <tbody>
             {% for result in results %}
                 <tr>
-                    <td>{{ result.id_business }}</td>
-                    <td>{{ result.adresse }}</td>
-                    <td>{{ result.date }}</td>
-                    <td>{{ result.categorie }}</td>
-                    <td>{{ result.description }}</td>
+                    <td>
+                        <label for="modif-date_visite"></label>
+                        <input type="text" id="modif-date_visite" placeholder="{{ result.date }}">
+                    </td>
+                    <td>
+                        <label for="modif-date_jugement"></label>
+                        <input type="text" id="modif-date_jugement" placeholder="{{ result.date_jugement }}">
+                    </td>
+                    <td>
+                        <label for="modif-montant"></label>
+                        <input type="text" id="modif-montant" placeholder="{{ result.montant }}">
+                    </td>
+                    <td>
+                        <label for="modif-categorie"></label>
+                        <input type="text" id="modif-categorie" placeholder="{{ result.categorie }}">
+                    </td>
+                    <td>
+                        <label for="modif-description"></label>
+                        <input type="text" id="modif-description" placeholder="{{ result.description }}">
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+
+
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
