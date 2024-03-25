@@ -53,6 +53,7 @@ def index():
         nom_complet = session.get('nom_complet')
     else:
         nom_complet = None
+        id_user = None
     return render_template('index.html',
                            titre=titre, script=script,
                            etablissements=etablissements,
