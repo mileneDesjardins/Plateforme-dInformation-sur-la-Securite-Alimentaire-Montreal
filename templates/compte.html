@@ -38,26 +38,6 @@
                     </div>
                 </div>
                 <div class="row py-1">
-                    <label for="photo" class="form-label">Photo de
-                        profil</label>
-                    <div class="col">
-                        {% if user[6] %}
-                            <img src="{{ url_for('photo',
-                        id_photo=user[6]) }}"
-                                 class="img-thumbnail" alt="photo profil"
-                                 style="max-width: 200px;">
-                        {% endif %}
-                        <div class="input-group">
-                            <input type="text" id="photo" class="form-control"
-                                   value="{{ user[6] }}">
-                            <button type="button" class="btn btn-secondary"
-                                    onclick="document.getElementById('nouvelle_photo').click()">
-                                Changer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row py-1">
                     <label class="form-label" style="text-align:
                         center; padding-left: 10px">Veuillez
                         sélectionner au
@@ -80,12 +60,23 @@
                         </select>
                     </div>
                 </div>
-                <div class="row g-3 py-1">
+                <div class="row py-1">
+                    <label for="photo" class="form-label">Photo de
+                        profil</label>
                     <div class="col">
-                        <input type="file" id="nouvelle_photo" name="photo"
-                               class="form-control" style="display: none;">
+                        {% if user[6] %}
+                            <img src="{{ url_for('photo', id_photo=user[6]) }}"
+                                 class="img-thumbnail" alt="photo profil"
+                                 style="max-width: 200px;">
+                        {% endif %}
+                        <div class="input-group">
+                            <input id="photo" type="file" class="form-control"
+                                   name="photo">
+                        </div>
                     </div>
                 </div>
+
+
                 {% if erreur %}
                     <div class="alert alert-danger" role="alert">
                         {{ erreur }}

@@ -241,7 +241,7 @@ class Database:
     # PHOTOS
     def get_photo_connection(self):
         if self.photo_connection is None:
-            self.photo_connection = sqlite3.connect('db/photos.db')
+            self.photo_connection = sqlite3.connect('db/photo.db')
         return self.photo_connection
 
     def create_photo(self, photo_data):
