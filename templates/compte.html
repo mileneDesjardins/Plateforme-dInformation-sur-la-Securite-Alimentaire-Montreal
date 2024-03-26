@@ -59,6 +59,27 @@
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
+                        <h3 class="h6 mb-1 fw-normal" style="text-align:
+                        left; padding-left: 10px">Veuillez
+                            sélectionner au
+                            moins un
+                            établissements à surveiller</h3>
+
+                        <select name="choix_etablissements"
+                                class="form-select"
+                                aria-label="Choix des établissements"
+                                multiple size="13">
+                            {% for etablissement in etablissements %}
+                                <option value="{{ etablissement[0] }}">
+                                    {{ etablissement[1] }}
+                                    [{{ etablissement[2] }}]
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
                         <input type="file" id="nouvelle_photo" name="photo"
                                class="form-control" style="display: none;">
                     </div>
