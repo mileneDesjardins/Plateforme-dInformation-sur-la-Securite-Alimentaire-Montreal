@@ -49,8 +49,9 @@
                                 class="form-select custom-select"
                                 style="width: 100%;">
                             {% for etablissement in etablissements %}
-                                <option value="{{ etablissement[0] }}"
-                                        {% if etablissement[0] in choix_etablissements %}
+                                {% set etablissement_id = etablissement[0] %}
+                                <option value="{{ etablissement_id }}"
+                                        {% if etablissement_id in choix_etablissements %}
                                         selected
                                         {% endif %}>
                                     {{ etablissement[1] }}

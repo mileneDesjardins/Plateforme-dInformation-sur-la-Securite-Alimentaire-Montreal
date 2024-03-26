@@ -244,6 +244,17 @@ class Database:
             self.photo_connection = sqlite3.connect('db/photo.db')
         return self.photo_connection
 
+    def get_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
+                       (id_photo,))
+        photo_data = cursor.fetchone()
+        if photo_data:
+            return photo_data[0]
+        else:
+            return None
+
     def create_photo(self, photo_data):
         id_photo = str(uuid.uuid4())
         connection = self.get_photo_connection()
