@@ -17,12 +17,10 @@
                     {% if nom_complet is not none %}
                         <h1 class="display-4 fw-bold text-body-emphasis">
                             Bienvenue {{ nom_complet }}</h1>
-                        <a href="/disconnection">
-                            <button type="disconnection"
-                                    class="btn btn-outline-secondary btn-lg px-4">
-                                Se
-                                déconnecter
-                            </button>
+                        <a href="/disconnection"
+                           class="btn btn-primary btn-lg px-4">
+                            Se
+                            déconnecter
                         </a>
                     {% else %}
                         <h1 class="display-4 fw-bold text-body-emphasis">
