@@ -271,6 +271,12 @@ class Database:
         )
         connection.commit()
 
+    def delete_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        connection.execute("DELETE FROM Photo WHERE id_photo = ?",
+                           (id_photo,))
+        connection.commit()
+
     # DEMANDE D'INSERTION
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:

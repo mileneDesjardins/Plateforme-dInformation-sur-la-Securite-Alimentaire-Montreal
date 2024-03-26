@@ -185,6 +185,7 @@ def connection():
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
 
+
 @app.route('/disconnection')
 @login_required
 def disconnection():
@@ -217,19 +218,18 @@ def creer_session(user):
     session["choix_etablissements"] = user[3]
     return redirect('/', 302)
 
+
 @app.route('/compte', methods=['GET', 'POST'])
 @login_required
 def compte():
     titre = 'Compte'
     db = Database()
     id_user = session["id_user"]
+    user = db.get_user_by_id(id_user)
+    etablissements = db.get_distinct_etablissements()
+    choix_etablissements = session.get("choix_etablissements")
 
     if request.method == 'GET':
-        user = db.get_user_by_id(id_user)
-        etablissements = db.get_distinct_etablissements()
-        choix_etablissements = session.get("choix_etablissements")
-        print(choix_etablissements)
-
 
         if not user:
             return render_template('404.html'), 404
@@ -241,7 +241,6 @@ def compte():
         # Convertir choix_etablissements en liste d'entiers
         if isinstance(choix_etablissements, str):  # Vérifier le type
             choix_etablissements = json.loads(choix_etablissements)
-
 
         return render_template('compte.html', titre=titre,
                                user=user, etablissements=etablissements,
@@ -267,13 +266,17 @@ def compte():
             session["choix_etablissements"] = new_etablissements
 
         # Enregistrer la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
-        if nouvelle_photo is not None:
+        if nouvelle_photo is not None and nouvelle_photo.filename:
             photo_data = nouvelle_photo.read()
             id_photo = db.create_photo(photo_data)
+            if user[6]:
+                db.delete_photo(user[
+                                    6])  # Supprimer l'ancienne photo de la base de données
             db.update_user_photo(id_user, id_photo)
 
         # Rediriger vers la page de confirmation des modifications de l'utilisateur
         return redirect(url_for('confirmation_modifs_user'))
+
 
 @app.route('/photo/<id_photo>')
 def photo(id_photo):
@@ -281,12 +284,11 @@ def photo(id_photo):
     if photo_data:
         return Response(photo_data, mimetype='application/octet-stream')
 
+
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():
     titre = 'Modifications enregistrées'
     return render_template('confirmation_modifs_user.html', titre=titre)
-
-
 
 
 # A3
