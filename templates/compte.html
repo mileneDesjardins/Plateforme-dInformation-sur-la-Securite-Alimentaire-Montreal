@@ -49,16 +49,29 @@
                                 class="form-select custom-select"
                                 style="width: 100%;">
                             {% for etablissement in etablissements %}
-                                {% set etablissement_id = etablissement[0] %}
-                                <option value="{{ etablissement_id }}"
-                                        {% if etablissement_id in choix_etablissements %}
-                                        selected
-                                        {% endif %}>
-                                    {{ etablissement[1] }}
-                                    [{{ etablissement[2] }}]
-                                </option>
+                                {% if etablissement[0] is defined %}
+                                    {% set id_business_str = etablissement[0]|string %}
+                                    {% if choix_etablissements is not none
+                                    and id_business_str in
+                                    choix_etablissements %} {# vérifie si
+                                    l'id_business actuel est présent dans la
+                                    liste choix_etablissements. Si c'est le cas, l'option est marquée comme sélectionnée (selected).#}
+                                        <option value="{{ etablissement[0] }}"
+                                                selected>
+                                            {{ etablissement[1] }}
+                                            [{{ etablissement[2] }}]
+                                        </option>
+                                    {% else %}
+                                        <option value="{{ etablissement[0] }}">
+                                            {{ etablissement[1] }}
+                                            [{{ etablissement[2] }}]
+                                        </option>
+                                    {% endif %}
+                                {% endif %}
                             {% endfor %}
                         </select>
+
+
                     </div>
                 </div>
                 <div class="row py-1">
