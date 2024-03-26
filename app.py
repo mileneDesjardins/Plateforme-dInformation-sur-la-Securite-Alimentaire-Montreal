@@ -226,14 +226,33 @@ def compte():
 
     if request.method == 'GET':
         user = db.get_user_by_id(id_user)
+        etablissements = db.get_distinct_etablissements()
+        choix_etablissements = session.get("choix_etablissements")
+
         if not user:
             return render_template('404.html'), 404
+
+        # Vérifier si la liste des établissements sélectionnés est vide
+        if not choix_etablissements:
+            return render_template('404.html'), 404
+
+        # Convertir choix_etablissements en liste d'entiers
+        choix_etablissements = json.loads(choix_etablissements)
+
         return render_template('compte.html', titre=titre,
-                               user=user)
+                               user=user, etablissements=etablissements,
+                               choix_etablissements=choix_etablissements)
 
     elif request.method == 'POST':
         # Récupérer les informations soumises dans le formulaire
         new_etablissements = request.form.getlist('choix_etablissements')
+
+        # Mettre à jour les établissements sélectionnés dans la base de données
+        db.update_user_etablissements(id_user, new_etablissements)
+
+        # Mettre à jour les établissements sélectionnés dans la session
+        session["choix_etablissements"] = new_etablissements
+
         nouvelle_photo = request.files.get('photo')
 
         # Mettre à jour les établissements choisis pour l'utilisateur
@@ -242,7 +261,7 @@ def compte():
             session["choix_etablissements"] = new_etablissements
 
         # Enregistrer la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
-        if nouvelle_photo:
+        if nouvelle_photo is not None:
             photo_data = nouvelle_photo.read()
             id_photo = db.create_photo(photo_data)
             db.update_user_photo(id_user, id_photo)
