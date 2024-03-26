@@ -212,7 +212,7 @@ def count_contraventions(contraventions):
     return occurrences
 
 
-# A4 TODO rechanger route
+# A4 TODO rechanger route ?
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
@@ -232,7 +232,7 @@ def info_etablissements(etablissement):
 
 @app.route('/api/contrevenant/<id_business>', methods=['PATCH'])
 @schema.validate(contrevenant_update_schema)
-def modifify_contrevenant(id_business):
+def modify_contrevenant(id_business):
     modifs_request = request.get_json()
     try:
         Database.get_db().update_contrevenant(id_business, modifs_request)
