@@ -123,3 +123,19 @@ contravention_update_schema = {
     },
     'additionalProperties': False
 }
+
+valider_new_user_schema = {
+    "type": "object",
+    "properties": {
+        "nom_complet": {"type": "string"},
+        "courriel": {"type": "string"},
+        "choix_etablissements": {
+            "type": "array",
+            "items": {"type": "integer"}
+        },
+        "mdp": {"type": "string"},
+    },
+    "required": ["nom_complet", "courriel", "choix_etablissements", "mdp"],
+    "additionalProperties": False
+}
+

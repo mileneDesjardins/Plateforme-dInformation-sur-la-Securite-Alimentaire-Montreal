@@ -1,3 +1,4 @@
+
 CREATE TABLE User(
     id_user INTEGER NOT NULL PRIMARY KEY,
     nom_complet varchar(50) NOT NULL,
@@ -9,6 +10,4 @@ CREATE TABLE User(
     CONSTRAINT fk_photo
         FOREIGN KEY (id_photo)
         REFERENCES photo(id_photo)
-
-
 )

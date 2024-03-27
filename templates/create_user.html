@@ -10,11 +10,11 @@
                   transform="translate(-46 -28)"></path>
         </svg>
     </div>
-    <form method="POST" enctype="multipart/form-data">
+    <form id="user-form" method="POST" action="/api/new-user">
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Création d'un compte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
-            <div class="container" style="max-width: 20%; text-align: center;">
+            <div class="container" style="max-width: 40%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
                         <input type="text" name="nom_complet"
@@ -37,27 +37,32 @@
                 </div>
                 <div class="row g-3 py-1">
                     <div class="col">
+                        <input type="password" name="mdp" class="form-control"
+                               placeholder="Mot de passe" aria-label="mdp">
+                    </div>
+                </div>
+                <div class="row g-3 py-1">
+                    <div class="col">
                         <h3 class="h6 mb-1 fw-normal" style="text-align:
                         left; padding-left: 10px">Veuillez
                             sélectionner au
                             moins un
                             établissements à surveiller</h3>
-                        <select name="choix_etablissements[]"
+
+                        <select name="choix_etablissements"
                                 class="form-select"
                                 aria-label="Choix des établissements"
                                 multiple size="13">
                             {% for etablissement in etablissements %}
-                                <option value="{{ etablissement }}">{{ etablissement }}</option>
+                                <option value="{{ etablissement[0] }}">
+                                    {{ etablissement[1] }}
+                                    [{{ etablissement[2] }}]
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                <div class="row g-3 py-1">
-                    <div class="col">
-                        <input type="password" name="mdp" class="form-control"
-                               placeholder="Mot de passe" aria-label="mdp">
-                    </div>
-                </div>
+
                 {#                <div class="row g-3 py-1">#}
                 {#                    <div class="col">#}
                 {#                        <input type="file" name="photo" class="form-control"#}
@@ -69,7 +74,8 @@
                         {{ erreur }}
                     </div>
                 {% endif %}
-                <button type="submit" class="btn btn-primary my-4">Créer un
+                <button id="btn-submit-user" type="submit" class="btn btn-primary
+                my-4">Créer un
                     compte
                 </button>
             </div>

@@ -1,15 +1,15 @@
 import datetime
 import sqlite3
 import csv
-from flask import g
+from flask import g, json
 from datetime import datetime
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
+import user
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
 
-# TODO remplacer par lautre
 def _build_contravention_dict(query_result):
     contravention = {
         "id_poursuite": query_result[0],
@@ -185,11 +185,12 @@ class Database:
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
-            "SELECT DISTINCT etablissement FROM Contravention "
+            "SELECT DISTINCT id_business, etablissement, adresse FROM "
+            "Contravention "
             "ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
-        return [item[0] for item in results]
+        return results
 
     def get_info_contrevenant_by_name(self, etablissement):
         connection = self.get_contravention_connection()
@@ -412,6 +413,20 @@ class Database:
         if self.user_connection is None:
             self.user_connection = sqlite3.connect('db/user.db')
         return self.user_connection
+
+    def create_user(self, user):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        choix_etablissements_json = json.dumps(user.choix_etablissements)
+        cursor.execute(
+            "INSERT INTO User (nom_complet, courriel, "
+            "choix_etablissements, mdp_hash, mdp_salt)"
+            "VALUES (?, ?, ?, ?, ?)",
+            (user.nom_complet, user.courriel, choix_etablissements_json,
+             user.mdp_hash,
+             user.mdp_salt)
+        )
+        connection.commit()
 
     def get_user_login_infos(self, courriel):
         cursor = self.get_user_connection().cursor()

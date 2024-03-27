@@ -6,7 +6,7 @@ import uuid
 from urllib.parse import unquote
 
 from apscheduler.triggers.cron import CronTrigger
-from flask import g, request, redirect, Response, session
+from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
 
@@ -19,6 +19,8 @@ import xml.etree.ElementTree as ET
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from demande_inspection import DemandeInspection
+from schema import inspection_insert_schema, valider_new_user_schema
+from user import User
 from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
 
@@ -43,6 +45,7 @@ def validation_error(e):
 def index():
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
+    print(script)
     return render_template('index.html', etablissements=etablissements,
                            script=script)
 
@@ -71,6 +74,75 @@ def plainte():
 @app.route('/plainte-envoyee')
 def plainte_envoyee():
     return render_template('confirmation_plainte.html')
+
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    titre = 'Création utilisateur'
+    db = Database.get_db()
+    script = "/js/script_create_user.js"
+    if request.method == "GET":
+        etablissements = db.get_distinct_etablissements()
+        return render_template("create_user.html", titre=titre,
+                               etablissements=etablissements, script=script)
+
+
+@app.route('/api/new-user', methods=['POST'])
+@schema.validate(valider_new_user_schema)
+def new_user():
+    try:
+        data = request.get_json()
+        db = Database.get_db()
+
+        # Vérifier si le champ choix_etablissements est un tableau non vide
+        choix_etablissements = data.get("choix_etablissements", [])
+        if not isinstance(choix_etablissements, list) or len(
+                choix_etablissements) == 0:
+            return jsonify({
+                "error": "Le champ choix_etablissements est requis."}), 400
+
+        # Vérifier si les autres champs requis sont présents et non vides
+        if "" in (data.get("nom_complet", ""), data.get("courriel", ""),
+                  data.get("mdp", "")):
+            return jsonify(
+                {"error": "Tous les champs sont obligatoires."}), 400
+
+        # Génération du sel de mot de passe
+        mdp_salt = uuid.uuid4().hex
+
+        # Récupérer le mot de passe fourni par l'utilisateur
+        mdp = data["mdp"]
+
+        # Hachage du mot de passe avec le sel
+        mdp_hash = hashlib.sha512(
+            str(mdp + mdp_salt).encode("utf-8")).hexdigest()
+
+        new_user = User(data["nom_complet"],
+                        data["courriel"],
+                        data["choix_etablissements"],
+                        mdp_hash,
+                        mdp_salt)
+
+        db.create_user(new_user)
+
+        """
+        201 Created : Ce code est renvoyé lorsqu'une nouvelle ressource a été 
+        créée avec succès.
+        """
+        return jsonify({"message": "Création de compte réussie"}), 201
+
+    except Exception as e:
+        print(e)
+        # Si une erreur se produit, renvoyer les données saisies
+        return jsonify(
+            error="Une erreur interne s'est produite. L'erreur a été "
+                  "signalée à l'équipe de développement."), 500
+
+
+@app.route('/confirmation-new-user', methods=['GET'])
+def confirmation_user():
+    titre = 'Création de compte réussie'
+    return render_template('confirmation_user.html', titre=titre)
 
 
 @app.route('/connection', methods=['GET', 'POST'])
@@ -129,49 +201,6 @@ def creer_session(user):
     return redirect('/', 302)
 
 
-@app.route('/create-user', methods=['GET', 'POST'])
-def create_user():
-    titre = 'Creation utilisateur'
-    db = Database.get_db()
-    if request.method == "GET":
-        etablissements = db.get_distinct_etablissements()
-        return render_template("create_user.html", titre=titre,
-                               etablissements=etablissements)
-    else:
-        nom_complet, courriel, choix_etablissements, mdp = (obtenir_infos())
-
-    # Vérifier que les champs ne soient pas vides
-    if (nom_complet == "" or courriel == "" or not
-    choix_etablissements or mdp == ""):
-        return render_template("create_user.html", titre=titre,
-                               erreur="Tous les champs sont obligatoires.")
-
-    # Génération d'un salt et hachage du mot de passe
-    mdp_salt = uuid.uuid4().hex
-    mdp_hash = hashlib.sha512(
-        str(mdp + mdp_salt).encode("utf-8")).hexdigest()
-
-    # Stockage des informations de l'utilisateur
-
-    db.create_user(nom_complet, courriel, choix_etablissements, mdp_hash,
-                   mdp_salt)
-
-    # Redirection vers une page de confirmation
-    return redirect('/confirmation_user', 302)
-
-
-def obtenir_infos():
-    nom_complet = request.form['nom_complet']
-    courriel = request.form["courriel"]
-    choix_etablissements = request.form.getlist(
-        "choix_etablissements")  # récupérer les valeurs d'un champ de form
-    # pour une liste de valeurs
-    mdp = request.form["mdp"]
-    # photo = request.files["photo"]
-    # photo_data = photo.stream.read()
-    return nom_complet, courriel, choix_etablissements, mdp
-
-
 # A3
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
@@ -219,7 +248,7 @@ def contrevenants(date1, date2):
     db = Database.get_db()
     # TODO valider dates ISO
     results = db.get_contraventions_between(date1, date2)
-    return jsonify(results)
+    return (results)
 
 
 # A6 TODO changer pour /api/contrevenant/<nom_etablissement>
