@@ -73,7 +73,6 @@ contrevenants_update_schema = {
     'additionalProperties': False
 }
 
-
 contrevenant_update_schema = {
     'type': 'object',
     'properties': {
@@ -101,8 +100,12 @@ contrevenant_update_schema = {
 }
 
 contravention_update_schema = {
-    'type': 'object',
+    'type': 'array',
+    'required': ['id_poursuite'],
     'properties': {
+        'id_poursuite': {
+            'type': 'number'
+        },
         'date': {
             'type': 'string',
             'format': 'date-time'
@@ -120,4 +123,3 @@ contravention_update_schema = {
     },
     'additionalProperties': False
 }
-

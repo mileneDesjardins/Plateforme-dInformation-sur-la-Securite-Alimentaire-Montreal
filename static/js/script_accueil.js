@@ -57,12 +57,11 @@ function OnSaveModificationSubmit() {
 
 
 function sendModifContrevenant(textResponse) {
-    contrevenant = getInfoContrevenant();
-    contrevenantToSend = JSON.stringify(contrevenant);
-    if (!isObjectEmpty(contrevenant)) {
+    contrevenantToSend = getInfoContrevenant();
+    if (!isObjectEmpty(contrevenantToSend)) {
         idBusiness = document.getElementById('modif-id-business').value;
-        let modifContrevenantURL = `/api/contrevenant/${idBusiness}`;
-        sendPatch(modifContrevenantURL, contrevenant)
+        let modifContrevenantURL = `/api/contrevenants/${idBusiness}`;
+        sendPost(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
                     textResponse.innerHTML = MSG_SUCESS_MODIF;
@@ -75,14 +74,13 @@ function sendModifContrevenant(textResponse) {
 }
 
 function sendModifContravention(textResponse) {
-    contraventions = getInfoContraventions();
-    console.log(contraventions);
-    contraventionsToSend = JSON.stringify(contraventions);
-    console.log(contraventionsToSend);
-    if (!isArrayEmpty(contraventions)) {
+    contraventionsToSend = getInfoContraventions();
+    console.log("contra " + contraventionsToSend);
+    if (!isArrayEmpty(contraventionsToSend)) {
         idBusiness = document.getElementById('modif-id-business').value;
-        let modifContrevenantURL = `/api/contrevenant/${idBusiness}`;
-        sendPatch(modifContrevenantURL, contrevenant)
+        let modifContrevenantURL = `/api/contraventions/${idBusiness}`;
+        console.log(JSON.stringify(contraventionsToSend));
+        sendPatch(modifContrevenantURL, contraventionsToSend)
             .then(response => {
                 if (response.ok) {
                     textResponse.innerHTML = MSG_SUCESS_MODIF;
@@ -147,7 +145,6 @@ function getInfoContraventions() {
     let formArray = [];
     for (let i = 1; i < tableRows; i++) {
         formData = {}
-        console.log(`donne ${i}`);
         let montant = document.getElementById(`modif-montant-${i}`).value;
         let dateVisite = document.getElementById(`modif-date-visite-${i}`).value;
         let dateJugement = document.getElementById(`modif-date-jugement-${i}`).value;
@@ -180,8 +177,6 @@ function getInfoContraventions() {
         }
 
     }
-
-    console.log(formArray);
     return formArray;
 }
 
@@ -204,22 +199,22 @@ function openModalModifier(id_business, startDate, endDate) {
 
 function sendPatch(URL, objectToSend) {
     return fetch(URL, {
-        method: 'PATCH',  // Méthode POST pour envoyer des données JSON
+        method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'  // Type de contenu JSON
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(objectToSend)  // Envoyer l'objet JSON dans le corps de la requête
+        body: JSON.stringify(objectToSend)
     });
 }
 
 
 function sendPost(URL, objectToSend) {
     return fetch(URL, {
-        method: 'POST',  // Méthode POST pour envoyer des données JSON
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json'  // Type de contenu JSON
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(objectToSend)  // Envoyer l'objet JSON dans le corps de la requête
+        body: JSON.stringify(objectToSend)
     });
 }
 
