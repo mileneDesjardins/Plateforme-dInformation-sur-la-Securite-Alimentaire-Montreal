@@ -2,9 +2,9 @@ const MSG_NOTHING_TO_MODIFY = "Aucune modification à apporter.";
 const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès.";
 const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées.";
 const MSG_SUCCES_DELETE_CONTREVENANT = "Le contrevenant a bien été supprimé.";
-const MSG_ERROR_DELETE_CONTREVENANT = "Une erreur est survenue, le contrevenant n'a pu être supprimé"
+const MSG_ERROR_DELETE_CONTREVENANT = "Une erreur est survenue, le contrevenant n'a pu être supprimé."
 const MSG_SUCCES_DELETE_CONTRAVENTION = "La contravention a bien été suppimmée.";
-const MSG_ERROR_DELETE_CONTRAVENTION = "Une erreur est survenue, la contravention n'a pu être supprimée"
+const MSG_ERROR_DELETE_CONTRAVENTION = "Une erreur est survenue, la contravention n'a pu être supprimée."
 
 
 function onFastSearchSubmit() {
@@ -226,8 +226,26 @@ function OnDeleteContrevenant() {
 }
 
 
-function OnDeleteContravention() {
-    console.log("delete contra");
+function OnDeleteContravention(svgId) {
+    let textResponse = document.getElementById('reponse-requete');
+    textResponse.innerHTML = "";
+    let row = svgId.charAt(svgId.length - 1);
+    let idPoursuite = document.getElementById(`modif-id-poursuite-${row}`).value;
+    let apiURL = `/api/contraventions/${idPoursuite}`
+    const request = new Request(apiURL, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    fetch(request).then(response => {
+        if (response.ok) {
+            textResponse.innerHTML = MSG_SUCCES_DELETE_CONTRAVENTION;
+            onFastSearchSubmit();
+        } else {
+            textResponse.innerHTML = MSG_ERROR_DELETE_CONTRAVENTION;
+        }
+    })
 }
 
 function sendPatch(URL, objectToSend) {
@@ -270,7 +288,7 @@ function addEventListenersOnCells() {
 function addEventListenerOnSVGDeletes() {
     document.getElementById(`svg-delete-contrevenant`).addEventListener(`click`, OnDeleteContrevenant);
     document.querySelectorAll('svg.delete').forEach(svg => {
-        svg.addEventListener("click", OnDeleteContravention)
+        svg.addEventListener("click", () => OnDeleteContravention(svg.id))
     })
 }
 

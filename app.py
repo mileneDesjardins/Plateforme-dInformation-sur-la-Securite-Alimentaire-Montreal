@@ -251,7 +251,6 @@ def modify_contrevenant(id_business):
 @schema.validate(contravention_update_schema)
 def modify_contravention(id_business):
     modifs_requests = request.get_json()
-    print(modifs_requests)
     modified_objects = []
     try:
         db = Database.get_db()
@@ -267,11 +266,11 @@ def modify_contravention(id_business):
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
 
 
-@app.route('/api/contraventions/<id_business>/<id_poursuite>',
+@app.route('/api/contraventions/<id_poursuite>',
            methods=['DELETE'])
-def delete_contravention(id_business, id_poursuite):
+def delete_contravention(id_poursuite):
     try:
-        Database.get_db().delete_contravention(id_business, id_poursuite)
+        Database.get_db().delete_contravention(id_poursuite)
         return jsonify("La contravention a bien été supprimée"), 200
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue :"), 500
