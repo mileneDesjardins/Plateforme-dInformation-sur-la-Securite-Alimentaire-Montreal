@@ -169,7 +169,7 @@ types:
             description: Date de fin au format AAAA-MM-DD.
             type: string
         get:
-          description: Récupère des données en fonction d'une plage de dates spécifiées.
+          description: Récupère les contraventions en fonction d'une plage de dates spécifiées.
           responses:
             200:
               body:
@@ -210,6 +210,13 @@ types:
                   ]
             400:
               description: L'une ou les deux dates ne respectent pas le format ISO 8601 (AAAA-MM-JJ) ou la date end est inférieure à la date start.
+            404:
+              body:
+                application/json:
+                example: |
+                  []
+              description: Aucune contravention n'a été trouvée.
+
     /{id_business}:
       uriParameters:
         id_business:
