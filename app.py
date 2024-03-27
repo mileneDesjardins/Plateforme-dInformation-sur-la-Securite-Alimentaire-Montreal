@@ -363,9 +363,13 @@ def info_etablissements(id_business):
 def modify_contrevenant(id_business):
     modifs_request = request.get_json()
     try:
+        validates_is_integer(id_business, "Le id_business")
         Database.get_db().update_contrevenant(id_business, modifs_request)
         modified = Database.get_db().get_info_contrevenant(id_business)
         return jsonify(modified), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
@@ -396,8 +400,12 @@ def modify_contravention():
            methods=['DELETE'])
 def delete_contravention(id_poursuite):
     try:
+        validates_is_integer(id_poursuite, "Le id_poursuite")
         Database.get_db().delete_contravention(id_poursuite)
         return jsonify("La contravention a bien été supprimée"), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
     except IDRessourceNonTrouve as e:
         return jsonify(e.message), 404
     except sqlite3.Error as e:
@@ -408,8 +416,12 @@ def delete_contravention(id_poursuite):
            methods=['DELETE'])
 def delete_contrevenant(id_business):
     try:
+        validates_is_integer(id_business, "Le id_business")
         Database.get_db().delete_contrevenant(id_business)
         return jsonify("Le contrevenant bien été supprimé"), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
     except IDRessourceNonTrouve as e:
         return jsonify(e.message), 404
     except sqlite3.Error as e:
@@ -447,17 +459,18 @@ def demande_inspection():
 @schema.validate(inspection_insert_schema)
 def supprimer_inspection(id_demande):
     try:
+        validates_is_integer(id_demande, "Le id_demande")
         demande = Database.get_db().get_demande_inspection(id_demande)
         if demande is None:
             return jsonify(
                 "Le ID " + id_demande + " ne correspond à aucune demande "
                                         "d\'inspection."), 404
-        Database.get_db().delete_demande_inspection(demande)
+        Database.get_db().delete_demande_inspection(id_demande)
         return jsonify("La demande a bien été supprimée."), 200
-    except Exception as e:
-        return jsonify(
-            error="Une erreur est survenue sur le serveur. Veuillez "
-                  "réessayer plus tard"), 500
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+
 
 
 # C1
