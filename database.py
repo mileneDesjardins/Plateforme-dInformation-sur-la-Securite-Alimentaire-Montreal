@@ -140,14 +140,12 @@ class Database:
             self.contravention_connection.commit()
 
     def search(self, keywords):
-        print("ici", keywords)
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
         param = ('%' + keywords + '%')
         cursor.execute(query, (param, param, param))
         all_data = cursor.fetchall()
-        print(all_data)
         return [_build_contravention_dict(item) for item in all_data]
 
     def get_contraventions_between(self, date1, date2):
@@ -192,7 +190,6 @@ class Database:
             "ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
-        print(results)
         return results
 
     def get_info_contrevenant_by_name(self, etablissement):
@@ -228,7 +225,9 @@ class Database:
         count = cursor.fetchone()
 
         if count[0] == 0:
-            raise IDRessourceNonTrouve()
+            raise IDRessourceNonTrouve(
+                "Le id_poursuite `" + id_poursuite +
+                "` ne correspond à aucune ressource dans la base de données.")
 
     def validates_business_exists(self, id_business):
         cursor = self.get_contravention_connection().cursor()
@@ -238,7 +237,9 @@ class Database:
         count = cursor.fetchone()
 
         if count[0] == 0:
-            raise IDRessourceNonTrouve()
+            raise IDRessourceNonTrouve(
+                "Le id_business `" + id_business +
+                "` ne correspond à aucune ressource dans la base de données.")
 
     def update_date(self, id_poursuite, contrevenant):
         if contrevenant.date is not None:
@@ -383,7 +384,7 @@ class Database:
         self.update_categorie(id_poursuite, contravention)
 
     def delete_contrevenant(self, id_business):
-        # TODO verifier si deja delete, si oui renvoyer false ?
+        self.validates_business_exists(id_business)
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = ("UPDATE Contravention SET timestamp_modif=?, "
@@ -397,6 +398,7 @@ class Database:
             return False
 
     def delete_contravention(self, id_poursuite):
+        self.validates_poursuite_exists(id_poursuite)
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = ("UPDATE Contravention SET timestamp_modif=?, "

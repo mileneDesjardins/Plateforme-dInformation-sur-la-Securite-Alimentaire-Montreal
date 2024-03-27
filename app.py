@@ -76,14 +76,12 @@ def index():
 @app.route('/search', methods=['GET'])
 def search():
     keywords = request.args.get('search')
-    print("KEY", keywords)
     if keywords is None or len(keywords) == 0:
         error = "Une erreur est survenue, veuillez réessayer plus tard."
         return render_template('results.html',
                                error=error)
     else:
         results = Database.get_db().search(keywords)
-        print("RES", results)
         return render_template('results.html', keywords=keywords,
                                results=results)
 
@@ -401,6 +399,8 @@ def delete_contravention(id_poursuite):
     try:
         Database.get_db().delete_contravention(id_poursuite)
         return jsonify("La contravention a bien été supprimée"), 200
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue :"), 500
 
@@ -410,9 +410,11 @@ def delete_contravention(id_poursuite):
 def delete_contrevenant(id_business):
     try:
         Database.get_db().delete_contrevenant(id_business)
-        return jsonify("Le contrevenant bien été suppimé"), 200
+        return jsonify("Le contrevenant bien été supprimé"), 200
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
     except sqlite3.Error as e:
-        return jsonify("Une erreur est survenue"), 500
+        return jsonify("Une erreur est survenue", e), 500
 
 
 @app.route('/modal', methods=['POST'])
