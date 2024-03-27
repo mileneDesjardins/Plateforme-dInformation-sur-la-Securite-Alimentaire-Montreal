@@ -51,36 +51,36 @@
                         </div>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center"
-                       href="/plainte"
-                       style="height: 100%;">
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                Plainte
+                {% if 'id' in session %}
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center"
+                           href="/plainte"
+                           style="height: 100%;">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    Plainte
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </li>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="#"
-                       style="height: 100%;">
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                Compte
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center"
+                           href="{{ url_for('compte', ) }}"
+                           style="height: 100%;">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    Compte
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </li>
+                        </a>
+                    </li>
+                {% endif %}
 
-                <li class="nav-item">
-                    <a href="/connection" class="btn btn-primary w-5 ">Se
-                        connecter</a>
-                </li>
             </ul>
 
-            <form class="d-flex" action="/search" method="GET">
+            <form id="search-form" class="d-flex" action="/search"
+                  method="GET">
                 <input class="form-control me-2" type="search"
                        placeholder="Search" aria-label="Search" name="search">
                 <button class="btn btn-outline-success" type="submit">Search

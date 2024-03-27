@@ -1,6 +1,8 @@
 import datetime
 import sqlite3
 import csv
+import uuid
+
 from flask import g, json
 from datetime import datetime
 
@@ -53,6 +55,7 @@ class Database:
     def __init__(self):
         self.contravention_connection = None
         self.user_connection = None
+        self.photo_connection = None
         self.demandes_inspection_connection = None
 
     @staticmethod
@@ -66,6 +69,11 @@ class Database:
             self.contravention_connection.close()
         if self.user_connection is not None:
             self.user_connection.close()
+        if self.photo_connection is not None:
+            self.photo_connection.close()
+        if self.demandes_inspection_connection is not None:
+            self.demandes_inspection_connection.close()
+
 
     # CONTRAVENTION
     def get_contravention_connection(self):
@@ -428,6 +436,15 @@ class Database:
         )
         connection.commit()
 
+    def get_user_by_id(self, id_user):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM User WHERE id_user = ?",
+            (id_user,)
+        )
+        return cursor.fetchone()
+
     def get_user_login_infos(self, courriel):
         cursor = self.get_user_connection().cursor()
         cursor.execute((
@@ -436,8 +453,75 @@ class Database:
             (courriel,))
         return cursor.fetchone()
 
+<<<<<<< HEAD
     # DEMANDE D'INSPECTION
+=======
+        # Méthode pour mettre à jour les établissements choisis pour un utilisateur
+    def update_user_etablissements(self, id_user, new_etablissements):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 
+        # Convertir la nouvelle liste d'établissements en format JSON
+        new_etablissements_json = json.dumps(new_etablissements)
+
+        try:
+            # Mettre à jour la ligne de l'utilisateur dans la base de données
+            cursor.execute(
+                "UPDATE User SET choix_etablissements = ? WHERE id_user = ?",
+                (new_etablissements_json, id_user)
+            )
+            connection.commit()
+            print(
+                "Liste des établissements mise à jour avec succès pour l'utilisateur",
+                id_user)
+        except Exception as e:
+            # Gérer les erreurs éventuelles
+            print(
+                "Erreur lors de la mise à jour des établissements pour l'utilisateur",
+                id_user)
+            print("Erreur détaillée:", e)
+
+    # PHOTOS
+    def get_photo_connection(self):
+        if self.photo_connection is None:
+            self.photo_connection = sqlite3.connect('db/photo.db')
+        return self.photo_connection
+
+    def get_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
+                       (id_photo,))
+        photo_data = cursor.fetchone()
+        if photo_data:
+            return photo_data[0]
+        else:
+            return None
+
+    def create_photo(self, photo_data):
+        id_photo = str(uuid.uuid4())
+        connection = self.get_photo_connection()
+        connection.execute("insert into Photo(id_photo, data) values(?, ?)",
+                           [id_photo, sqlite3.Binary(photo_data)])
+        connection.commit()
+        return id_photo
+
+    def update_user_photo(self, id_user, nouveau_id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE User SET id_photo=? WHERE id_user=?",
+            (nouveau_id_photo, id_user)
+        )
+        connection.commit()
+
+    def delete_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        connection.execute("DELETE FROM Photo WHERE id_photo = ?",
+                           (id_photo,))
+        connection.commit()
+
+    # DEMANDE D'INSERTION
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:
             self.demandes_inspection_connection = sqlite3.connect(

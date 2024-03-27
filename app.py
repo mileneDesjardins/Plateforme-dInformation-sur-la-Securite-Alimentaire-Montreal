@@ -1,6 +1,10 @@
 import hashlib
 import json
+<<<<<<< HEAD
 import sqlite3
+=======
+import os
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 import subprocess
 import uuid
 from urllib.parse import unquote
@@ -9,9 +13,15 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
+<<<<<<< HEAD
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
 from database import Database, _build_contravention
+=======
+from flask.cli import load_dotenv
+
+from database import Database
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
@@ -21,11 +31,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
+<<<<<<< HEAD
 from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
+=======
+from authorization_decorator import login_required
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 
+load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 @app.teardown_appcontext
@@ -43,11 +59,22 @@ def validation_error(e):
 
 @app.route('/')
 def index():
+    titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
     print(script)
-    return render_template('index.html', etablissements=etablissements,
-                           script=script)
+
+    if "id" in session:
+        id_user = session.get("id_user")
+        nom_complet = session.get('nom_complet')
+    else:
+        nom_complet = None
+        id_user = None
+    return render_template('index.html',
+                           titre=titre, script=script,
+                           etablissements=etablissements,
+                           nom_complet=nom_complet, id_user=id_user
+                           )
 
 
 # A2
@@ -165,13 +192,20 @@ def connection():
 
         mdp_hash = obtenir_mdp_hash(mdp, user)
 
-        if mdp_hash == user[3]:
+        if mdp_hash == user[4]:
             # Accès autorisé
             return creer_session(user)
         else:
             return render_template('connection.html',
                                    erreur="Connexion impossible, veuillez "
                                           "vérifier vos informations")
+
+
+@app.route('/disconnection')
+@login_required
+def disconnection():
+    session.clear()  # Supprime toutes les données de la session
+    return redirect("/")
 
 
 def est_incomplet():
@@ -186,7 +220,7 @@ def nexiste_pas():
 
 
 def obtenir_mdp_hash(mdp, user):
-    salt = user[3]
+    salt = user[5]
     mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
     return mdp_hash
 
@@ -195,10 +229,81 @@ def creer_session(user):
     id_session = uuid.uuid4().hex
     session["id"] = id_session
     session["id_user"] = user[0]
-    session["prenom"] = user[1]
-    session["nom"] = user[2]
-    session["id_photo"] = user[7]
+    session["nom_complet"] = user[1]
+    session["choix_etablissements"] = user[3]
     return redirect('/', 302)
+
+
+@app.route('/compte', methods=['GET', 'POST'])
+@login_required
+def compte():
+    titre = 'Compte'
+    db = Database()
+    id_user = session["id_user"]
+    user = db.get_user_by_id(id_user)
+    etablissements = db.get_distinct_etablissements()
+    choix_etablissements = session.get("choix_etablissements")
+
+    if request.method == 'GET':
+
+        if not user:
+            return render_template('404.html'), 404
+
+        # Vérifier si la liste des établissements sélectionnés est vide
+        if not choix_etablissements:
+            return render_template('404.html'), 404
+
+        # Convertir choix_etablissements en liste d'entiers
+        if isinstance(choix_etablissements, str):  # Vérifier le type
+            choix_etablissements = json.loads(choix_etablissements)
+
+        return render_template('compte.html', titre=titre,
+                               user=user, etablissements=etablissements,
+                               choix_etablissements=choix_etablissements)
+
+
+    elif request.method == 'POST':
+
+        # Récupérer les informations soumises dans le formulaire
+        new_etablissements = request.form.getlist('choix_etablissements')
+
+        # Mettre à jour les établissements sélectionnés dans la base de données
+        db.update_user_etablissements(id_user, new_etablissements)
+
+        # Mettre à jour les établissements sélectionnés dans la session
+        session["choix_etablissements"] = new_etablissements
+
+        nouvelle_photo = request.files.get('photo')
+
+        # Mettre à jour les établissements choisis pour l'utilisateur
+        if new_etablissements:
+            db.update_user_etablissements(id_user, new_etablissements)
+            session["choix_etablissements"] = new_etablissements
+
+        # Enregistrer la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
+        if nouvelle_photo is not None and nouvelle_photo.filename:
+            photo_data = nouvelle_photo.read()
+            id_photo = db.create_photo(photo_data)
+            if user[6]:
+                db.delete_photo(user[
+                                    6])  # Supprimer l'ancienne photo de la base de données
+            db.update_user_photo(id_user, id_photo)
+
+        # Rediriger vers la page de confirmation des modifications de l'utilisateur
+        return redirect(url_for('confirmation_modifs_user'))
+
+
+@app.route('/photo/<id_photo>')
+def photo(id_photo):
+    photo_data = Database.get_db().get_photo(id_photo)
+    if photo_data:
+        return Response(photo_data, mimetype='application/octet-stream')
+
+
+@app.route('/confirmation-modifs-user', methods=['GET'])
+def confirmation_modifs_user():
+    titre = 'Modifications enregistrées'
+    return render_template('confirmation_modifs_user.html', titre=titre)
 
 
 # A3

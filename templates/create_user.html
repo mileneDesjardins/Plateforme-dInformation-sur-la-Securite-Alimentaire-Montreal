@@ -10,7 +10,7 @@
                   transform="translate(-46 -28)"></path>
         </svg>
     </div>
-    <form id="user-form" method="POST" action="/api/new-user">
+    <form id="user-form" method="POST">
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Création d'un compte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez remplir tous les champs</h2>
@@ -63,12 +63,6 @@
                     </div>
                 </div>
 
-                {#                <div class="row g-3 py-1">#}
-                {#                    <div class="col">#}
-                {#                        <input type="file" name="photo" class="form-control"#}
-                {#                               aria-label="photo">#}
-                {#                    </div>#}
-                {#                </div>#}
                 {% if erreur %}
                     <div class="alert alert-danger" role="alert">
                         {{ erreur }}
