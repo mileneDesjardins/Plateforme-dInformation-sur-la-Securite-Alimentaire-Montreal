@@ -15,5 +15,5 @@ CREATE TABLE Contravention
     categorie       TEXT,
     timestamp_csv   DATETIME NOT NULL,
     timestamp_modif DATETIME,
-    deleted         INTEGER
+    deleted         INTEGER  NOT NULL
 );

@@ -99,8 +99,8 @@ class Database:
             insertion = (
                 "INSERT INTO Contravention(id_poursuite, id_business, date, "
                 "description, adresse, date_jugement, etablissement, montant, "
-                "proprietaire, ville, statut, date_statut, categorie, timestamp_csv) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                "proprietaire, ville, statut, date_statut, categorie, timestamp_csv, deleted) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)")
 
             # Ignorer la première ligne (en-tête)
             next(contenu)
@@ -219,7 +219,8 @@ class Database:
 
     def validates_poursuite_exists(self, id_poursuite):
         cursor = self.get_contravention_connection().cursor()
-        query = ("SELECT COUNT(*)  FROM Contravention WHERE id_poursuite=?")
+        query = ("SELECT COUNT(*)  FROM Contravention WHERE id_poursuite=? "
+                 "AND deleted=0")
         cursor.execute(query, (id_poursuite,))
         count = cursor.fetchone()
 
@@ -228,7 +229,8 @@ class Database:
 
     def validates_business_exists(self, id_business):
         cursor = self.get_contravention_connection().cursor()
-        query = ("SELECT COUNT(*)  FROM Contravention WHERE id_business=?")
+        query = ("SELECT COUNT(*)  FROM Contravention WHERE id_business=? "
+                 "AND deleted=0")
         cursor.execute(query, (id_business,))
         count = cursor.fetchone()
 
@@ -357,6 +359,7 @@ class Database:
                                    id_poursuite))
             connection.commit()
 
+    # TODO si delete, retourner
     def update_contrevenant(self, id_business, modif_request):
         contrevenant = _build_contravention(modif_request)
         self.update_adresse(id_business, contrevenant)
@@ -366,8 +369,9 @@ class Database:
         self.update_statut(id_business, contrevenant)
         self.update_date_statut(id_business, contrevenant)
 
-    def update_info_contravention(self, id_poursuite,
-                                  modif_request):
+    # TODO si delete, retourner
+    def update_contravention(self, id_poursuite,
+                             modif_request):
         contravention = _build_contravention(modif_request)
         self.update_date(id_poursuite, contravention)
         self.update_description(id_poursuite, contravention)
@@ -379,11 +383,8 @@ class Database:
         # TODO verifier si deja delete, si oui renvoyer false ?
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        query = ("UPDATE Contravention SET adresse = NULL,"
-                 "date=NULL, description=NULL, date_jugement=NULL, "
-                 "etablissement=NULL, montant=NULL, proprietaire=NULL, "
-                 "ville=NULL, statut=NULL, date_statut=NULL, categorie=NULL,"
-                 "deleted=1, timestamp_modif=? WHERE id_business =?")
+        query = ("UPDATE Contravention SET timestamp_modif=?, "
+                 "deleted=1 WHERE id_business =?")
         try:
             cursor.execute(query, (datetime.now(), id_business))
             connection.commit()
@@ -395,11 +396,8 @@ class Database:
     def delete_contravention(self, id_poursuite):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        query = ("UPDATE Contravention SET adresse = NULL,"
-                 "date=NULL, description=NULL, date_jugement=NULL, "
-                 "etablissement=NULL, montant=NULL, proprietaire=NULL, "
-                 "ville=NULL, statut=NULL, date_statut=NULL, categorie=NULL, "
-                 "timestamp_modif=?, deleted=1 WHERE id_poursuite=?")
+        query = ("UPDATE Contravention SET timestamp_modif=?, "
+                 "deleted=1 WHERE id_poursuite=?")
         try:
             cursor.execute(query, (datetime.now(), id_poursuite))
             connection.commit()

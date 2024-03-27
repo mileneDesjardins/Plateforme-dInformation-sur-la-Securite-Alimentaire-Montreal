@@ -390,8 +390,8 @@ def modify_contravention():
         db = Database.get_db()
         for modifs_request in modifs_requests:
             id_poursuite = modifs_request.get('id_poursuite')
-            db.update_info_contravention(id_poursuite,
-                                         modifs_request)
+            db.update_contravention(id_poursuite,
+                                    modifs_request)
             modified_objects.append(
                 db.get_info_poursuite(id_poursuite))
         return jsonify(modified_objects)
