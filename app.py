@@ -1,16 +1,27 @@
 import hashlib
 import json
+<<<<<<< HEAD
+import sqlite3
+=======
 import os
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 import subprocess
 import uuid
+from urllib.parse import unquote
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
+<<<<<<< HEAD
+
+from IDRessourceNonTrouve import IDRessourceNonTrouve
+from database import Database, _build_contravention
+=======
 from flask.cli import load_dotenv
 
 from database import Database
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
@@ -20,7 +31,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
+<<<<<<< HEAD
+from schema import inspection_insert_schema, contrevenant_update_schema, \
+    contravention_update_schema
+=======
 from authorization_decorator import login_required
+>>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -67,8 +83,7 @@ def search():
     try:
         keywords = request.args.get('search')
         if keywords is None or len(keywords) == 0:
-            print("nice")
-        results = Database.get_db().db.search(keywords)
+            results = Database.get_db().db.search(keywords)
         return render_template('results.html', keywords=keywords,
                                results=results)
     except Exception as e:
@@ -307,22 +322,101 @@ scheduler.start()  # démarre le planificateur
 atexit.register(lambda: scheduler.shutdown())
 
 
-# A4 TODO route ok ?
+@app.route('/search-by-dates/<start>/<end>', methods=['POST'])
+def search_by_date(start, end):
+    infos_obtenues = request.get_json()
+    occurences = count_contraventions(infos_obtenues)
+    return render_template('search-by-dates.html', results=occurences,
+                           start=start, end=end)
+
+
+@app.route('/modal-dates/<id_business>/<start>/<end>', methods=['GET'])
+def modal_dates(start, end, id_business):
+    contrevenant = (Database.get_db().
+                    get_contraventions_business_between(start, end,
+                                                        id_business))
+    return render_template('modal_modifier.html', results=contrevenant)
+
+
+def count_contraventions(contraventions):
+    occurrences = {item['id_business']: {'count': sum(
+        1 for c in contraventions if c['id_business'] == item['id_business']),
+        'etablissement': item[
+            'etablissement']} for item in
+        contraventions}
+    return occurrences
+
+
+# A4 TODO rechanger route ?
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
-    # TODO valider dates ISO ?
+    # TODO valider dates ISO
     results = db.get_contraventions_between(date1, date2)
     return (results)
 
 
-# A6
+# A6 TODO changer pour /api/contrevenant/<nom_etablissement>
 @app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
 def info_etablissements(etablissement):
     db = Database.get_db()
     # TODO valider
-    etablissement = db.get_info_etablissement(etablissement)
+    etablissement = db.get_info_contrevenant_by_name(etablissement)
     return jsonify(etablissement)
+
+
+@app.route('/api/contrevenants/<id_business>', methods=['PATCH'])
+@schema.validate(contrevenant_update_schema)
+def modify_contrevenant(id_business):
+    modifs_request = request.get_json()
+    try:
+        Database.get_db().update_contrevenant(id_business, modifs_request)
+        modified = Database.get_db().get_info_contrevenant_by_id(id_business)
+        return jsonify(modified), 200
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifiée.", e.message), 404
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
+
+
+@app.route('/api/contraventions',
+           methods=['PATCH'])
+@schema.validate(contravention_update_schema)
+def modify_contravention():
+    modifs_requests = request.get_json()
+    modified_objects = []
+    try:
+        db = Database.get_db()
+        for modifs_request in modifs_requests:
+            id_poursuite = modifs_request.get('id_poursuite')
+            db.update_info_contravention(id_poursuite,
+                                         modifs_request)
+            modified_objects.append(
+                db.get_info_poursuite(id_poursuite))
+        return jsonify(modified_objects)
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifée.", e.message), 404
+
+
+@app.route('/api/contraventions/<id_poursuite>',
+           methods=['DELETE'])
+def delete_contravention(id_poursuite):
+    try:
+        Database.get_db().delete_contravention(id_poursuite)
+        return jsonify("La contravention a bien été supprimée"), 200
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue :"), 500
+
+
+@app.route('/api/contrevenant/<id_business>',
+           methods=['DELETE'])
+def delete_contrevenant(id_business):
+    try:
+        Database.get_db().delete_contrevenant(id_business)
+        return jsonify("Le contrevenant bien été suppimé"), 200
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue"), 500
 
 
 @app.route('/modal', methods=['POST'])
@@ -344,7 +438,6 @@ def demande_inspection():
                                              demande["date_visite"],
                                              demande["nom_complet_client"],
                                              demande["description"])
-        print(nouvelle_demande.description)
         Database.get_db().insert_demande_inspection(nouvelle_demande)
         return "Utilisateur ajouté", 201
     except Exception as e:
