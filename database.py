@@ -5,9 +5,9 @@ from flask import g, json
 from datetime import datetime
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-import user
 from contravention import Contravention
 from demande_inspection import DemandeInspection
+from validations import validates_format_iso
 
 
 def _build_contravention_dict(query_result):
@@ -227,7 +227,7 @@ class Database:
 
         if count[0] == 0:
             raise IDRessourceNonTrouve(
-                "Le id_poursuite `" + id_poursuite +
+                "Le id_poursuite `" + str(id_poursuite) +
                 "` ne correspond à aucune ressource dans la base de données.")
 
     def validates_business_exists(self, id_business):
@@ -245,6 +245,7 @@ class Database:
     def update_date(self, id_poursuite, contrevenant):
         if contrevenant.date is not None:
             self.validates_poursuite_exists(id_poursuite)
+            validates_format_iso(contrevenant.date)
             connection = self.get_contravention_connection()
             cursor = connection.cursor()
             query = ("UPDATE Contravention SET date = ?, "
