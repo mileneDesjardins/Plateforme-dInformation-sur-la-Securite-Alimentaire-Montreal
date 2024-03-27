@@ -1,10 +1,7 @@
 import hashlib
 import json
-
 import sqlite3
-
 import os
-
 import subprocess
 import uuid
 
@@ -12,27 +9,22 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
-
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-
 from flask.cli import load_dotenv
-
 from database import Database
-
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
-
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
-
 from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
-
 from authorization_decorator import login_required
+from validations import validates_dates, validates_format_iso, \
+    validates_dates_order
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -345,9 +337,17 @@ def count_contraventions(contraventions):
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
-    # TODO valider dates ISO
-    results = db.get_contraventions_between(date1, date2)
-    return jsonify(results)
+    try:
+        validates_dates(date1, date2)
+        results = db.get_contraventions_between(date1, date2)
+        return jsonify(results)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. "
+            "Veuillez réessayer plus tard.")
 
 
 # A6

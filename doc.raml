@@ -208,6 +208,8 @@ types:
                       "categorie": "Restaurant"
                     }
                   ]
+            400:
+              description: L'une ou les deux dates ne respectent pas le format ISO 8601 (AAAA-MM-JJ) ou la date end est inférieure à la date start.
     /{id_business}:
       uriParameters:
         id_business:
