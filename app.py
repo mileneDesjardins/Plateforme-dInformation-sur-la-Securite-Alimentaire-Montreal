@@ -7,7 +7,7 @@ import os
 
 import subprocess
 import uuid
-from urllib.parse import unquote
+
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
@@ -16,7 +16,7 @@ from flask import Flask, jsonify
 
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-from database import Database, _build_contravention
+
 
 from flask.cli import load_dotenv
 
@@ -353,7 +353,7 @@ def contrevenants(date1, date2):
     db = Database.get_db()
     # TODO valider dates ISO
     results = db.get_contraventions_between(date1, date2)
-    return (results)
+    return jsonify(results)
 
 
 # A6 TODO changer pour /api/contrevenant/<nom_etablissement>
