@@ -384,6 +384,31 @@ class Database:
         self.update_montant(id_business, id_poursuite, contravention)
         self.update_categorie(id_business, id_poursuite, contravention)
 
+    def delete_contrevenant(self, id_business):
+        connection = self.get_contravention_connection()
+        cursor = connection.cursor()
+        query = "DELETE FROM Contravention WHERE id_business =?"
+        try:
+            cursor.execute(query, (id_business,))
+            connection.commit()
+            return True
+        except sqlite3.Error as e:
+            connection.rollback()
+            return False
+
+    def delete_contravention(self, id_business, id_poursuite):
+        connection = self.get_contravention_connection()
+        cursor = connection.cursor()
+        query = ("DELETE FROM Contravention WHERE id_business =? "
+                 "AND id_poursuite=?")
+        try:
+            cursor.execute(query, (id_business,id_poursuite))
+            connection.commit()
+            return True
+        except sqlite3.Error as e:
+            connection.rollback()
+            return False
+
     # USER
     def get_user_connection(self):
         if self.user_connection is None:
