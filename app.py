@@ -24,7 +24,7 @@ from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
 from authorization_decorator import login_required
 from validations import validates_dates, validates_format_iso, \
-    validates_dates_order
+    validates_dates_order, is_empty
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -340,6 +340,8 @@ def contrevenants(date1, date2):
     try:
         validates_dates(date1, date2)
         results = db.get_contraventions_between(date1, date2)
+        if is_empty(results):
+            return jsonify(results), 404
         return jsonify(results)
     except ValueError as e:
         error_msg = {"error": str(e)}

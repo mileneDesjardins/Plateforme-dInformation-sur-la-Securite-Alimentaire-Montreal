@@ -28,3 +28,7 @@ def validates_dates(start_date, end_date):
     elif not validates_dates_order(start_date, end_date):
         raise ValueError("La date de fin est inférieure"
                          " à la date de début. ")
+
+
+def is_empty(array):
+    return len(array) == 0
