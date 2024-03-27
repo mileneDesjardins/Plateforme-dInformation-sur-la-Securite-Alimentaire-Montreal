@@ -101,11 +101,7 @@ contrevenant_update_schema = {
 
 contravention_update_schema = {
     'type': 'array',
-    'required': ['id_poursuite'],
     'properties': {
-        'id_poursuite': {
-            'type': 'number'
-        },
         'date': {
             'type': 'string',
             'format': 'date-time'
