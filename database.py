@@ -140,12 +140,14 @@ class Database:
             self.contravention_connection.commit()
 
     def search(self, keywords):
+        print("ici", keywords)
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
                  "adresse LIKE ? OR proprietaire LIKE ?")
         param = ('%' + keywords + '%')
         cursor.execute(query, (param, param, param))
         all_data = cursor.fetchall()
+        print(all_data)
         return [_build_contravention_dict(item) for item in all_data]
 
     def get_contraventions_between(self, date1, date2):

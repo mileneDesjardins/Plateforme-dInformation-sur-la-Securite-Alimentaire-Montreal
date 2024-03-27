@@ -8,15 +8,12 @@ import os
 import subprocess
 import uuid
 
-
 from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
 
-
 from IDRessourceNonTrouve import IDRessourceNonTrouve
-
 
 from flask.cli import load_dotenv
 
@@ -36,7 +33,6 @@ from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
 
 from authorization_decorator import login_required
-
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -80,16 +76,17 @@ def index():
 # A2
 @app.route('/search', methods=['GET'])
 def search():
-    try:
-        keywords = request.args.get('search')
-        if keywords is None or len(keywords) == 0:
-            results = Database.get_db().db.search(keywords)
-        return render_template('results.html', keywords=keywords,
-                               results=results)
-    except Exception as e:
+    keywords = request.args.get('search')
+    print("KEY", keywords)
+    if keywords is None or len(keywords) == 0:
         error = "Une erreur est survenue, veuillez réessayer plus tard."
         return render_template('results.html',
                                error=error)
+    else:
+        results = Database.get_db().search(keywords)
+        print("RES", results)
+        return render_template('results.html', keywords=keywords,
+                               results=results)
 
 
 @app.route('/plainte')
