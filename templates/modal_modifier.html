@@ -2,15 +2,18 @@
     <div id="modal-dates">
 
     </div>
-    <table>
-        <tbody>
-        <tr>
-            <td class="modal-title fs-5">
-                <label></label>
-                <input type="text" id="modif-proprietaire" placeholder="{{ results[0].etablissement }}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <form id="form-nom-etablissement">
+        <table>
+            <tbody>
+            <tr>
+                <td class="modal-title fs-5">
+                    <label></label>
+                    <input type="text" id="modif-etablissement" placeholder="{{ results[0].etablissement }}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
     <h6 id="reponse-requete" class="hidden"></h6>
     <button type="button" class="btn-close" data-bs-dismiss="modal"
             aria-label="Close"></button>
@@ -88,7 +91,7 @@
                         <td>
                             <label for="modif-description-{{ loop.index }}"></label>
                             <input type="text" id="modif-description-{{ loop.index }}"
-                                   placeholder="{{ result.description }}">\
+                                   placeholder="{{ result.description }}">
                             <label for="modif-id-poursuite-{{ loop.index }}"></label>
                             <input type="hidden" id="modif-id-poursuite-{{ loop.index }}"
                                    value="{{ result.id_poursuite }}">

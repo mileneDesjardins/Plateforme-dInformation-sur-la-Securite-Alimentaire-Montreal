@@ -58,10 +58,11 @@ function OnSaveModificationSubmit() {
 
 function sendModifContrevenant(textResponse) {
     contrevenantToSend = getInfoContrevenant();
+    console.log(contrevenantToSend);
     if (!isObjectEmpty(contrevenantToSend)) {
         idBusiness = document.getElementById('modif-id-business').value;
         let modifContrevenantURL = `/api/contrevenants/${idBusiness}`;
-        sendPost(modifContrevenantURL, contrevenantToSend)
+        sendPatch(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
                     textResponse.innerHTML = MSG_SUCESS_MODIF;
@@ -104,7 +105,7 @@ function isArrayEmpty(jsonArray) {
 
 function getInfoContrevenant() {
     let formData = {}
-    let etablissement = document.getElementById('modal-dates').value;
+    let etablissement = document.getElementById('modif-etablissement').value;
     let proprietaire = document.getElementById('modif-proprietaire').value;
     let adresse = document.getElementById('modif-adresse').value;
     let ville = document.getElementById('modif-ville').value;
@@ -115,12 +116,12 @@ function getInfoContrevenant() {
 
         formData['proprietaire'] = proprietaire;
     }
-    /*
+
     if (etablissement !== '') {
         console.log("ici");
         formData['etablissement'] = etablissement;
     }
-*/
+
     if (adresse !== '') {
         formData['adresse'] = adresse;
     }
