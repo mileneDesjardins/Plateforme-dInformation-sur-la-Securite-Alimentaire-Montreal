@@ -1,6 +1,11 @@
-const MSG_NOTHING_TO_MODIFY = "Aucune modification à apporter."
-const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès."
-const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées."
+const MSG_NOTHING_TO_MODIFY = "Aucune modification à apporter.";
+const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès.";
+const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées.";
+const MSG_SUCCES_DELETE_CONTREVENANT = "Le contrevenant a bien été supprimé.";
+const MSG_ERROR_DELETE_CONTREVENANT = "Une erreur est survenue, le contrevenant n'a pu être supprimé"
+const MSG_SUCCES_DELETE_CONTRAVENTION = "La contravention a bien été suppimmée.";
+const MSG_ERROR_DELETE_CONTRAVENTION = "Une erreur est survenue, la contravention n'a pu être supprimée"
+
 
 function onFastSearchSubmit() {
     let startDate = document.getElementById('start-date').value;
@@ -200,8 +205,26 @@ function openModalModifier(id_business, startDate, endDate) {
 
 
 function OnDeleteContrevenant() {
-    console.log("DELETE contrenvant");
+    let textResponse = document.getElementById('reponse-requete');
+    textResponse.innerHTML = "";
+    idBusiness = document.getElementById('modif-id-business').value;
+    apiURL = `/api/contrevenant/${idBusiness}`
+    const request = new Request(apiURL, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    fetch(request).then(response => {
+        if (response.ok) {
+            textResponse.innerHTML = MSG_SUCCES_DELETE_CONTREVENANT
+            onFastSearchSubmit();
+        } else {
+            textResponse.innerHTML = MSG_ERROR_DELETE_CONTREVENANT
+        }
+    })
 }
+
 
 function OnDeleteContravention() {
     console.log("delete contra");
