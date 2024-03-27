@@ -29,7 +29,7 @@ function onFastSearchSubmit() {
             addEventListenersOnCells();
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err);
+            console.log("Erreur côté serveur", err); //TODO afficher message
         });
 }
 
@@ -48,7 +48,7 @@ function OnGetInfoEtablissementSubmit() {
             document.getElementById('modal-content').innerHTML = htmlContent;
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err);
+            console.log("Erreur côté serveur", err); //TODO afficher message
         });
 }
 
@@ -63,7 +63,6 @@ function OnSaveModificationSubmit() {
 
 function sendModifContrevenant(textResponse) {
     contrevenantToSend = getInfoContrevenant();
-    console.log(contrevenantToSend);
     if (!isObjectEmpty(contrevenantToSend)) {
         idBusiness = document.getElementById('modif-id-business').value;
         let modifContrevenantURL = `/api/contrevenants/${idBusiness}`;
@@ -81,11 +80,8 @@ function sendModifContrevenant(textResponse) {
 
 function sendModifContravention(textResponse) {
     contraventionsToSend = getInfoContraventions();
-    console.log("contra " + contraventionsToSend);
     if (!isArrayEmpty(contraventionsToSend)) {
-        idBusiness = document.getElementById('modif-id-business').value;
-        let modifContrevenantURL = `/api/contraventions/${idBusiness}`;
-        console.log(JSON.stringify(contraventionsToSend));
+        let modifContrevenantURL = `/api/contraventions`;
         sendPatch(modifContrevenantURL, contraventionsToSend)
             .then(response => {
                 if (response.ok) {
@@ -123,7 +119,6 @@ function getInfoContrevenant() {
     }
 
     if (etablissement !== '') {
-        console.log("ici");
         formData['etablissement'] = etablissement;
     }
 
@@ -154,10 +149,8 @@ function getInfoContraventions() {
         let montant = document.getElementById(`modif-montant-${i}`).value;
         let dateVisite = document.getElementById(`modif-date-visite-${i}`).value;
         let dateJugement = document.getElementById(`modif-date-jugement-${i}`).value;
-
         let categorie = document.getElementById(`modif-categorie-${i}`).value;
         let description = document.getElementById(`modif-description-${i}`).value;
-        let idBusiness = document.getElementById(`modif-id-business`).value;
         let idPoursuite = document.getElementById(`modif-id-poursuite-${i}`).value;
 
         if (dateVisite !== '') {
@@ -178,7 +171,6 @@ function getInfoContraventions() {
 
         if (!isObjectEmpty(formData)) {
             formData['id_poursuite'] = idPoursuite;
-            formData['id_business'] = idBusiness;
             formArray.push(formData);
         }
 
@@ -199,7 +191,7 @@ function openModalModifier(id_business, startDate, endDate) {
             addEventListenerOnSVGDeletes();
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err);
+            console.log("Erreur côté serveur", err);  //TODO afficher message
         })
 }
 

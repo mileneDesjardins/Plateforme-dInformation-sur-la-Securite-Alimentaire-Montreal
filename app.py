@@ -246,10 +246,10 @@ def modify_contrevenant(id_business):
             "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
 
 
-@app.route('/api/contraventions/<id_poursuite>',
+@app.route('/api/contraventions',
            methods=['PATCH'])
 @schema.validate(contravention_update_schema)
-def modify_contravention(id_poursuite):
+def modify_contravention():
     modifs_requests = request.get_json()
     modified_objects = []
     try:
@@ -260,7 +260,6 @@ def modify_contravention(id_poursuite):
                                          modifs_request)
             modified_objects.append(
                 db.get_info_poursuite(id_poursuite))
-            print(modified_objects)
         return jsonify(modified_objects)
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
@@ -280,7 +279,6 @@ def delete_contravention(id_poursuite):
            methods=['DELETE'])
 def delete_contrevenant(id_business):
     try:
-        print(id_business)
         Database.get_db().delete_contrevenant(id_business)
         return jsonify("Le contrevenant bien été suppimé"), 200
     except sqlite3.Error as e:
