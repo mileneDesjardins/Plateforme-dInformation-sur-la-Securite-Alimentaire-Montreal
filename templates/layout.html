@@ -14,6 +14,8 @@
     <!-- Template Main CSS File -->
     <link href="{{ url_for('static', filename='css/style.css') }}"
           rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Ajoutez ce style pour créer un espace au-dessus du contenu */
         body {
@@ -101,7 +103,6 @@
 
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js') }}"></script>
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.js') }}"></script>
-<script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.esm.js') }}"></script>
 <script src="{{ url_for('static', filename='/js/validations.js') }}"></script>
 {% if script is defined %}
     <script src="{{ script }}"></script>

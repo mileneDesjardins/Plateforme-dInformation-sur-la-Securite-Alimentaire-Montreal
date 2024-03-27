@@ -1,3 +1,7 @@
+const MSG_NOTHING_TO_MODIFY = "Aucune modification à apporter."
+const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès."
+const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées."
+
 function onFastSearchSubmit() {
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
@@ -43,26 +47,54 @@ function OnGetInfoEtablissementSubmit() {
         });
 }
 
+
 function OnSaveModificationSubmit() {
+    let textResponse = document.getElementById('reponse-requete');
+    textResponse.innerHTML = "";
+    sendModifContrevenant(textResponse);
+    sendModifContravention(textResponse);
+}
+
+
+function sendModifContrevenant(textResponse) {
     contrevenant = getInfoContrevenant();
     contrevenantToSend = JSON.stringify(contrevenant);
-    idBusiness = document.getElementById('modif-id-business').value;
-
     if (!isObjectEmpty(contrevenant)) {
+        idBusiness = document.getElementById('modif-id-business').value;
         let modifContrevenantURL = `/api/contrevenant/${idBusiness}`;
         sendPatch(modifContrevenantURL, contrevenant)
             .then(response => {
+                if (response.ok) {
+                    textResponse.innerHTML = MSG_SUCESS_MODIF;
 
+                } else {
+                    textResponse.innerHTML = MSG_ERREUR_MODIF;
+                }
             })
     }
-
-    contraventions = getInfoContravention();
-    contraventionsToSend = JSON.stringify(contraventions);
-    if (!isArrayEmpty(contraventions)) {
-        idPoursuite = document.getElementById('modif-id-business');
-    }
-    console.log("good");
 }
+
+function sendModifContravention(textResponse) {
+    contraventions = getInfoContraventions();
+    console.log(contraventions);
+    contraventionsToSend = JSON.stringify(contraventions);
+    console.log(contraventionsToSend);
+    if (!isArrayEmpty(contraventions)) {
+        idBusiness = document.getElementById('modif-id-business').value;
+        let modifContrevenantURL = `/api/contrevenant/${idBusiness}`;
+        sendPatch(modifContrevenantURL, contrevenant)
+            .then(response => {
+                if (response.ok) {
+                    textResponse.innerHTML = MSG_SUCESS_MODIF;
+                } else {
+                    textResponse.innerHTML = MSG_ERREUR_MODIF;
+                }
+            })
+    } else {
+        textResponse.innerHTML = MSG_NOTHING_TO_MODIFY;
+    }
+}
+
 
 function isObjectEmpty(jsonObj) {
     return Object.keys(jsonObj).length === 0;
@@ -110,26 +142,48 @@ function getInfoContrevenant() {
     return formData;
 }
 
-function getInfoContravention() {
+function getInfoContraventions() {
+    tableRows = document.getElementById('modif-contravention-table').rows.length;
     let formArray = [];
-    let inputs = document.querySelectorAll('#form-modif-contravention input[type="text"]');
+    for (let i = 1; i < tableRows; i++) {
+        formData = {}
+        console.log(`donne ${i}`);
+        let montant = document.getElementById(`modif-montant-${i}`).value;
+        let dateVisite = document.getElementById(`modif-date-visite-${i}`).value;
+        let dateJugement = document.getElementById(`modif-date-jugement-${i}`).value;
 
-    inputs.forEach(input => {
-        let id = input.getAttribute('id');
-        let value = input.value.trim();
+        let categorie = document.getElementById(`modif-categorie-${i}`).value;
+        let description = document.getElementById(`modif-description-${i}`).value;
+        let idBusiness = document.getElementById(`modif-id-business`).value;
+        let idPoursuite = document.getElementById(`modif-id-poursuite-${i}`).value;
 
-        if (value !== '') {
-            let formData = {
-                id: id,
-                value: value
-            };
+        if (dateVisite !== '') {
+            formData['date'] = dateVisite;
+        }
+        if (dateJugement !== '') {
+            formData['date_jugement'] = dateJugement;
+        }
+        if (montant !== '') {
+            formData['montant'] = montant;
+        }
+        if (categorie !== '') {
+            formData['categorie'] = categorie;
+        }
+        if (description !== '') {
+            formData['description'] = description;
+        }
+
+        if (!isObjectEmpty(formData)) {
+            formData['id_poursuite'] = idPoursuite;
+            formData['id_business'] = idBusiness;
             formArray.push(formData);
         }
-    });
 
+    }
+
+    console.log(formArray);
     return formArray;
 }
-
 
 
 function openModalModifier(id_business, startDate, endDate) {
