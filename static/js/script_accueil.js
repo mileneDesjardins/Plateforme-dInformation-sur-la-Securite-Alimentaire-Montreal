@@ -191,12 +191,21 @@ function openModalModifier(id_business, startDate, endDate) {
             let modal = new bootstrap.Modal(document.getElementById('modal-date'));
             modal.show(modal);
             document.getElementById('btn-save-modifs-contrevenant').addEventListener('click', OnSaveModificationSubmit);
+            addEventListenerOnSVGDeletes();
         })
         .catch(err => {
             console.log("Erreur côté serveur", err);
         })
 }
 
+
+function OnDeleteContrevenant() {
+    console.log("DELETE contrenvant");
+}
+
+function OnDeleteContravention() {
+    console.log("delete contra");
+}
 
 function sendPatch(URL, objectToSend) {
     return fetch(URL, {
@@ -233,6 +242,13 @@ function addEventListenersOnCells() {
             openModalModifier(id_business, startDate, endDate);
         });
     });
+}
+
+function addEventListenerOnSVGDeletes() {
+    document.getElementById(`svg-delete-contrevenant`).addEventListener(`click`, OnDeleteContrevenant);
+    document.querySelectorAll('svg.delete').forEach(svg => {
+        svg.addEventListener("click", OnDeleteContravention)
+    })
 }
 
 
