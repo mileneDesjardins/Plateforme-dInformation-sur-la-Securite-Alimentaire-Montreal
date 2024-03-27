@@ -6,7 +6,7 @@ import subprocess
 import uuid
 
 from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect, Response, session, url_for
+from flask import g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
 from IDRessourceNonTrouve import IDRessourceNonTrouve
@@ -18,13 +18,11 @@ import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
-from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
 from schema import inspection_insert_schema, contrevenant_update_schema, \
-    contravention_update_schema
+    contravention_update_schema, valider_new_user_schema
 from authorization_decorator import login_required
-from validations import validates_dates, validates_format_iso, \
-    validates_dates_order, is_empty
+from validations import validates_dates, is_empty, doesnt_exist, is_incomplete
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -169,12 +167,12 @@ def connection():
         mdp = request.form["mdp"]
 
         if courriel == "" or mdp == "":
-            return est_incomplet()
+            is_incomplete()
 
         db = Database.get_db()
         user = db.get_user_login_infos(courriel)
         if user is None:
-            return nexiste_pas()
+            doesnt_exist()
 
         mdp_hash = obtenir_mdp_hash(mdp, user)
 
@@ -192,17 +190,6 @@ def connection():
 def disconnection():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
-
-
-def est_incomplet():
-    return render_template('connection.html',
-                           erreur="Veuillez remplir tous les champs")
-
-
-def nexiste_pas():
-    return render_template('connection.html',
-                           erreur="Utilisateur inexistant, veuillez "
-                                  "vérifier vos informations")
 
 
 def obtenir_mdp_hash(mdp, user):

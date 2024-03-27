@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from flask import jsonify
+from flask import render_template
 
 
 def validates_format_iso(date):
@@ -32,3 +32,14 @@ def validates_dates(start_date, end_date):
 
 def is_empty(array):
     return len(array) == 0
+
+
+def doesnt_exist():
+    return render_template('connection.html',
+                           erreur="Utilisateur inexistant, veuillez "
+                                  "vérifier vos informations")
+
+
+def is_incomplete():
+    return render_template('connection.html',
+                           erreur="Veuillez remplir tous les champs")
