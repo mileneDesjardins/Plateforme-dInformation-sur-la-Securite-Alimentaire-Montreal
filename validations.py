@@ -43,3 +43,15 @@ def doesnt_exist():
 def is_incomplete():
     return render_template('connection.html',
                            erreur="Veuillez remplir tous les champs")
+
+
+def validates_is_integer(value, name_value):
+    try:
+        int_value = int(value)
+    except ValueError:
+        raise ValueError(
+            name_value + " doit être un nombre entier valide.")
+
+    if int_value <= 0:
+        raise ValueError(
+            name_value + " doit être un nombre entier positif.")

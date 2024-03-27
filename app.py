@@ -22,7 +22,8 @@ from user import User
 from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema, valider_new_user_schema
 from authorization_decorator import login_required
-from validations import validates_dates, is_empty, doesnt_exist, is_incomplete
+from validations import validates_dates, is_empty, doesnt_exist, is_incomplete, \
+    validates_is_integer
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -342,10 +343,19 @@ def contrevenants(date1, date2):
 # A6
 @app.route('/api/contrevenants/<id_business>', methods=['GET'])
 def info_etablissements(id_business):
-    db = Database.get_db()
-    # TODO valider
-    etablissement = db.get_info_contrevenant_by_id(id_business)
-    return jsonify(etablissement)
+    try:
+        validates_is_integer(id_business, "Le id_business")
+        db = Database.get_db()
+        etablissement = db.get_info_contrevenant(id_business)
+        return jsonify(etablissement)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
+    except Exception as e:
+        return jsonify("Une erreur est survenue sur le serveur. "
+                       "Veuillez réessayer plus tard.")
 
 
 @app.route('/api/contrevenants/<id_business>', methods=['PATCH'])
@@ -354,7 +364,7 @@ def modify_contrevenant(id_business):
     modifs_request = request.get_json()
     try:
         Database.get_db().update_contrevenant(id_business, modifs_request)
-        modified = Database.get_db().get_info_contrevenant_by_id(id_business)
+        modified = Database.get_db().get_info_contrevenant(id_business)
         return jsonify(modified), 200
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404

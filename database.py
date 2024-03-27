@@ -209,7 +209,8 @@ class Database:
             return None
         return _build_contravention_dict(info_poursuite)
 
-    def get_info_contrevenant_by_id(self, id_business):
+    def get_info_contrevenant(self, id_business):
+        self.validates_business_exists(id_business)
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = "SELECT * FROM Contravention WHERE id_business = ?"
@@ -363,7 +364,7 @@ class Database:
                                    id_poursuite))
             connection.commit()
 
-    # TODO si delete, retourner
+    # TODO si delete, retourner true ?
     def update_contrevenant(self, id_business, modif_request):
         contrevenant = _build_contravention(modif_request)
         self.update_adresse(id_business, contrevenant)
@@ -373,7 +374,7 @@ class Database:
         self.update_statut(id_business, contrevenant)
         self.update_date_statut(id_business, contrevenant)
 
-    # TODO si delete, retourner
+    # TODO si delete, retourner true ?
     def update_contravention(self, id_poursuite,
                              modif_request):
         contravention = _build_contravention(modif_request)
