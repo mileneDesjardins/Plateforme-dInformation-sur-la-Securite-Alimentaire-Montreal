@@ -1,10 +1,10 @@
 import hashlib
 import json
-<<<<<<< HEAD
+
 import sqlite3
-=======
+
 import os
->>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
+
 import subprocess
 import uuid
 from urllib.parse import unquote
@@ -13,15 +13,15 @@ from apscheduler.triggers.cron import CronTrigger
 from flask import Flask, g, request, redirect, Response, session, url_for
 from flask import render_template
 from flask import Flask, jsonify
-<<<<<<< HEAD
+
 
 from IDRessourceNonTrouve import IDRessourceNonTrouve
 from database import Database, _build_contravention
-=======
+
 from flask.cli import load_dotenv
 
 from database import Database
->>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
+
 from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
 import xml.etree.ElementTree as ET
@@ -31,12 +31,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
-<<<<<<< HEAD
+
 from schema import inspection_insert_schema, contrevenant_update_schema, \
     contravention_update_schema
-=======
+
 from authorization_decorator import login_required
->>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
+
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")

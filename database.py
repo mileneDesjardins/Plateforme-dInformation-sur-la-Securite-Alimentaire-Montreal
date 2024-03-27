@@ -436,18 +436,12 @@ class Database:
             (courriel,))
         return cursor.fetchone()
 
-<<<<<<< HEAD
     # DEMANDE D'INSPECTION
-=======
-<<<<<<< HEAD
-    # DEMANDE D'INSPECTION
-=======
-        # Méthode pour mettre à jour les établissements choisis pour un utilisateur
+
+    # Méthode pour mettre à jour les établissements choisis pour un utilisateur
     def update_user_etablissements(self, id_user, new_etablissements):
         connection = self.get_user_connection()
         cursor = connection.cursor()
->>>>>>> 20a54fa4a61291096a07aefefa7dbe43e82cc510
->>>>>>> e33b416db1d0ce3bb61da59882939e7da6c507d3
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:
