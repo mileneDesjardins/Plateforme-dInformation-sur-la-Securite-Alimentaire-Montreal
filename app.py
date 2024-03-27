@@ -1,5 +1,6 @@
 import hashlib
 import json
+import sqlite3
 import subprocess
 import uuid
 from urllib.parse import unquote
@@ -264,6 +265,27 @@ def modify_contravention(id_business):
         return jsonify(modified_objects)
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
+
+
+@app.route('/api/contraventions/<id_business>/<id_poursuite>',
+           methods=['DELETE'])
+def delete_contravention(id_business, id_poursuite):
+    try:
+        Database.get_db().delete_contravention(id_business, id_poursuite)
+        return jsonify("La contravention a bien été supprimée"), 200
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue :"), 500
+
+
+@app.route('/api/contrevenant/<id_business>',
+           methods=['DELETE'])
+def delete_contrevenant(id_business):
+    try:
+        print(id_business)
+        Database.get_db().delete_contrevenant(id_business)
+        return jsonify("Le contrevenant bien été suppimé"), 200
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue"), 500
 
 
 @app.route('/modal', methods=['POST'])
