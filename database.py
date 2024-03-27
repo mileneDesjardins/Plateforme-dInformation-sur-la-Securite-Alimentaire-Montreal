@@ -192,6 +192,7 @@ class Database:
             "ORDER BY etablissement")
         cursor.execute(query)
         results = cursor.fetchall()
+        print(results)
         return results
 
     def get_info_contrevenant_by_name(self, etablissement):

@@ -34,8 +34,8 @@ function onFastSearchSubmit() {
 }
 
 function OnGetInfoEtablissementSubmit() {
-    let etablissement = document.getElementById('select-etablissement').value;
-    let apiUrl = `/api/info-etablissement/${etablissement}`;
+    let id_business = document.getElementById('select-etablissement').value;
+    let apiUrl = `/api/contrevenants/${id_business}`;
 
     fetch(apiUrl)
         .then(response => response.json())

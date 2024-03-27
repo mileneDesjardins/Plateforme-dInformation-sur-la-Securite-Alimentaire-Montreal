@@ -58,7 +58,6 @@ def index():
     titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
-    print(script)
 
     if "id" in session:
         id_user = session.get("id_user")
@@ -353,12 +352,12 @@ def contrevenants(date1, date2):
     return jsonify(results)
 
 
-# A6 TODO changer pour /api/contrevenant/<nom_etablissement>
-@app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
-def info_etablissements(etablissement):
+# A6
+@app.route('/api/contrevenants/<id_business>', methods=['GET'])
+def info_etablissements(id_business):
     db = Database.get_db()
     # TODO valider
-    etablissement = db.get_info_contrevenant_by_name(etablissement)
+    etablissement = db.get_info_contrevenant_by_id(id_business)
     return jsonify(etablissement)
 
 
