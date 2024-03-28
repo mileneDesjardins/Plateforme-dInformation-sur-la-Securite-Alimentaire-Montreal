@@ -324,9 +324,11 @@ types:
         responses:
           200:
             description: L'établissement a bien été supprimé de la base de données.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
           404:
             description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
-  /contravention:
+  /contraventions:
     patch:
       description: Modifie partiellement les informations d'une contravention, selon les modifications spécifiées.
       body:
@@ -371,19 +373,32 @@ types:
                     }
                   ]
             400:
-            description: Une erreur reliée au schéma JSON a été rencontrée.
-            body:
-              application/json:
-              example: |
-                {
-                  "error": "Error validating against schema",
-                  "errors": [
-                    "'id_business' is a required property"
-                  ]
-                }
+              description: Une erreur reliée au schéma JSON a été rencontrée.
+              body:
+                application/json:
+                example: |
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                      "'id_business' is a required property"
+                    ]
+                  }
+            404:
+              description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
+    /{id_poursuite}:
+      uriParameters:
+        id_poursuite:
+          description: L'identifiant unique de la contravention à modifier.
+          type: integer
+      delete:
+        description: Supprime contravention correspondant au Id spécifié en paramètre de la base de données.
+        responses:
+          200:
+            description: La contravention a bien été supprimée.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
           404:
-            description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
-
+            description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
 
 
 
@@ -478,6 +493,8 @@ types:
         responses:
           200:
             description : La demande d'inspection a bien été supprimée.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
           404:
             description : Le ID spécifié ne correspond à aucune demande d'inspection.
 

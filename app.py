@@ -345,8 +345,7 @@ def contrevenants(date1, date2):
 def info_etablissements(id_business):
     try:
         validates_is_integer(id_business, "Le id_business")
-        db = Database.get_db()
-        etablissement = db.get_info_contrevenant(id_business)
+        etablissement = Database.get_db().get_info_contrevenant(id_business)
         return jsonify(etablissement)
     except ValueError as e:
         error_msg = {"error": str(e)}
@@ -374,7 +373,8 @@ def modify_contrevenant(id_business):
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
         return jsonify(
-            "Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.")
+            "Une erreur est survenue sur le serveur. "
+            "Veuillez réessayer plus tard.")
 
 
 @app.route('/api/contraventions', methods=['PATCH'])
@@ -383,21 +383,22 @@ def modify_contravention():
     modifs_requests = request.get_json()
     modified_objects = []
     try:
-        db = Database.get_db()
-        for modifs_request in modifs_requests:
-            id_poursuite = modifs_request.get('id_poursuite')
-            print("ok")
-            validates_is_integer(id_poursuite, "Le id_poursuite")
-            print("good")
-            db.update_contravention(id_poursuite, modifs_request)
-            modified_objects.append(
-                db.get_info_poursuite(id_poursuite))
-        return jsonify(modified_objects)
+        return update_contraventions(modified_objects, modifs_requests)
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
+
+#TODO pas une route, mais ailleurs ? ou juste plus bas ?
+def update_contraventions(modified_objects, modifs_requests):
+    db = Database.get_db()
+    for modifs_request in modifs_requests:
+        id_poursuite = modifs_request.get('id_poursuite')
+        validates_is_integer(id_poursuite, "Le id_poursuite")
+        db.update_contravention(id_poursuite, modifs_request)
+        modified_objects.append(db.get_info_poursuite(id_poursuite))
+    return jsonify(modified_objects)
 
 
 @app.route('/api/contraventions/<id_poursuite>',
