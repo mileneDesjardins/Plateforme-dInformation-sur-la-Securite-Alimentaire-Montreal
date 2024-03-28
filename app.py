@@ -321,7 +321,7 @@ def count_contraventions(contraventions):
     return occurrences
 
 
-# A4 TODO rechanger route ?
+# A4 TODO rechanger route pour mettre query parameter
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
