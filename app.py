@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import g, request, redirect, Response, session, url_for
-from flask import render_template, Flask, jsonify
+from flask import render_template, Flask, jsonify, make_response
 from IDRessourceNonTrouve import IDRessourceNonTrouve
 from flask.cli import load_dotenv
 from database import Database
@@ -24,6 +24,7 @@ from schema import inspection_insert_schema, contrevenant_update_schema, \
 from authorization_decorator import login_required
 from validations import validates_dates, is_empty, doesnt_exist, is_incomplete, \
     validates_is_integer
+from basic_auth_decorator import basic_auth_required
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
@@ -375,7 +376,7 @@ def modify_contrevenant(id_business):
             "Veuillez réessayer plus tard.")
 
 
-# TODO deplacer
+# TODO deplacer?
 def update_contrevenant(id_business, modifs_request):
     validates_is_integer(id_business, "Le id_business")
     Database.get_db().update_contrevenant(id_business, modifs_request)
@@ -438,7 +439,6 @@ def delete_contrevenant(id_business):
         return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue", e), 500
-
 
 @app.route('/modal', methods=['POST'])
 def modal_etablissements():
