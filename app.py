@@ -316,8 +316,10 @@ def before_request():
 
 def extract_and_update_data(session):
     print("Extraction et mise à jour des données en cours...")
+
     # Code pour extraire et mettre à jour les données
     download_csv()
+
     print("Extraction et mise à jour des données terminées.")
 
     # Appel à la fonction de détection et de notification des nouvelles contraventions
