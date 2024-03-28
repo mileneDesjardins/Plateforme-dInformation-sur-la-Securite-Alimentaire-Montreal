@@ -147,7 +147,6 @@ types:
       nom_client: string
       prenom_client: string
       description: string
-
     additionalProperties: false
     example: |
       {
@@ -164,6 +163,25 @@ types:
         "statut": "Ouvert",
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
+      }
+  DemandeInspectionQuery:
+    type: object
+    properties:
+      etablissement: string
+      adresse: string
+      ville: string
+      date_visite: string
+      nom_complet_client: string
+      description: string
+    additionalProperties: false
+    example: |
+      {
+        "etablissement": "Nom Établissement",
+        "adresse": "123 avenue Chemin, Québec",
+        "ville": "Montréal",
+        "date_visite": "2022-11-05",
+        "nom_complet_client": "Prenom Nom",
+        "description": "Personnes affectées à la consommation de produits",
       }
   user:
     type: object
@@ -455,39 +473,42 @@ types:
                   Nom Établissement, 5
                   Autre Établissement, 3
 
-    /demande-inspection:
-      post:
-        description: Crée une demande d'inspection à la ville.
-        responses:
-          201:
-            description: La demande d'inspection a bien été créée.
-            body:
-              application/json:
-                type: DemandeInspection
-                example: |
-                  {
-                   "id": 45,
-                   "etablissement": Restaurant XYZ,
-                   "adresse": "123 rue LeChemin",
-                   "ville": "VilleCity",
-                   "date_visite": "2022-11-05",
-                   "nom_client": "Joe",
-                   "prenom_client": "Dane",
-                   "Description": "Aliments insalubres",
-                  }
-          400:
-            description: Une erreur reliée au schéma JSON a été rencontrée.
-            body:
-              application/json:
-                example: |
-                  {
-                    "error": "Error validating against schema",
-                    "errors": [
-                    "'ville' is a required property",
-                    "Additional properties are not allowed ('vlle' was unexpected)"
-                    ]
-                  }
-
+  /demande-inspection:
+    post:
+      description: Crée une demande d'inspection à la ville.
+      body:
+        application/json:
+          type: DemandeInspectionQuery
+      responses:
+        201:
+          description: La demande d'inspection a bien été créée.
+          body:
+            application/json:
+              type: DemandeInspection
+              example: |
+                {
+                 "id": 45,
+                 "etablissement": Restaurant XYZ,
+                 "adresse": "123 rue LeChemin",
+                 "ville": "VilleCity",
+                 "date_visite": "2022-11-05",
+                 "nom_client": "Joe",
+                 "prenom_client": "Dane",
+                 "Description": "Aliments insalubres",
+                }
+        400:
+          description: Une erreur reliée au schéma JSON a été rencontrée.
+          body:
+            application/json:
+              example: |
+                {
+                  "error": "Error validating against schema",
+                  "errors": [
+                  "'ville' is a required property",
+                  "Additional properties are not allowed ('vlle' was unexpected)"
+                  ]
+                }
+    /{id_demande_inspection}:
       delete:
         description: Supprime une demande d'inspection à la ville selon le ID spécifié en paramètre.
         responses:

@@ -464,17 +464,25 @@ def demande_inspection():
 @schema.validate(inspection_insert_schema)
 def supprimer_inspection(id_demande):
     try:
-        validates_is_integer(id_demande, "Le id_demande")
-        demande = Database.get_db().get_demande_inspection(id_demande)
-        if demande is None:
-            return jsonify(
-                "Le ID " + id_demande + " ne correspond à aucune demande "
-                                        "d\'inspection."), 404
-        Database.get_db().delete_demande_inspection(id_demande)
-        return jsonify("La demande a bien été supprimée."), 200
+        return delete_demande_inspection(id_demande)
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
+    except Exception as e:
+        return jsonify(
+            error="Une erreur est survenue sur le serveur. Veuillez "
+                  "réessayer plus tard"), 500
+
+#TODO deplacer
+def delete_demande_inspection(id_demande):
+    validates_is_integer(id_demande, "Le id_demande")
+    demande = Database.get_db().get_demande_inspection(id_demande)
+    if demande is None:
+        return jsonify(
+            "Le ID " + id_demande + " ne correspond à aucune demande "
+                                    "d\'inspection."), 404
+    Database.get_db().delete_demande_inspection(id_demande)
+    return jsonify("La demande a bien été supprimée."), 200
 
 
 # C1
