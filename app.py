@@ -16,7 +16,6 @@ from flask.cli import load_dotenv
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
 
-
 from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
 from user import User
@@ -289,7 +288,8 @@ def extract_and_update_data():
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=extract_and_update_data,
-                  trigger=CronTrigger(second='*/5'))  # déclenchée à minuit (0 heure, 0 minute)
+                  trigger=CronTrigger(hour=0,
+                                      minute=0))  # déclenchée à minuit (0 heure, 0 minute)
 
 scheduler.start()  # démarre le planificateur
 
@@ -374,7 +374,8 @@ def modify_contrevenant(id_business):
             "Une erreur est survenue sur le serveur. "
             "Veuillez réessayer plus tard.")
 
-#TODO deplacer
+
+# TODO deplacer
 def update_contrevenant(id_business, modifs_request):
     validates_is_integer(id_business, "Le id_business")
     Database.get_db().update_contrevenant(id_business, modifs_request)
