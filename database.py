@@ -1,6 +1,8 @@
 import datetime
 import sqlite3
 import csv
+from enum import Enum
+
 from flask import g, json
 from datetime import datetime
 
@@ -8,6 +10,29 @@ from IDRessourceNonTrouve import IDRessourceNonTrouve
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 from validations import validates_format_iso
+
+
+class Cols(Enum):
+    """
+    Enumérations représentant les colonnes du schéma de la
+    table SQL Contravention.
+    """
+    ID_POURSUITE = 0
+    ID_BUSINESS = 1
+    DATE = 2
+    DESCRIP = 3
+    ADRESSE = 4
+    DATE_JUG = 5
+    ETAB = 6
+    MONTANT = 7
+    PROPRIO = 8
+    VILLE = 9
+    STATUT = 10
+    DATE_STA = 11
+    CAT = 12
+    TSP_CSV = 13
+    TSP_MOD = 14
+    DELETED = 15
 
 
 def _build_contravention_dict(query_result):
@@ -47,6 +72,55 @@ def _build_contravention(modifs_request):
         categorie=modifs_request.get('categorie')
     )
     return contrevenant
+
+
+def can_be_update(timestamp_modif, timestamp_csv):
+    if timestamp_modif is None:
+        return True
+    if isinstance(timestamp_modif, str):
+        timestamp_modif = datetime.strptime(timestamp_modif,
+                                            '%Y-%m-%d %H:%M:%S.%f')
+    if isinstance(timestamp_csv, str):
+        timestamp_csv = datetime.strptime(timestamp_csv,
+                                          '%Y-%m-%d %H:%M:%S.%f')
+    return timestamp_csv > timestamp_modif
+
+
+def update_record(cursor, date, date_jugement, date_statut,
+                  existing_data, row):
+    if can_be_update(existing_data[Cols.TSP_MOD.value],
+                     existing_data[Cols.TSP_CSV.value]):
+        current_time = datetime.now()
+        query = (
+            "UPDATE Contravention SET date=?, description=?, adresse=?, "
+            "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
+            "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+            "WHERE id_poursuite=? AND id_business=?")
+        params = (date, row[Cols.DESCRIP.value], row[Cols.ADRESSE.value],
+                  date_jugement, row[Cols.ETAB.value],
+                  row[Cols.MONTANT.value], row[Cols.PROPRIO.value],
+                  row[Cols.VILLE.value], row[Cols.STATUT.value],
+                  date_statut, row[Cols.CAT.value], current_time,
+                  row[Cols.ID_POURSUITE.value], row[Cols.ID_BUSINESS.value])
+        cursor.execute(query, params)
+
+
+def insert_new_record(cursor, date, date_jugement,
+                      date_statut, row):
+    current_time = datetime.now()
+    query = ("INSERT INTO Contravention(id_poursuite, id_business, date, "
+             "description, adresse, date_jugement, etablissement, montant, "
+             "proprietaire, ville, statut, date_statut, categorie, "
+             "timestamp_csv, deleted) "
+             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",)
+    params = (
+        row[Cols.ID_POURSUITE.value], row[Cols.ID_BUSINESS.value],
+        date, row[Cols.DESCRIP.value], row[Cols.ADRESSE.value],
+        date_jugement, row[Cols.ETAB.value], row[Cols.MONTANT.value],
+        row[Cols.PROPRIO.value], row[Cols.VILLE.value],
+        row[Cols.STATUT.value], date_statut, row[Cols.CAT.value],
+        current_time.value)
+    cursor.execute(query, params)
 
 
 class Database:
@@ -139,11 +213,10 @@ class Database:
 
             self.contravention_connection.commit()
 
-    def update_contraventions_from_csv(self, csv_file):
+    def update_contraventions_from(self, csv_file):
         with open(csv_file, 'r', encoding='utf-8') as file:
             contenu = csv.reader(file)
             cursor = self.get_contravention_connection().cursor()
-
             # Ignorer la première ligne (en-tête)
             next(contenu)
 
@@ -159,63 +232,28 @@ class Database:
                     continue
 
                 try:
-                    current_time = datetime.now()
                     # Vérifier si les données existent déjà dans la base de données
                     cursor.execute(
-                        "SELECT * FROM Contravention WHERE id_poursuite=? AND id_business=?",
-                        (row[0], row[1])
+                        "SELECT * FROM Contravention WHERE id_poursuite=? "
+                        "AND id_business=?",
+                        (row[Cols.ID_POURSUITE.value],
+                         row[Cols.ID_BUSINESS.value])
                     )
                     existing_data = cursor.fetchone()
-
                     if existing_data is not None:
-
-                        # Si lenrgistrement n'a pas ete modifie depuis le dernier update, mettre a jour
-
-                        if self.can_be_update(existing_data[14],
-                                              existing_data[13]):
-                            # Mettre à jour les données existantes dans la base de données
-                            cursor.execute(
-                                "UPDATE Contravention SET date=?, description=?, adresse=?, "
-                                "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
-                                "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
-                                "WHERE id_poursuite=? AND id_business=?",
-                                (date, row[3], row[4], date_jugement, row[6],
-                                 row[7], row[8], row[9],
-                                 row[10], date_statut, row[12], current_time,
-                                 row[0], row[1])
-                            )
+                        update_record(cursor, date, date_jugement,
+                                      date_statut, existing_data, row)
                     else:
                         # Insérer les nouvelles données dans la base de données
-                        cursor.execute(
-                            "INSERT INTO Contravention(id_poursuite, id_business, date, "
-                            "description, adresse, date_jugement, etablissement, montant, "
-                            "proprietaire, ville, statut, date_statut, categorie, timestamp_csv, deleted) "
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",
-                            (row[0], row[1], date, row[3], row[4],
-                             date_jugement, row[6], row[7], row[8],
-                             row[9], row[10], date_statut, row[12],
-                             current_time)
-                        )
+                        insert_new_record(cursor, date, date_jugement,
+                                          date_statut, row)
                 except Exception as e:
-                    # Gérer les erreurs
                     print(
                         f"Erreur lors de la mise à jour pour la ligne: {row}")
                     print(f"Erreur détaillée: {e}")
                     continue
 
             self.contravention_connection.commit()
-
-    def can_be_update(self, timestamp_modif, timestamp_csv):
-        if timestamp_modif is None:
-            return True
-        if isinstance(timestamp_modif, str):
-            timestamp_modif = datetime.strptime(timestamp_modif,
-                                                '%Y-%m-%d %H:%M:%S.%f')
-        if isinstance(timestamp_csv, str):
-            timestamp_csv = datetime.strptime(timestamp_csv,
-                                              '%Y-%m-%d %H:%M:%S.%f')
-
-        return timestamp_csv > timestamp_modif
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()

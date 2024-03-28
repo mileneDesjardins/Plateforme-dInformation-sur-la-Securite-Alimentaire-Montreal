@@ -21,7 +21,7 @@ with open(temp_file.name, 'r', encoding='utf-8') as csv_file:
     contenu = csv.reader(csv_file)
 
     # Appel de la fonction pour insérer les contraventions depuis le CSV
-    db.update_contraventions_from_csv(csv_file.name)
+    db.update_contraventions_from(csv_file.name)
     print("ok gg")
 # Nettoyer le fichier temporaire
 os.unlink(temp_file.name)
