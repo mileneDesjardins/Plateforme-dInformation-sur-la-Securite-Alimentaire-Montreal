@@ -4,17 +4,18 @@ import sqlite3
 import os
 import subprocess
 import uuid
+import atexit
+import sys
+import xml.etree.ElementTree as ET
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import g, request, redirect, Response, session, url_for
-from flask import render_template
-from flask import Flask, jsonify
+from flask import render_template, Flask, jsonify
 from IDRessourceNonTrouve import IDRessourceNonTrouve
 from flask.cli import load_dotenv
 from database import Database
 from flask_json_schema import JsonValidationError, JsonSchema
-import atexit
-import xml.etree.ElementTree as ET
+
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
@@ -280,16 +281,16 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
-# A3
+# A3 TODO verifier que jai bien remis la bonne heure
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
-    subprocess.run(["python", "telechargement.py"])
+    subprocess.run([sys.executable, "sync_database.py"])
 
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=extract_and_update_data,
-                  trigger=CronTrigger(hour=0,
-                                      minute=0))  # déclenchée à minuit (0 heure, 0 minute)
+                  trigger=CronTrigger(second='*/5'))  # déclenchée à minuit (0 heure, 0 minute)
+
 scheduler.start()  # démarre le planificateur
 
 # Shut down the scheduler when exiting the app
@@ -330,7 +331,7 @@ def contrevenants(date1, date2):
         results = db.get_contraventions_between(date1, date2)
         if is_empty(results):
             return jsonify(results), 404
-        return jsonify(results)
+        return jsonify(results), 200
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
@@ -362,10 +363,7 @@ def info_etablissements(id_business):
 def modify_contrevenant(id_business):
     modifs_request = request.get_json()
     try:
-        validates_is_integer(id_business, "Le id_business")
-        Database.get_db().update_contrevenant(id_business, modifs_request)
-        modified = Database.get_db().get_info_contrevenant(id_business)
-        return jsonify(modified), 200
+        return update_contrevenant(id_business, modifs_request)
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
@@ -375,6 +373,13 @@ def modify_contrevenant(id_business):
         return jsonify(
             "Une erreur est survenue sur le serveur. "
             "Veuillez réessayer plus tard.")
+
+#TODO deplacer
+def update_contrevenant(id_business, modifs_request):
+    validates_is_integer(id_business, "Le id_business")
+    Database.get_db().update_contrevenant(id_business, modifs_request)
+    modified = Database.get_db().get_info_contrevenant(id_business)
+    return jsonify(modified), 200
 
 
 @app.route('/api/contraventions', methods=['PATCH'])
@@ -390,7 +395,8 @@ def modify_contravention():
     except IDRessourceNonTrouve as e:
         return jsonify("La ressource n'a pu être modifée.", e.message), 404
 
-#TODO pas une route, mais ailleurs ? ou juste plus bas ?
+
+# TODO pas une route, mais ailleurs ? ou juste plus bas ?
 def update_contraventions(modified_objects, modifs_requests):
     db = Database.get_db()
     for modifs_request in modifs_requests:
@@ -473,7 +479,8 @@ def supprimer_inspection(id_demande):
             error="Une erreur est survenue sur le serveur. Veuillez "
                   "réessayer plus tard"), 500
 
-#TODO deplacer
+
+# TODO deplacer
 def delete_demande_inspection(id_demande):
     validates_is_integer(id_demande, "Le id_demande")
     demande = Database.get_db().get_demande_inspection(id_demande)
