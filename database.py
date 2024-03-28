@@ -124,6 +124,13 @@ class Database:
 
             self.contravention_connection.commit()
 
+    def detect_contraventions(self):
+        # Code pour détecter les nouvelles contraventions
+        new_contraventions = self.get_contraventions_between(
+            datetime.min, datetime.now())
+        return new_contraventions
+
+
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
@@ -212,6 +219,12 @@ class Database:
             "WHERE courriel=?"),
             (courriel,))
         return cursor.fetchone()
+
+    def get_all_users(self):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM User")
+        return cursor.fetchall()
 
         # Méthode pour mettre à jour les établissements choisis pour un utilisateur
     def update_user_etablissements(self, id_user, new_etablissements):

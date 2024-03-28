@@ -1,31 +1,35 @@
+import atexit
 import hashlib
 import json
 import os
-import subprocess
+import smtplib
 import uuid
-
-from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect, Response, session, url_for
-from flask import render_template
-from flask import Flask, jsonify
-from flask.cli import load_dotenv
-
-from database import Database
-from flask_json_schema import JsonValidationError, JsonSchema
-import atexit
 import xml.etree.ElementTree as ET
+from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
+import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from flask import (Flask, jsonify, g, request, redirect, Response, session,
+                   url_for, render_template)
+from flask.cli import load_dotenv
+from flask_json_schema import JsonValidationError, JsonSchema
 
+from authorization_decorator import login_required
+# from contravention_detector import detect_new_contraventions_and_notify
+from database import Database
 from demande_inspection import DemandeInspection
 from schema import inspection_insert_schema, valider_new_user_schema
+from telechargement import download_csv
 from user import User
-from authorization_decorator import login_required
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+scheduler = BackgroundScheduler()
 
 
 @app.teardown_appcontext
@@ -88,6 +92,7 @@ def plainte_envoyee():
     return render_template('confirmation_plainte.html')
 
 
+# E1
 @app.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     titre = 'Création utilisateur'
@@ -99,6 +104,7 @@ def create_user():
                                etablissements=etablissements, script=script)
 
 
+# E1
 @app.route('/api/new-user', methods=['POST'])
 @schema.validate(valider_new_user_schema)
 def new_user():
@@ -151,12 +157,14 @@ def new_user():
                   "signalée à l'équipe de développement."), 500
 
 
+# E1
 @app.route('/confirmation-new-user', methods=['GET'])
 def confirmation_user():
     titre = 'Création de compte réussie'
     return render_template('confirmation_user.html', titre=titre)
 
 
+# E2
 @app.route('/connection', methods=['GET', 'POST'])
 def connection():
     titre = "Connexion"
@@ -186,6 +194,7 @@ def connection():
                                           "vérifier vos informations")
 
 
+# E2
 @app.route('/disconnection')
 @login_required
 def disconnection():
@@ -193,23 +202,27 @@ def disconnection():
     return redirect("/")
 
 
+# E2
 def est_incomplet():
     return render_template('connection.html',
                            erreur="Veuillez remplir tous les champs")
 
 
+# E2
 def nexiste_pas():
     return render_template('connection.html',
                            erreur="Utilisateur inexistant, veuillez "
                                   "vérifier vos informations")
 
 
+# E2
 def obtenir_mdp_hash(mdp, user):
     salt = user[5]
     mdp_hash = hashlib.sha512(str(mdp + salt).encode("utf-8")).hexdigest()
     return mdp_hash
 
 
+# E2
 def creer_session(user):
     id_session = uuid.uuid4().hex
     session["id"] = id_session
@@ -219,6 +232,7 @@ def creer_session(user):
     return redirect('/', 302)
 
 
+# E2
 @app.route('/compte', methods=['GET', 'POST'])
 @login_required
 def compte():
@@ -278,6 +292,7 @@ def compte():
         return redirect(url_for('confirmation_modifs_user'))
 
 
+# E2
 @app.route('/photo/<id_photo>')
 def photo(id_photo):
     photo_data = Database.get_db().get_photo(id_photo)
@@ -285,25 +300,144 @@ def photo(id_photo):
         return Response(photo_data, mimetype='application/octet-stream')
 
 
+# E2
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():
     titre = 'Modifications enregistrées'
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
-# A3
-def extract_and_update_data():
-    # Appeler le script de téléchargement et d'insertion des données
-    subprocess.run(["python", "telechargement.py"])
+@app.before_request
+def before_request():
+    if not request.path.startswith('/static'):
+        extract_and_update_data(session)
+        detect_new_contraventions(session)
 
 
-scheduler = BackgroundScheduler()
+def extract_and_update_data(session):
+    print("Extraction et mise à jour des données en cours...")
+    # Code pour extraire et mettre à jour les données
+    download_csv()
+    print("Extraction et mise à jour des données terminées.")
+
+    # Appel à la fonction de détection et de notification des nouvelles contraventions
+    new_contraventions = detect_new_contraventions(session)
+    return new_contraventions
+
+
+def detect_new_contraventions(session):
+    try:
+        db = Database.get_db()
+
+        # Récupérer la dernière date de vérification des nouvelles contraventions
+        last_check_date = session.get("last_check_date")
+
+        # S'il s'agit de la première vérification, utiliser une date antérieure pour obtenir toutes les contraventions
+        if last_check_date is None:
+            last_check_date = datetime.min
+
+        # Récupérer toutes les contraventions ajoutées depuis la dernière vérification
+        new_contraventions = db.get_contraventions_between(
+            last_check_date, datetime.now())
+
+        # Mettre à jour la dernière date de vérification
+        session["last_check_date"] = datetime.now()
+
+        # Si de nouvelles contraventions ont été détectées, appeler la fonction notify_users
+        if new_contraventions:
+            notify_users(new_contraventions)
+
+        # Retourner la liste des nouvelles contraventions
+        return new_contraventions
+    except Exception as e:
+        # Enregistrer l'erreur ou la gérer de manière appropriée
+        print(f"Une erreur s'est produite : {e}")
+        return []
+
+
+def notify_users(new_contraventions):
+    db = Database.get_db()
+    users = db.get_all_users()
+    # Lecture des adresses des destinataires depuis le fichier de configuration YAML
+    with open('config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+        destinataires_config = config[
+            'destinataires']  # Supposons que vous avez une clé 'destinataires' dans votre fichier de configuration
+
+    # Initialiser un ensemble pour stocker tous les destinataires
+    destinataires = set()
+
+    # Parcourir chaque nouvelle contravention
+    for contravention in new_contraventions:
+        # Récupérer les destinataires spécifiques à cette contravention
+        destinataires_contravention = set()
+
+        # Parcourir chaque utilisateur
+        for user in users:
+            # Vérifier si cette contravention est surveillée par l'utilisateur
+            if contravention in user.choix_etablissements:
+                # Ajouter l'utilisateur à la liste des destinataires de cette contravention
+                destinataires_contravention.add(user.courriel)
+
+        # Ajouter les destinataires spécifiques à cette contravention à l'ensemble global de destinataires
+        destinataires.update(destinataires_contravention)
+
+    # Ajouter les destinataires du fichier de configuration YAML, s'il y en a
+    if destinataires_config:
+        destinataires.update(destinataires_config)
+
+    # Envoyer un courriel à tous les destinataires pour chaque contravention
+    for destinataire in destinataires:
+        send_courriel(destinataire, [
+            "Nouvelle contravention à l'établissement {}".format(
+                contravention)])
+
+
+def send_courriel(destinataires, contraventions):
+    # Lecture de l'adresse de l'expéditeur et d'autres informations depuis le fichier de configuration YAML
+    with open('config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+        expediteur = config['expediteur']
+        smtp_server = config['smtp_server']
+        smtp_port = config['smtp_port']
+        smtp_courriel = config['smtp_courriel']
+        smtp_password = config['smtp_password']
+
+    # Boucle sur tous les destinataires pour envoyer le courriel à chacun
+    for destinataire in destinataires:
+        # Construction du message
+        msg = MIMEMultipart()
+        msg['From'] = expediteur
+        msg['To'] = destinataire
+        msg['Subject'] = 'Nouvelles contraventions détectées'
+
+        body = "\n".join(contraventions)
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Envoi du message
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_courriel, smtp_password)
+            server.send_message(msg)
+
+
+# Ajouter les tâches planifiées au planificateur
 scheduler.add_job(func=extract_and_update_data,
-                  trigger=CronTrigger(hour=0,
-                                      minute=0))  # déclenchée à minuit (0 heure, 0 minute)
-scheduler.start()  # démarre le planificateur
+                  trigger=IntervalTrigger(seconds=5))
+scheduler.add_job(func=detect_new_contraventions,
+                  trigger=IntervalTrigger(seconds=5))
 
-# Shut down the scheduler when exiting the app
+# TODO METTRE POUR MINUIT
+# scheduler.add_job(func=extract_and_update_data,
+#                   trigger=CronTrigger(hour=0, minute=0))
+# scheduler.add_job(func=detect_new_contraventions_and_notify,
+#                   trigger=CronTrigger(hour=0, minute=0))
+
+
+# Démarrez le planificateur
+scheduler.start()
+
+# Enregistrez la fermeture du planificateur à la sortie
 atexit.register(lambda: scheduler.shutdown())
 
 
