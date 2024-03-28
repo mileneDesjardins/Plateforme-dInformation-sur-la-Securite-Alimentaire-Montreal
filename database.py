@@ -139,6 +139,84 @@ class Database:
 
             self.contravention_connection.commit()
 
+    def update_contraventions_from_csv(self, csv_file):
+        with open(csv_file, 'r', encoding='utf-8') as file:
+            contenu = csv.reader(file)
+            cursor = self.get_contravention_connection().cursor()
+
+            # Ignorer la première ligne (en-tête)
+            next(contenu)
+
+            for row in contenu:
+                try:
+                    # Convertir la date du format YYYYMMDD en un objet datetime
+                    date = datetime.strptime(row[2], '%Y%m%d').date()
+                    date_jugement = datetime.strptime(row[5], '%Y%m%d').date()
+                    date_statut = datetime.strptime(row[11], '%Y%m%d').date()
+                except ValueError:
+                    # Gérer les erreurs de format de date
+                    print(f"Erreur de format de date pour la ligne: {row}")
+                    continue
+
+                try:
+                    current_time = datetime.now()
+                    # Vérifier si les données existent déjà dans la base de données
+                    cursor.execute(
+                        "SELECT * FROM Contravention WHERE id_poursuite=? AND id_business=?",
+                        (row[0], row[1])
+                    )
+                    existing_data = cursor.fetchone()
+
+                    if existing_data is not None:
+
+                        # Si lenrgistrement n'a pas ete modifie depuis le dernier update, mettre a jour
+
+                        if self.can_be_update(existing_data[14],
+                                              existing_data[13]):
+                            # Mettre à jour les données existantes dans la base de données
+                            cursor.execute(
+                                "UPDATE Contravention SET date=?, description=?, adresse=?, "
+                                "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
+                                "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+                                "WHERE id_poursuite=? AND id_business=?",
+                                (date, row[3], row[4], date_jugement, row[6],
+                                 row[7], row[8], row[9],
+                                 row[10], date_statut, row[12], current_time,
+                                 row[0], row[1])
+                            )
+                    else:
+                        # Insérer les nouvelles données dans la base de données
+                        cursor.execute(
+                            "INSERT INTO Contravention(id_poursuite, id_business, date, "
+                            "description, adresse, date_jugement, etablissement, montant, "
+                            "proprietaire, ville, statut, date_statut, categorie, timestamp_csv, deleted) "
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",
+                            (row[0], row[1], date, row[3], row[4],
+                             date_jugement, row[6], row[7], row[8],
+                             row[9], row[10], date_statut, row[12],
+                             current_time)
+                        )
+                except Exception as e:
+                    # Gérer les erreurs
+                    print(
+                        f"Erreur lors de la mise à jour pour la ligne: {row}")
+                    print(f"Erreur détaillée: {e}")
+                    continue
+
+            self.contravention_connection.commit()
+
+    def can_be_update(self, timestamp_modif, timestamp_csv):
+        if timestamp_modif is None:
+            return True
+        if isinstance(timestamp_modif, str):
+            timestamp_modif = datetime.strptime(timestamp_modif,
+                                                '%Y-%m-%d %H:%M:%S.%f')
+        if isinstance(timestamp_csv, str):
+            timestamp_csv = datetime.strptime(timestamp_csv,
+                                              '%Y-%m-%d %H:%M:%S.%f')
+
+        return timestamp_csv > timestamp_modif
+
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
