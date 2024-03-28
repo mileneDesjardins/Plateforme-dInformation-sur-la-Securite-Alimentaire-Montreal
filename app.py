@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 from apscheduler.triggers.cron import CronTrigger
 from flask import g, request, redirect, Response, session, url_for
-from flask import render_template, Flask, jsonify, make_response
+from flask import render_template, Flask, jsonify
 from IDRessourceNonTrouve import IDRessourceNonTrouve
 from flask.cli import load_dotenv
 from database import Database
@@ -30,7 +30,8 @@ load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
+app.config['SITE_USER'] = os.getenv('SITE_USER')
+app.config['SITE_PASS'] = os.getenv('SITE_PASS')
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -360,6 +361,7 @@ def info_etablissements(id_business):
 
 
 @app.route('/api/contrevenants/<id_business>', methods=['PATCH'])
+@basic_auth_required
 @schema.validate(contrevenant_update_schema)
 def modify_contrevenant(id_business):
     modifs_request = request.get_json()
@@ -385,6 +387,7 @@ def update_contrevenant(id_business, modifs_request):
 
 
 @app.route('/api/contraventions', methods=['PATCH'])
+@basic_auth_required
 @schema.validate(contravention_update_schema)
 def modify_contravention():
     modifs_requests = request.get_json()
@@ -411,6 +414,7 @@ def update_contraventions(modified_objects, modifs_requests):
 
 @app.route('/api/contraventions/<id_poursuite>',
            methods=['DELETE'])
+@basic_auth_required
 def delete_contravention(id_poursuite):
     try:
         validates_is_integer(id_poursuite, "Le id_poursuite")
@@ -427,6 +431,7 @@ def delete_contravention(id_poursuite):
 
 @app.route('/api/contrevenant/<id_business>',
            methods=['DELETE'])
+@basic_auth_required
 def delete_contrevenant(id_business):
     try:
         validates_is_integer(id_business, "Le id_business")

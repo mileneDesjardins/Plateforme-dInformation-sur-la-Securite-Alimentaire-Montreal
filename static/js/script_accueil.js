@@ -3,7 +3,7 @@ const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès.";
 const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées.";
 const MSG_SUCCES_DELETE_CONTREVENANT = "Le contrevenant a bien été supprimé.";
 const MSG_ERROR_DELETE_CONTREVENANT = "Une erreur est survenue, le contrevenant n'a pu être supprimé."
-const MSG_SUCCES_DELETE_CONTRAVENTION = "La contravention a bien été suppimmée.";
+const MSG_SUCCES_DELETE_CONTRAVENTION = "La contravention a bien été supprimée.";
 const MSG_ERROR_DELETE_CONTRAVENTION = "Une erreur est survenue, la contravention n'a pu être supprimée."
 
 
