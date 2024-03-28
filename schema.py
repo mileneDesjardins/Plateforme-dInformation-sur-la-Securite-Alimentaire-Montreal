@@ -58,7 +58,7 @@ contravention_update_schema = {
         "type": "object",
         "properties": {
             "id_poursuite": {
-                "type": "number"
+                "type": "number",
             },
             "date": {
                 "type": "string",
@@ -75,7 +75,8 @@ contravention_update_schema = {
                 "type": "string"
             }
         },
-        "required": ["id_poursuite"]
+        "required": ["id_poursuite"],
+        'additionalProperties': False
     }
 }
 

@@ -386,8 +386,10 @@ def modify_contravention():
         db = Database.get_db()
         for modifs_request in modifs_requests:
             id_poursuite = modifs_request.get('id_poursuite')
-            db.update_contravention(id_poursuite,
-                                    modifs_request)
+            print("ok")
+            validates_is_integer(id_poursuite, "Le id_poursuite")
+            print("good")
+            db.update_contravention(id_poursuite, modifs_request)
             modified_objects.append(
                 db.get_info_poursuite(id_poursuite))
         return jsonify(modified_objects)
