@@ -1,12 +1,11 @@
-import datetime
-import sqlite3
 import csv
+import sqlite3
 import uuid
-
-from flask import g, json
+import datetime
 from datetime import datetime
 
-import user
+from flask import g, json
+
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 
@@ -25,7 +24,8 @@ def _build_contravention(query_result):
         "ville": query_result[9],
         "statut": query_result[10],
         "date_statut": query_result[11],
-        "categorie": query_result[12]
+        "categorie": query_result[12],
+        "date_importation": query_result[13]
     }
     return contravention
 
@@ -36,6 +36,7 @@ class Database:
         self.user_connection = None
         self.photo_connection = None
         self.demandes_inspection_connection = None
+        self.last_import_time = None
 
     @staticmethod
     def get_db():
@@ -53,7 +54,6 @@ class Database:
         if self.demandes_inspection_connection is not None:
             self.demandes_inspection_connection.close()
 
-
     # CONTRAVENTION
     def get_contravention_connection(self):
         if self.contravention_connection is None:
@@ -70,24 +70,26 @@ class Database:
         for row in cursor.fetchall():
             (id_poursuite, id_business, date, description, adresse,
              date_jugement, etablissement, montant, proprietaire, ville,
-             statut, date_statut, categorie) = row
+             statut, date_statut, categorie, date_importation) = row
             contravention = Contravention(id_poursuite, id_business, date,
                                           description, adresse,
                                           date_jugement, etablissement,
                                           montant, proprietaire, ville,
-                                          statut, date_statut, categorie)
+                                          statut, date_statut, categorie, date_importation)
             contraventions.append(contravention)
         return contraventions
 
     def insert_contraventions_from_csv(self, csv_file):
+        new_data_inserted = False  # Variable pour suivre si de nouvelles données ont été insérées
         with open(csv_file, 'r', encoding='utf-8') as file:
             contenu = csv.reader(file)
             cursor = self.get_contravention_connection().cursor()
             insertion = (
                 "INSERT INTO Contravention(id_poursuite, id_business, date, "
                 "description, adresse, date_jugement, etablissement, montant, "
-                "proprietaire, ville, statut, date_statut, categorie) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                "proprietaire, ville, statut, date_statut, categorie, "
+                "date_importation) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
             # Ignorer la première ligne (en-tête)
             next(contenu)
@@ -98,6 +100,7 @@ class Database:
                     date = datetime.strptime(row[2], '%Y%m%d').date()
                     date_jugement = datetime.strptime(row[5], '%Y%m%d').date()
                     date_statut = datetime.strptime(row[11], '%Y%m%d').date()
+                    date_importation = datetime.now()
                 except ValueError:
                     # Gérer les erreurs de format de date
                     print(f"Erreur de format de date pour la ligne: {row}")
@@ -109,12 +112,13 @@ class Database:
                         row[0], row[1], date, row[3], row[4], date_jugement,
                         row[6],
                         row[7],
-                        row[8], row[9], row[10], date_statut, row[12]))
+                        row[8], row[9], row[10], date_statut, row[12], date_importation))
+                    new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
-                    print(
-                        f"Ignorer l'insertion pour id_poursuite existant: "
-                        f"{row[0]}")
+                    # print(
+                    #     f"Ignorer l'insertion pour id_poursuite existant: "
+                    #     f"{row[0]}")
                     continue
                 except Exception as e:
                     # Gérer les autres erreurs
@@ -124,12 +128,39 @@ class Database:
 
             self.contravention_connection.commit()
 
-    def detect_contraventions(self):
-        # Code pour détecter les nouvelles contraventions
-        new_contraventions = self.get_contraventions_between(
-            datetime.min, datetime.now())
-        return new_contraventions
+        if new_data_inserted:
+            print("Nouvelles données insérées avec succès.")
+        else:
+            print("Aucune nouvelle donnée insérée.")
 
+    def get_new_contraventions(self, last_import_time):
+        # Obtention de la connexion à la base de données des contraventions
+        connection = self.get_contravention_connection()
+        connection.set_trace_callback(print)
+        cursor = connection.cursor()
+
+        # Utiliser l'heure actuelle comme new_import_time
+        new_import_time = datetime.now()
+
+        print("last", last_import_time)
+        print("new", new_import_time)
+
+        # Requête pour récupérer les contraventions entre la dernière importation et l'heure actuelle
+        query = "SELECT * FROM Contravention WHERE date_importation > ? AND date_importation <= ?"
+
+        # Exécution de la requête avec les paramètres
+        cursor.execute(query, (last_import_time, new_import_time))
+
+        # Récupération de toutes les lignes retournées par la requête
+        rows = cursor.fetchall()
+
+        return rows
+
+    def update_last_import_time(self):
+        self.last_import_time = datetime.now()
+
+    def get_last_import_time(self):
+        return self.last_import_time
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
@@ -168,7 +199,7 @@ class Database:
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
-            "SELECT DISTINCT id_business, etablissement, adresse FROM "
+            "SELECT DISTINCT id_business, etablissement, adresse, date_importation FROM "
             "Contravention "
             "ORDER BY etablissement")
         cursor.execute(query)
@@ -227,6 +258,7 @@ class Database:
         return cursor.fetchall()
 
         # Méthode pour mettre à jour les établissements choisis pour un utilisateur
+
     def update_user_etablissements(self, id_user, new_etablissements):
         connection = self.get_user_connection()
         cursor = connection.cursor()
