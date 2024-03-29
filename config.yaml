@@ -1,2 +1,3 @@
-courriel_expediteur: villedemontreal@hotmail.com
-courriel_destinataire: monitoring@hotmail.com
+sender_email: "villedemontreal@hotmail.com"
+receiver_email: "milene123@hotmail.fr"
+
