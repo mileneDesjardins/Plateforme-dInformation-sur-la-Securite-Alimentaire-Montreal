@@ -64,51 +64,50 @@ def detect_new_contraventions():
 
 
 def notify(new_contraventions):
-
-    # db = Database.get_db()
-    # users = db.get_all_users()
-    # destinataires_users = set()
+    db = Database.get_db()
+    users = db.get_all_users()
+    destinataires_users = dict()
 
     if new_contraventions is None:
         print("Aucune nouvelle contravention à notifier.")
         return
 
-    try:
-        with open('config.yaml', 'r') as file:
-            config_data = yaml.safe_load(file)
-            sender_email = config_data['sender_email']
-            receiver_email = config_data['receiver_email']
-            print(config_data)
-    except Exception as e:
-        print(
-            f"Une erreur s'est produite lors de la lecture du fichier YAML : {e}")
+    else:
+        try:
+            with open('config.yaml', 'r') as file:
+                config_data = yaml.safe_load(file)
+                sender_email = config_data['sender_email']
+                receiver_email = config_data['receiver_email']
+        except Exception as e:
+            print(
+                f"Une erreur s'est produite lors de la lecture du fichier YAML : {e}")
+
+        # Parcourir chaque utilisateur
+        for user in users:
+            courriel = user[2]
+            choix_etablissements = eval(user[3])
+
+            # Initialiser les contraventions surveillées par cet utilisateur
+            contraventions_surveillees = set()
+
+            # Parcourir chaque nouvelle contravention
+            for contravention in new_contraventions:
+                id_business = contravention[1]
+
+                # Vérifier si cette contravention est surveillée par l'utilisateur
+                if id_business in choix_etablissements:
+                    contraventions_surveillees.add(contravention)
+
+            if contraventions_surveillees:
+                # Ajouter l'utilisateur et ses contraventions surveillées à la liste
+                destinataires_users[courriel] = contraventions_surveillees
+
+        send_courriel(sender_email, receiver_email, new_contraventions,
+                      destinataires_users)
 
 
-    send_courriel(sender_email, receiver_email, new_contraventions)
-
-    # # Parcourir chaque nouvelle contravention
-    # for contravention in new_contraventions:
-    #     # Parcourir chaque utilisateur
-    #     for user in users:
-    #         choix_etablissements = eval(user[3])
-    #         # Vérifier si cette contravention est surveillée par l'utilisateur
-    #         if contravention[1] in choix_etablissements:
-    #             # Ajouter l'utilisateur à la liste des destinataires supplémentaires
-    #             destinataires_users.add((user[2], choix_etablissements))  #
-    #             # courriel,
-    #             # choix_etablissements
-    #
-    #     # Vérifier si des destinataires ont été ajoutés
-    #     if destinataires_users:
-    #         try:
-    #             # Envoyer un courriel à l'adresse spécifiée dans le fichier YAML et aux utilisateurs concernés
-    #             send_courriel(sender_email, receiver_email,
-    #                           destinataires_users, new_contraventions)
-    #         except Exception as e:
-    #             print(f"Erreur lors de l'envoi de l'e-mail : {e}")
-
-
-def send_courriel(sender_email, receiver_email, new_contraventions):
+def send_courriel(sender_email, receiver_email, new_contraventions,
+                  destinataires_users):
     port = 1025
     smtp_server = 'localhost'
 
@@ -116,51 +115,46 @@ def send_courriel(sender_email, receiver_email, new_contraventions):
         with (smtplib.SMTP(smtp_server, port) as server):
 
             # Envoyer un courriel au courriel dans le fichier YAML
-            message_body_all = "<h3>Nouvelles contraventions!</h3>"
-            for contravention in new_contraventions:
-                message_body_all += f"<p>Établissement: {contravention[6]}</p>"
-                message_body_all += "<ul>"
-                message_body_all += f"<li>Date: {contravention[2]}</li>"
-                message_body_all += f"<li>Description: {contravention[3]}</li>"
-                message_body_all += "</ul>"
-
-            msg_all = MIMEMultipart()
-            msg_all['Subject'] = 'Nouvelles contraventions - Ville de Montréal'
-            msg_all['From'] = sender_email
-            msg_all['To'] = receiver_email
-            msg_all.attach(MIMEText(message_body_all, 'html'))
+            message_body = prepare_email_body(new_contraventions)
+            message_content = prepare_message_content(message_body,
+                                                      sender_email, receiver_email)
             server.sendmail(sender_email, [receiver_email],
-                            msg_all.as_string())
+                            message_content.as_string())
 
-            # Envoyer un courriel à chaque destinataire user avec les
-            # contraventions qu'ils surveillent
-            # for destinataire in destinataires_users:
-            #     email_destinataire = destinataire[0]
-            #     message_body = ("<h3>Nouvelles contraventions!</h3>")
-            #     contraventions_destinataire = [contravention for contravention
-            #                                    in new_contraventions if
-            #                                    contravention[1] in
-            #                                    destinataire[1]]
-            #
-            #     for contravention in contraventions_destinataire:
-            #         etablissement = contravention[6]
-            #         message_body += f"<p>Établissement: {etablissement}</p>"
-            #         message_body += "<ul>"
-            #         message_body += f"<li>Date: {contravention[2]}</li>"
-            #         message_body += f"<li>Description: {contravention[3]}</li>"
-            #         message_body += "</ul>"
-            #
-            #     msg = MIMEMultipart()
-            #     msg['Subject'] = 'Nouvelles contraventions - Ville de Montréal'
-            #     msg['From'] = sender_email
-            #     msg['To'] = email_destinataire
-            #
-            #     # Attach the message body
-            #     msg.attach(MIMEText(message_body, 'html'))
-            #
-            #     server.sendmail(sender_email,
-            #                     [email_destinataire],
-            #                     msg.as_string())
+            # Envoyer un courriel à chaque destinataire user
+            for email_destinataire, contraventions in destinataires_users.items():
+                message_body = prepare_email_body(contraventions)
+                message_content = prepare_message_content(message_body,
+                                                          sender_email,
+                                                          email_destinataire)
+                # Envoyer le courriel à l'utilisateur concerné
+                server.sendmail(sender_email, [email_destinataire],
+                                message_content.as_string())
 
     except Exception as e:
         print(f"Erreur lors de l'envoi de l'e-mail : {e}")
+
+
+def prepare_email_body(contraventions):
+    message_body = "<h3>Nouvelles contraventions!</h3>"
+    for contravention in contraventions:
+        etablissement = contravention[6]
+        date = contravention[2]
+        description = contravention[3]
+
+        message_body += f"<p>Établissement: {etablissement}</p>"
+        message_body += "<ul>"
+        message_body += f"<li>Date: {date}</li>"
+        message_body += f"<li>Description: {description}</li>"
+        message_body += "</ul>"
+    return message_body
+
+
+def prepare_message_content(message_body, sender_email, receiver_email):
+    # Créer le message MIME multipart
+    msg_content = MIMEMultipart()
+    msg_content['Subject'] = 'Nouvelles contraventions - Ville de Montréal'
+    msg_content['From'] = sender_email
+    msg_content['To'] = receiver_email
+    msg_content.attach(MIMEText(message_body, 'html'))
+    return msg_content
