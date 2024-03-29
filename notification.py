@@ -1,3 +1,4 @@
+import os
 import smtplib
 import time
 from email.mime.multipart import MIMEMultipart
@@ -52,7 +53,7 @@ def detect_new_contraventions():
             print(
                 f"Nombre total de nouvelles contraventions détectées : {num_new_contraventions}")
 
-            notify_users(new_contraventions)
+            notify(new_contraventions)
 
         # Mettre à jour le temps de la dernière importation
         db.update_last_import_time()
@@ -63,102 +64,87 @@ def detect_new_contraventions():
         return []
 
 
-def notify_users(new_contraventions):
+def notify(new_contraventions):
     db = Database.get_db()
     users = db.get_all_users()
+    destinataires_users = set()
 
-    # Appeler la fonction pour créer le fichier YAML
-    create_yaml_config(users)
-
-    # Lire les adresses des destinataires depuis le fichier de configuration YAML
+    # Lecture de l'adresse e-mail du destinataire depuis le fichier YAML
     with open('config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-        # Récupérer les adresses des destinataires du fichier YAML, en gérant le cas où la clé 'destinataires' peut ne pas exister
-        destinataires_config = config.get('destinataires', [])
-
-    # Initialiser un ensemble pour stocker tous les destinataires
-    destinataires = set()
+        sender_email = yaml.safe_load(file)['sender_email']
+        receiver_email = yaml.safe_load(file)['receiver_email']
 
     # Parcourir chaque nouvelle contravention
     for contravention in new_contraventions:
-        # Récupérer les destinataires spécifiques à cette contravention
-        destinataires_contravention = set()
-
         # Parcourir chaque utilisateur
         for user in users:
             choix_etablissements = eval(user[3])
             # Vérifier si cette contravention est surveillée par l'utilisateur
             if contravention[1] in choix_etablissements:
-                # Ajouter l'utilisateur à la liste des destinataires de cette contravention
-                destinataires_contravention.add(user[2])
+                # Ajouter l'utilisateur à la liste des destinataires supplémentaires
+                destinataires_users.add((user[2], choix_etablissements))  #
+                # courriel,
+                # choix_etablissements
 
-        # Ajouter les destinataires spécifiques à cette contravention à l'ensemble global de destinataires
-        destinataires.update(destinataires_contravention)
-
-    # Ajouter les destinataires du fichier de configuration YAML, s'il y en a
-    destinataires.update(destinataires_config)
-
-    # Envoyer un courriel à tous les destinataires pour chaque contravention
-    for destinataire in destinataires:
-        for contravention in new_contraventions:
-            # Construire le message
-            message = "Nouvelle contravention à l'établissement {} - {}".format(
-                contravention[6], contravention[3])
-            # Envoyer l'e-mail
-            send_courriel(destinataire, [message])
+    # Envoyer un courriel à l'adresse spécifiée dans le fichier YAML et aux utilisateurs concernés
+    send_courriel(sender_email, receiver_email, destinataires_users,
+                  new_contraventions)
 
 
-def send_courriel(destinataires, contraventions):
-    # Lecture de l'adresse de l'expéditeur et d'autres informations depuis le fichier de configuration YAML
-    with open('config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
-        expediteur = config['expediteur']
-        smtp_server = config['smtp_server']
-        smtp_port = config['smtp_port']
-        smtp_email = config['smtp_email']
-        smtp_password = config['smtp_password']
-
-    # Boucle sur tous les destinataires pour envoyer le courriel à chacun
-    for destinataire in destinataires:
-        # Construction du message
-        msg = MIMEMultipart()
-        msg['From'] = expediteur
-        msg['To'] = destinataire
-        msg['Subject'] = 'Nouvelles contraventions détectées'
-
-        body = "\n".join(contraventions)
-        msg.attach(MIMEText(body, 'plain'))
-
-        # Envoi du message
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(smtp_email, smtp_password)
-            server.send_message(msg)
-
-
-def create_yaml_config(users):
-    # Utiliser un ensemble pour stocker les adresses e-mail uniques
-    unique_destinataires = set()
-
-    # Parcourir les utilisateurs et ajouter les adresses e-mail uniques à l'ensemble
-    for user in users:
-        unique_destinataires.add(user[2])
-
-    # Convertir l'ensemble en liste
-    destinataires = list(unique_destinataires)
-
-    # Données à stocker dans le fichier YAML
-    data = {
-        'destinataires': destinataires
-    }
-
-    # Chemin d'accès au fichier YAML
-    yaml_file_path = r"C:\Users\Public\PycharmProjects\Projet_session\config.yaml"
+def send_courriel(sender_email, receiver_email, destinataires_users,
+                  new_contraventions):
+    port = 1025
+    smtp_server = 'localhost'
 
     try:
-        # Écriture des données dans le fichier YAML
-        with open(yaml_file_path, 'w') as file:
-            yaml.dump(data, file)
-        print("Fichier YAML créé avec succès.")
+        with (smtplib.SMTP(smtp_server, port) as server):
+
+            # Envoyer un courriel au courriel dans le fichier YAML
+            message_body_all = "<h3>Nouvelles contraventions!</h3>"
+            for contravention in new_contraventions:
+                message_body_all += f"<p>Établissement: {contravention[6]}</p>"
+                message_body_all += "<ul>"
+                message_body_all += f"<li>Date: {contravention[2]}</li>"
+                message_body_all += f"<li>Description: {contravention[3]}</li>"
+                message_body_all += "</ul>"
+
+            msg_all = MIMEMultipart()
+            msg_all['Subject'] = 'Nouvelles contraventions - Ville de Montréal'
+            msg_all['From'] = sender_email
+            msg_all['To'] = receiver_email
+            msg_all.attach(MIMEText(message_body_all, 'html'))
+            server.sendmail(sender_email, [receiver_email],
+                            msg_all.as_string())
+
+            # Envoyer un courriel à chaque destinataire user avec les
+            # contraventions qu'ils surveillent
+            for destinataire in destinataires_users:
+                message_body = ("<h3>Nouvelles contraventions!</h3>")
+                contraventions_destinataire = [contravention for contravention
+                                               in new_contraventions if
+                                               contravention[1] in
+                                               destinataire[1]]
+
+                for contravention in contraventions_destinataire:
+                    etablissement = contravention[6]
+                    message_body += f"<p>Établissement: {etablissement}</p>"
+                    message_body += "<ul>"
+                    message_body += f"<li>Date: {contravention[2]}</li>"
+                    message_body += f"<li>Description: {contravention[3]}</li>"
+                    message_body += "</ul>"
+
+                msg = MIMEMultipart()
+                msg['Subject'] = 'Nouvelles contraventions - Ville de Montréal'
+                msg['From'] = sender_email
+                msg['To'] = receiver_email
+                msg['Bcc'] = destinataire['email']
+
+                # Attach the message body
+                msg.attach(MIMEText(message_body, 'html'))
+
+                server.sendmail(sender_email,
+                                [receiver_email, destinataire[0]],
+                                msg.as_string())
+
     except Exception as e:
-        print(f"Erreur lors de la création du fichier YAML : {e}")
+        print(f"Erreur lors de l'envoi de l'e-mail : {e}")
