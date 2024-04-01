@@ -1,7 +1,8 @@
 class Contravention:
     def __init__(self, id_poursuite, id_business, date, description,
                  adresse, date_jugement, etablissement, montant,
-                 proprietaire, ville, statut, date_statut, categorie):
+                 proprietaire, ville, statut, date_statut, categorie,
+                 date_importation):
         self.id_poursuite = id_poursuite
         self.id_business = id_business
         self.date = date
@@ -15,6 +16,7 @@ class Contravention:
         self.statut = statut
         self.date_statut = date_statut
         self.categorie = categorie
+        self.date_importation = date_importation
 
     def set_id(self, id):
         self.id = id

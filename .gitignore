@@ -1,13 +1,11 @@
+
+__pycache__/
+
 .idea/
 
-.DS_Store
-*.swp
+node_modules/
 
-#### Python ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
 .env
+/node_modules/
 
 node_modules/
