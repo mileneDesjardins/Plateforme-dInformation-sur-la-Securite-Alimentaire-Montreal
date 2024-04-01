@@ -38,6 +38,48 @@ types:
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
       }
+
+  InfoContravention:
+    type: array
+    items:
+      type: object
+      properties:
+        id_poursuite: number
+        date?: string
+        description?: string
+        date_jugement?: string
+        montant?: number
+        categorie?: string
+      additionalProperties: false
+    example: |
+      [
+        {
+          "id_poursuite": 234,
+          "date": "2012-12-12"
+        },
+        {
+          "id_poursuite": 344,
+          "montant": 400,
+          "categorie": "Café"
+        }
+      ]
+
+  InfoEtablissement:
+    type: object
+    properties:
+      adresse?: string
+      etablissement?: string
+      proprietaire?: string
+      ville?: string
+      statut?: string
+      date_statut?: string
+    additionalProperties: false
+    example: |
+      {
+        "ville": "Laval"
+        "statut": "Fermé"
+      }
+
   DateRange:
     type: object
     properties:
@@ -105,7 +147,6 @@ types:
       nom_client: string
       prenom_client: string
       description: string
-
     additionalProperties: false
     example: |
       {
@@ -122,6 +163,25 @@ types:
         "statut": "Ouvert",
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
+      }
+  DemandeInspectionQuery:
+    type: object
+    properties:
+      etablissement: string
+      adresse: string
+      ville: string
+      date_visite: string
+      nom_complet_client: string
+      description: string
+    additionalProperties: false
+    example: |
+      {
+        "etablissement": "Nom Établissement",
+        "adresse": "123 avenue Chemin, Québec",
+        "ville": "Montréal",
+        "date_visite": "2022-11-05",
+        "nom_complet_client": "Prenom Nom",
+        "description": "Personnes affectées à la consommation de produits",
       }
   user:
     type: object
@@ -143,57 +203,224 @@ types:
 
 /api:
   /contrevenants:
-    get:
-      description: Récupère des données en fonction d'une plage de dates spécifiées.
-      queryParameters:
-        du:
-          type: string
+    /start/{date1}/end/{date2}:
+      uriParameters:
+        date1:
           description: Date de début au format AAAA-MM-DD.
-          example: "2022-05-08"
-          required: true
-        au:
           type: string
+        date2:
           description: Date de fin au format AAAA-MM-DD.
-          example: "2024-05-15"
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              type: Contravention[]
-            example: |
-              [
+          type: string
+      get:
+        description: Récupère les contraventions en fonction d'une plage de dates spécifiées.
+        responses:
+          200:
+            body:
+              application/json:
+                type: Contravention[]
+              example: |
+                [
+                  {
+                    "id_poursuite": 100,
+                    "id_business": 200,
+                    "date": "2022-11-05",
+                    "description": "Personnes affectées à la consommation de produits",
+                    "adresse": "123 avenue Chemin, Montréal, Québec",
+                    "date_jugement": "2022-12-05",
+                    "etablissement": "Nom Établissement",
+                    "montant": 100,
+                    "proprietaire": "Nom Proprietaire",
+                    "ville": "Montréal",
+                    "statut": "Ouvert",
+                    "date_statut": "2024-01-02",
+                    "categorie": "Restaurant"
+                  },
+                  {
+                    "id_poursuite": 300,
+                    "id_business": 350,
+                    "date": "2020-11-05",
+                    "description": "Personnes affectées à la consommation de produits",
+                    "adresse": "123 avenue Chemin, Montréal, Québec",
+                    "date_jugement": "2020-12-05",
+                    "etablissement": "Nom Établissement",
+                    "montant": 500,
+                    "proprietaire": "Nom Proprietaire",
+                    "ville": "Montréal",
+                    "statut": "Ouvert",
+                    "date_statut": "2024-01-02",
+                    "categorie": "Restaurant"
+                  }
+                ]
+          400:
+            description: L'une ou les deux dates ne respectent pas le format ISO 8601 (AAAA-MM-JJ) ou la date end est inférieure à la date start.
+          404:
+            body:
+              application/json:
+              example: |
+                []
+            description: Aucune contravention n'a été trouvée.
+
+    /{id_business}:
+      uriParameters:
+        id_business:
+          description: L'identifiant unique de l'établissement à modifier
+          type: integer
+      get:
+        description: Récupère l'établissement correspondant au ID spécifié en paramètre.
+        responses:
+          200:
+            body:
+                application/json:
+                  type: Contravention
+                example: |
+                  {
+                    "id_poursuite": 100,
+                    "id_business": 200,
+                    "date": "2022-11-05",
+                    "description": "Personnes affectées à la consommation de produits",
+                    "adresse": "123 avenue Chemin, Montréal, Québec",
+                    "date_jugement": "2022-12-05",
+                    "etablissement": "Nom Établissement",
+                    "montant": 100,
+                    "proprietaire": "Nom Proprietaire",
+                    "ville": "Montréal",
+                    "statut": "Ouvert",
+                    "date_statut": "2024-01-02",
+                    "categorie": "Restaurant"
+                    }
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
+          404:
+            description : Le id_business ne correspondent à aucun établissement.
+            body:
+              application/json:
+                example: |
+                  []
+
+
+      patch:
+        description: Modifie partiellement l'établissement associé au ID spécifié en paramètre, selon les modifications spécifiées.
+        body:
+          application/json:
+            type: InfoEtablissement
+        responses:
+          200:
+            body:
+              application/json:
+                type: Contravention[]
+                  example: |
+                    {
+                      "id_poursuite": 100,
+                      "id_business": 200,
+                      "date": "2022-11-05",
+                       "description": "Personnes affectées à la consommation de produits",
+                      "adresse": "123 avenue Chemin, Montréal, Québec",
+                      "date_jugement": "2022-12-05",
+                      "etablissement": "Nom Établissement",
+                      "montant": 100,
+                      "proprietaire": "Nom Proprietaire",
+                      "ville": "Montréal",
+                      "statut": "Ouvert",
+                      "date_statut": "2024-01-02",
+                      "categorie": "Restaurant"
+                    }
+          400:
+            description: Une erreur reliée au schéma JSON a été rencontrée.
+            body:
+              application/json:
+              example: |
                 {
-                  "id_poursuite": 100,
-                  "id_business": 200,
-                  "date": "2022-11-05",
-                  "description": "Personnes affectées à la consommation de produits",
-                  "adresse": "123 avenue Chemin, Montréal, Québec",
-                  "date_jugement": "2022-12-05",
-                  "etablissement": "Nom Établissement",
-                  "montant": 100,
-                  "proprietaire": "Nom Proprietaire",
-                  "ville": "Montréal",
-                  "statut": "Ouvert",
-                  "date_statut": "2024-01-02",
-                  "categorie": "Restaurant"
-                },
-                {
-                  "id_poursuite": 300,
-                  "id_business": 350,
-                  "date": "2020-11-05",
-                  "description": "Personnes affectées à la consommation de produits",
-                  "adresse": "123 avenue Chemin, Montréal, Québec",
-                  "date_jugement": "2020-12-05",
-                  "etablissement": "Nom Établissement",
-                  "montant": 500,
-                  "proprietaire": "Nom Proprietaire",
-                  "ville": "Montréal",
-                  "statut": "Ouvert",
-                  "date_statut": "2024-01-02",
-                  "categorie": "Restaurant"
+                  "error": "Error validating against schema",
+                  "errors": [
+                  "Additional properties are not allowed ('villee' was unexpected)"
+                  ]
                 }
-              ]
+          404:
+            description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
+      delete:
+        description: Supprime l'établissement associé au id spécifié en paramètre de la base de données.
+        responses:
+          200:
+            description: L'établissement a bien été supprimé de la base de données.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
+          404:
+            description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
+  /contraventions:
+    patch:
+      description: Modifie partiellement les informations d'une contravention, selon les modifications spécifiées.
+      body:
+        application/json:
+          type: InfoContravention
+      responses:
+            200:
+              body:
+                application/json:
+                  type: Contravention[]
+                example: |
+                  [
+                    {
+                      "id_poursuite": 100,
+                      "id_business": 200,
+                      "date": "2022-11-05",
+                      "description": "Personnes affectées à la consommation de produits",
+                      "adresse": "123 avenue Chemin, Montréal, Québec",
+                      "date_jugement": "2022-12-05",
+                      "etablissement": "Nom Établissement",
+                      "montant": 100,
+                      "proprietaire": "Nom Proprietaire",
+                      "ville": "Montréal",
+                      "statut": "Ouvert",
+                      "date_statut": "2024-01-02",
+                      "categorie": "Restaurant"
+                    },
+                    {
+                      "id_poursuite": 300,
+                      "id_business": 350,
+                      "date": "2020-11-05",
+                      "description": "Personnes affectées à la consommation de produits",
+                      "adresse": "123 avenue Chemin, Montréal, Québec",
+                      "date_jugement": "2020-12-05",
+                      "etablissement": "Nom Établissement",
+                      "montant": 500,
+                      "proprietaire": "Nom Proprietaire",
+                      "ville": "Montréal",
+                      "statut": "Ouvert",
+                      "date_statut": "2024-01-02",
+                      "categorie": "Restaurant"
+                    }
+                  ]
+            400:
+              description: Une erreur reliée au schéma JSON a été rencontrée.
+              body:
+                application/json:
+                example: |
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                      "'id_business' is a required property"
+                    ]
+                  }
+            404:
+              description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
+    /{id_poursuite}:
+      uriParameters:
+        id_poursuite:
+          description: L'identifiant unique de la contravention à modifier.
+          type: integer
+      delete:
+        description: Supprime contravention correspondant au Id spécifié en paramètre de la base de données.
+        responses:
+          200:
+            description: La contravention a bien été supprimée.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
+          404:
+            description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
+
+
+
+
 
   /etablissements:
     get:
@@ -246,45 +473,49 @@ types:
                   Nom Établissement, 5
                   Autre Établissement, 3
 
-    /demande-inspection:
-      post:
-        description: Crée une demande d'inspection à la ville.
-        responses:
-          201:
-            description: La demande d'inspection a bien été créée.
-            body:
-              application/json:
-                type: DemandeInspection
-                example: |
-                  {
-                   "id": 45,
-                   "etablissement": Restaurant XYZ,
-                   "adresse": "123 rue LeChemin",
-                   "ville": "VilleCity",
-                   "date_visite": "2022-11-05",
-                   "nom_client": "Joe",
-                   "prenom_client": "Dane",
-                   "Description": "Aliments insalubres",
-                  }
-          400:
-            description: Une erreur reliée au schéma JSON a été rencontrée.
-            body:
-              application/json:
-                example: |
-                  {
-                    "error": "Error validating against schema",
-                    "errors": [
-                    "'ville' is a required property",
-                    "Additional properties are not allowed ('vlle' was unexpected)"
-                    ]
-                  }
-          500:
-            description: Une erreur est survenue sur le serveur. Veuillez réessayer plus tard.
+  /demande-inspection:
+    post:
+      description: Crée une demande d'inspection à la ville.
+      body:
+        application/json:
+          type: DemandeInspectionQuery
+      responses:
+        201:
+          description: La demande d'inspection a bien été créée.
+          body:
+            application/json:
+              type: DemandeInspection
+              example: |
+                {
+                 "id": 45,
+                 "etablissement": Restaurant XYZ,
+                 "adresse": "123 rue LeChemin",
+                 "ville": "VilleCity",
+                 "date_visite": "2022-11-05",
+                 "nom_client": "Joe",
+                 "prenom_client": "Dane",
+                 "Description": "Aliments insalubres",
+                }
+        400:
+          description: Une erreur reliée au schéma JSON a été rencontrée.
+          body:
+            application/json:
+              example: |
+                {
+                  "error": "Error validating against schema",
+                  "errors": [
+                  "'ville' is a required property",
+                  "Additional properties are not allowed ('vlle' was unexpected)"
+                  ]
+                }
+    /{id_demande_inspection}:
       delete:
         description: Supprime une demande d'inspection à la ville selon le ID spécifié en paramètre.
         responses:
           200:
             description : La demande d'inspection a bien été supprimée.
+          400:
+            description: Le ID spécifié en paramètre n'est pas un entier valide.
           404:
             description : Le ID spécifié ne correspond à aucune demande d'inspection.
 

@@ -1,32 +1,37 @@
 import hashlib
 import json
+import sqlite3
 import os
 import subprocess
 import uuid
-
-from apscheduler.triggers.cron import CronTrigger
-from flask import Flask, g, request, redirect, Response, session, url_for
-from flask import render_template
-from flask import Flask, jsonify
-from flask.cli import load_dotenv
-
-from database import Database
-from flask_json_schema import JsonValidationError, JsonSchema
 import atexit
+import sys
 import xml.etree.ElementTree as ET
 
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from flask import g, request, redirect, Response, session, url_for
+from flask import render_template, Flask, jsonify
+from IDRessourceNonTrouve import IDRessourceNonTrouve
+from flask.cli import load_dotenv
+from database import Database
+from flask_json_schema import JsonValidationError, JsonSchema
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from demande_inspection import DemandeInspection
-from schema import inspection_insert_schema, valider_new_user_schema
 from user import User
+from schema import inspection_insert_schema, contrevenant_update_schema, \
+    contravention_update_schema, valider_new_user_schema
 from authorization_decorator import login_required
+from validations import validates_dates, is_empty, doesnt_exist, is_incomplete, \
+    validates_is_integer
+from basic_auth_decorator import basic_auth_required
 
 load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="static")
 schema = JsonSchema(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
+app.config['SITE_USER'] = os.getenv('SITE_USER')
+app.config['SITE_PASS'] = os.getenv('SITE_PASS')
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -46,7 +51,6 @@ def index():
     titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
-    print(script)
 
     if "id" in session:
         id_user = session.get("id_user")
@@ -64,17 +68,15 @@ def index():
 # A2
 @app.route('/search', methods=['GET'])
 def search():
-    try:
-        keywords = request.args.get('search')
-        if keywords is None or len(keywords) == 0:
-            print("nice")
-        results = Database.get_db().db.search(keywords)
-        return render_template('results.html', keywords=keywords,
-                               results=results)
-    except Exception as e:
+    keywords = request.args.get('search')
+    if keywords is None or len(keywords) == 0:
         error = "Une erreur est survenue, veuillez réessayer plus tard."
         return render_template('results.html',
                                error=error)
+    else:
+        results = Database.get_db().search(keywords)
+        return render_template('results.html', keywords=keywords,
+                               results=results)
 
 
 @app.route('/plainte')
@@ -168,12 +170,12 @@ def connection():
         mdp = request.form["mdp"]
 
         if courriel == "" or mdp == "":
-            return est_incomplet()
+            is_incomplete()
 
         db = Database.get_db()
         user = db.get_user_login_infos(courriel)
         if user is None:
-            return nexiste_pas()
+            doesnt_exist()
 
         mdp_hash = obtenir_mdp_hash(mdp, user)
 
@@ -191,17 +193,6 @@ def connection():
 def disconnection():
     session.clear()  # Supprime toutes les données de la session
     return redirect("/")
-
-
-def est_incomplet():
-    return render_template('connection.html',
-                           erreur="Veuillez remplir tous les champs")
-
-
-def nexiste_pas():
-    return render_template('connection.html',
-                           erreur="Utilisateur inexistant, veuillez "
-                                  "vérifier vos informations")
 
 
 def obtenir_mdp_hash(mdp, user):
@@ -291,39 +282,168 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
-# A3
+# A3 TODO verifier que jai bien remis la bonne heure
 def extract_and_update_data():
     # Appeler le script de téléchargement et d'insertion des données
-    subprocess.run(["python", "telechargement.py"])
+    subprocess.run([sys.executable, "sync_database.py"])
 
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=extract_and_update_data,
                   trigger=CronTrigger(hour=0,
                                       minute=0))  # déclenchée à minuit (0 heure, 0 minute)
+
 scheduler.start()  # démarre le planificateur
 
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
 
-# A4 TODO route ok ?
+@app.route('/search-by-dates/<start>/<end>', methods=['POST'])
+def search_by_date(start, end):
+    infos_obtenues = request.get_json()
+    occurences = count_contraventions(infos_obtenues)
+    return render_template('search-by-dates.html', results=occurences,
+                           start=start, end=end)
+
+
+@app.route('/modal-dates/<id_business>/<start>/<end>', methods=['GET'])
+def modal_dates(start, end, id_business):
+    contrevenant = (Database.get_db().
+                    get_contraventions_business_between(start, end,
+                                                        id_business))
+    return render_template('modal_modifier.html', results=contrevenant)
+
+
+def count_contraventions(contraventions):
+    occurrences = {item['id_business']: {'count': sum(
+        1 for c in contraventions if c['id_business'] == item['id_business']),
+        'etablissement': item[
+            'etablissement']} for item in
+        contraventions}
+    return occurrences
+
+
+# A4 TODO rechanger route pour mettre query parameter
 @app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
-    # TODO valider dates ISO ?
-    results = db.get_contraventions_between(date1, date2)
-    return (results)
+    try:
+        validates_dates(date1, date2)
+        results = db.get_contraventions_between(date1, date2)
+        if is_empty(results):
+            return jsonify(results), 404
+        return jsonify(results), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. "
+            "Veuillez réessayer plus tard.")
 
 
 # A6
-@app.route('/api/info-etablissement/<etablissement>', methods=['GET'])
-def info_etablissements(etablissement):
-    db = Database.get_db()
-    # TODO valider
-    etablissement = db.get_info_etablissement(etablissement)
-    return jsonify(etablissement)
+@app.route('/api/contrevenants/<id_business>', methods=['GET'])
+def info_etablissements(id_business):
+    try:
+        validates_is_integer(id_business, "Le id_business")
+        etablissement = Database.get_db().get_info_contrevenant(id_business)
+        return jsonify(etablissement)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
+    except Exception as e:
+        return jsonify("Une erreur est survenue sur le serveur. "
+                       "Veuillez réessayer plus tard.")
 
+
+@app.route('/api/contrevenants/<id_business>', methods=['PATCH'])
+@basic_auth_required
+@schema.validate(contrevenant_update_schema)
+def modify_contrevenant(id_business):
+    modifs_request = request.get_json()
+    try:
+        return update_contrevenant(id_business, modifs_request)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifiée.", e.message), 404
+    except Exception as e:
+        return jsonify(
+            "Une erreur est survenue sur le serveur. "
+            "Veuillez réessayer plus tard.")
+
+
+# TODO deplacer?
+def update_contrevenant(id_business, modifs_request):
+    validates_is_integer(id_business, "Le id_business")
+    Database.get_db().update_contrevenant(id_business, modifs_request)
+    modified = Database.get_db().get_info_contrevenant(id_business)
+    return jsonify(modified), 200
+
+
+@app.route('/api/contraventions', methods=['PATCH'])
+@basic_auth_required
+@schema.validate(contravention_update_schema)
+def modify_contravention():
+    modifs_requests = request.get_json()
+    modified_objects = []
+    try:
+        return update_contraventions(modified_objects, modifs_requests)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify("La ressource n'a pu être modifée.", e.message), 404
+
+
+# TODO pas une route, mais ailleurs ? ou juste plus bas ?
+def update_contraventions(modified_objects, modifs_requests):
+    db = Database.get_db()
+    for modifs_request in modifs_requests:
+        id_poursuite = modifs_request.get('id_poursuite')
+        validates_is_integer(id_poursuite, "Le id_poursuite")
+        db.update_contravention(id_poursuite, modifs_request)
+        modified_objects.append(db.get_info_poursuite(id_poursuite))
+    return jsonify(modified_objects)
+
+
+@app.route('/api/contraventions/<id_poursuite>',
+           methods=['DELETE'])
+@basic_auth_required
+def delete_contravention(id_poursuite):
+    try:
+        validates_is_integer(id_poursuite, "Le id_poursuite")
+        Database.get_db().delete_contravention(id_poursuite)
+        return jsonify("La contravention a bien été supprimée"), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue :"), 500
+
+
+@app.route('/api/contrevenant/<id_business>',
+           methods=['DELETE'])
+@basic_auth_required
+def delete_contrevenant(id_business):
+    try:
+        validates_is_integer(id_business, "Le id_business")
+        Database.get_db().delete_contrevenant(id_business)
+        return jsonify("Le contrevenant bien été supprimé"), 200
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
+    except IDRessourceNonTrouve as e:
+        return jsonify(e.message), 404
+    except sqlite3.Error as e:
+        return jsonify("Une erreur est survenue", e), 500
 
 @app.route('/modal', methods=['POST'])
 def modal_etablissements():
@@ -344,7 +464,6 @@ def demande_inspection():
                                              demande["date_visite"],
                                              demande["nom_complet_client"],
                                              demande["description"])
-        print(nouvelle_demande.description)
         Database.get_db().insert_demande_inspection(nouvelle_demande)
         return "Utilisateur ajouté", 201
     except Exception as e:
@@ -357,17 +476,26 @@ def demande_inspection():
 @schema.validate(inspection_insert_schema)
 def supprimer_inspection(id_demande):
     try:
-        demande = Database.get_db().get_demande_inspection(id_demande)
-        if demande is None:
-            return jsonify(
-                "Le ID " + id_demande + " ne correspond à aucune demande "
-                                        "d\'inspection."), 404
-        Database.get_db().delete_demande_inspection(demande)
-        return jsonify("La demande a bien été supprimée."), 200
+        return delete_demande_inspection(id_demande)
+    except ValueError as e:
+        error_msg = {"error": str(e)}
+        return json.dumps(error_msg), 400
     except Exception as e:
         return jsonify(
             error="Une erreur est survenue sur le serveur. Veuillez "
                   "réessayer plus tard"), 500
+
+
+# TODO deplacer
+def delete_demande_inspection(id_demande):
+    validates_is_integer(id_demande, "Le id_demande")
+    demande = Database.get_db().get_demande_inspection(id_demande)
+    if demande is None:
+        return jsonify(
+            "Le ID " + id_demande + " ne correspond à aucune demande "
+                                    "d\'inspection."), 404
+    Database.get_db().delete_demande_inspection(id_demande)
+    return jsonify("La demande a bien été supprimée."), 200
 
 
 # C1

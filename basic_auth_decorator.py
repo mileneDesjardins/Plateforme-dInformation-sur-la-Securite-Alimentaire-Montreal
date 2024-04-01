@@ -1,0 +1,18 @@
+from flask import make_response, request, current_app
+from functools import wraps
+
+
+def basic_auth_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        print("ok?")
+
+        auth = request.authorization
+        print(auth)
+        if (auth and auth.username == current_app.config["SITE_USER"] and
+                auth.password == current_app.config["SITE_PASS"]):
+            return f(*args, **kwargs)
+        return make_response("<H1>TODO Access denied </H1>"), 401, {
+            'WWW-Authenticate': 'Basic realm="Login Required!"'}
+
+    return decorated_function
