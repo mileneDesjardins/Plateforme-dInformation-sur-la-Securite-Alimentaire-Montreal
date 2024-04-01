@@ -26,6 +26,60 @@ inspection_insert_schema = {
     'additionalProperties': False
 }
 
+contrevenant_update_schema = {
+    'type': 'object',
+    'properties': {
+        'adresse': {
+            'type': 'string'
+        },
+        'etablissement': {
+            'type': 'string'
+        },
+        'proprietaire': {
+            'type': 'string'
+        },
+        'ville': {
+            'type': 'string'
+        },
+        'statut': {
+            'type': 'string'
+        },
+        'date_statut': {
+            'type': 'string',
+            'format': 'date-time'
+        }
+    },
+    'additionalProperties': False
+}
+
+contravention_update_schema = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "id_poursuite": {
+                "type": "number",
+            },
+            "date": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "date_jugement": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "montant": {
+                "type": "number"
+            },
+            "categorie": {
+                "type": "string"
+            }
+        },
+        "required": ["id_poursuite"],
+        'additionalProperties': False
+    }
+}
+
 valider_new_user_schema = {
     "type": "object",
     "properties": {
@@ -40,4 +94,3 @@ valider_new_user_schema = {
     "required": ["nom_complet", "courriel", "choix_etablissements", "mdp"],
     "additionalProperties": False
 }
-

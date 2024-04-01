@@ -53,7 +53,6 @@ function isEmpty(date) {
 }
 
 function isISO(date) {
-    console.log(DATE_ISO_REGEX.test(date));
     return DATE_ISO_REGEX.test(date);
 }
 
@@ -61,7 +60,6 @@ function isISO(date) {
 function isInGoodOrder(startDate, endDate) {
     let startDateObj = new Date(startDate);
     let endDateObj = new Date(endDate);
-    console.log(startDateObj <= endDateObj);
     return startDateObj <= endDateObj;
 }
 

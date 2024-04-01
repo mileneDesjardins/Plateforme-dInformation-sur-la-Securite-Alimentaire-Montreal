@@ -5,7 +5,7 @@
         <div class="section mt-5">
             <div class="px-4 py-5 my-5 text-center">
                 {% if error is defined %}
-                    <h2 class="display-5 text-body-emphasis">{{ error }}</h2>
+                    <h2 class="display-5 text-body-emphasis text-center">{{ error }}</h2>
                 {% endif %}
             </div>
 
@@ -55,9 +55,24 @@
                 </table>
 
             </div>
-        {% elif results and error is not defined %}
-            <p> Aucun résultat pour les mots clés <span>{{ keywords }} </span></p>
+
+            <div class="section mt-5">
+            <div class="px-4 py-5 my-5 text-center">
+
+
+
+
+        {% elif results is defined and error is not defined %}
+            <h3 class="display-5 text-body-emphasis text-center"> Aucun résultat pour les mots clés : <span class="fw-bold">{{ keywords }} </span>
+            </h3>
         {% endif %}
+
+
+
+        </div>
+
+        </div>
+
 
     </div>
 {% endblock %}

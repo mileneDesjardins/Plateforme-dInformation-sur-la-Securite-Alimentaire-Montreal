@@ -26,6 +26,9 @@ def extract_and_update_data():
             # Appel à la fonction pour détecter les nouvelles contraventions
             _ = detect_new_contraventions()
 
+            # TODO detect_modifications()
+
+
             # Mettre à jour le temps de la dernière importation
             db.update_last_import_time()
 

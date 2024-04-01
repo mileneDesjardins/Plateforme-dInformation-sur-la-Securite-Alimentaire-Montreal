@@ -13,5 +13,8 @@ CREATE TABLE Contravention
     statut        TEXT      NOT NULL,
     date_statut   DATE      NOT NULL,
     categorie     TEXT      NOT NULL,
-    date_importation DATETIME NOT NULL
+    date_importation DATETIME NOT NULL,
+    timestamp_csv   DATETIME NOT NULL,
+    timestamp_modif DATETIME,
+    deleted         INTEGER  NOT NULL
 );
