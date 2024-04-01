@@ -1,10 +1,8 @@
 import csv
-import sqlite3
-import csv
-from enum import Enum
-import uuid
 import datetime
+import sqlite3
 from datetime import datetime
+from enum import Enum
 
 from flask import g, json
 
@@ -32,9 +30,10 @@ class Cols(Enum):
     STATUT = 10
     DATE_STA = 11
     CAT = 12
-    TSP_CSV = 13
-    TSP_MOD = 14
-    DELETED = 15
+    DATE_IMPORTATION = 13
+    TSP_CSV = 14
+    TSP_MOD = 15
+    DELETED = 16
 
 
 def _build_contravention_dict(query_result):
@@ -97,7 +96,8 @@ def update_record(cursor, date, date_jugement, date_statut,
         query = (
             "UPDATE Contravention SET date=?, description=?, adresse=?, "
             "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
-            "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+            "ville=?, statut=?, date_statut=?, categorie=?, "
+            "date_importation=?, timestamp_csv=?, deleted=0 "
             "WHERE id_poursuite=? AND id_business=?")
         params = (date, row[Cols.DESCRIP.value], row[Cols.ADRESSE.value],
                   date_jugement, row[Cols.ETAB.value],
@@ -114,14 +114,16 @@ def insert_new_record(cursor, date, date_jugement,
     query = ("INSERT INTO Contravention(id_poursuite, id_business, date, "
              "description, adresse, date_jugement, etablissement, montant, "
              "proprietaire, ville, statut, date_statut, categorie, "
+             "date_importation, "
              "timestamp_csv, deleted) "
-             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",)
+             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",)
     params = (
         row[Cols.ID_POURSUITE.value], row[Cols.ID_BUSINESS.value],
         date, row[Cols.DESCRIP.value], row[Cols.ADRESSE.value],
         date_jugement, row[Cols.ETAB.value], row[Cols.MONTANT.value],
         row[Cols.PROPRIO.value], row[Cols.VILLE.value],
         row[Cols.STATUT.value], date_statut, row[Cols.CAT.value],
+        row[Cols.DATE_IMPORTATION.value],
         current_time.value)
     cursor.execute(query, params)
 
@@ -166,7 +168,8 @@ class Database:
                                           description, adresse,
                                           date_jugement, etablissement,
                                           montant, proprietaire, ville,
-                                          statut, date_statut, categorie, date_importation)
+                                          statut, date_statut, categorie,
+                                          date_importation)
             contraventions.append(contravention)
         return contraventions
 
@@ -179,8 +182,8 @@ class Database:
                 "INSERT INTO Contravention(id_poursuite, id_business, date, "
                 "description, adresse, date_jugement, etablissement, montant, "
                 "proprietaire, ville, statut, date_statut, categorie, "
-                "date_importation) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                "date_importation, timestamp_csv, deleted) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
             # Ignorer la première ligne (en-tête)
             next(contenu)
@@ -192,19 +195,21 @@ class Database:
                     date_jugement = datetime.strptime(row[5], '%Y%m%d').date()
                     date_statut = datetime.strptime(row[11], '%Y%m%d').date()
                     date_importation = datetime.now()
+                    timestamp_csv = datetime.now()
+                    deleted = 0
                 except ValueError:
                     # Gérer les erreurs de format de date
                     print(f"Erreur de format de date pour la ligne: {row}")
                     continue
 
                 try:
-                    current_time = datetime.now()
                     # Insérer les données dans la base de données
                     cursor.execute(insertion, (
                         row[0], row[1], date, row[3], row[4], date_jugement,
                         row[6],
                         row[7],
-                        row[8], row[9], row[10], date_statut, row[12], date_importation))
+                        row[8], row[9], row[10], date_statut, row[12],
+                        date_importation, timestamp_csv, deleted))
                     new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant

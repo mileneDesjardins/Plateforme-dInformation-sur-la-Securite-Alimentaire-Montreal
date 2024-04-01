@@ -22,3 +22,6 @@ def import_csv():
     except Exception as e:
         print(
             f"Une erreur s'est produite lors de l'importation du fichier CSV : {e}")
+
+
+

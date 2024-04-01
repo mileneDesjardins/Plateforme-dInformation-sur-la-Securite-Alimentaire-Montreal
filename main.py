@@ -1,5 +1,6 @@
 import hashlib
 import json
+import sqlite3
 import threading
 import uuid
 import xml.etree.ElementTree as ET
@@ -9,13 +10,18 @@ from flask import (jsonify, g, request, redirect, Response, session,
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
+import IDRessourceNonTrouve
 from app import app
 from authorization_decorator import login_required
+from basic_auth_decorator import basic_auth_required
 from database import Database
 from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
-from schema import inspection_insert_schema, valider_new_user_schema
+from schema import inspection_insert_schema, valider_new_user_schema, \
+    contrevenant_update_schema, contravention_update_schema
 from user import User
+from validations import validates_is_integer, is_incomplete, doesnt_exist, \
+    validates_dates, is_empty
 
 load_dotenv()
 schema = JsonSchema(app)
@@ -167,12 +173,12 @@ def connection():
         mdp = request.form["mdp"]
 
         if courriel == "" or mdp == "":
-            return est_incomplet()
+            return is_incomplete()
 
         db = Database.get_db()
         user = db.get_user_login_infos(courriel)
         if user is None:
-            return nexiste_pas()
+            return doesnt_exist()
 
         mdp_hash = obtenir_mdp_hash(mdp, user)
 
