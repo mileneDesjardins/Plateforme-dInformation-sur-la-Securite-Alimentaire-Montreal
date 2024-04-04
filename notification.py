@@ -144,6 +144,7 @@ def prepare_email_body(contraventions):
         etablissement = contravention[6]
         date = contravention[2]
         description = contravention[3]
+        unsubscribe_link = f"<a href='http://votresite.com/desabonnement/{etablissement}'>Se désabonner de {etablissement}</a>"
 
         message_body += f"<p>Établissement: {etablissement}</p>"
         message_body += "<ul>"

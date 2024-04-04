@@ -569,6 +569,15 @@ class Database:
             (courriel,))
         return cursor.fetchone()
 
+    def get_user_by_id(self, id_user):
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT * FROM User WHERE id_user = ?",
+            (id_user,)
+        )
+        return cursor.fetchone()
+
     def get_all_users(self):
         connection = self.get_user_connection()
         cursor = connection.cursor()

@@ -290,6 +290,21 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
+# E4
+@app.route('/unsubscribed-user', methods=['GET', 'POST'])
+def unsubscribe_user():
+    titre = 'Désabonnement'
+    if request.method == 'GET':
+        return render_template('unsubscribed.html', titre=titre)
+    else:
+
+@app.route('/confirmation-unsubscribed-user', methods=['GET'])
+def confirmation_modifs_user():
+    titre = 'Désabonnement confirmé'
+    return render_template('confirmation_unsubscribed_user.html',
+                           titre=titre)
+
+
 @app.route('/search-by-dates/<start>/<end>', methods=['POST'])
 def search_by_date(start, end):
     infos_obtenues = request.get_json()

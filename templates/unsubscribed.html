@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center mb-4">Confirmation de
+                            désabonnement</h1>
+                        <p class="card-text text-center mb-4">Êtes-vous sûr de
+                            vouloir vous désabonner de cet établissement?</p>
+                        <div class="text-center">
+                            <form action="{{ url_for('process_unsubscribe') }}"
+                                  method="post">
+                                <input type="hidden" name="etablissement_id"
+                                       value="{{ etablissement_id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    Confirmer le désabonnement
+                                </button>
+                            </form>
+                            <a href="{{ url_for('accueil') }}"
+                               class="btn btn-secondary mt-3">Annuler</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
