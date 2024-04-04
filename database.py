@@ -136,6 +136,7 @@ class Database:
         self.demandes_inspection_connection = None
         self.last_import_time = None
         self.photo_connection = None
+        self.token_connection = None
 
     @staticmethod
     def get_db():
@@ -154,6 +155,8 @@ class Database:
             self.last_import_time.close()
         if self.photo_connection is not None:
             self.photo_connection.close()
+        if self.token_connection is not None:
+            self.token_connection.close()
 
     # CONTRAVENTION
     def get_contravention_connection(self):
@@ -637,6 +640,38 @@ class Database:
                 self.get_user_connection().commit()
                 return True
         return False
+
+    # TOKEN
+    def get_token_connection(self):
+        if self.token_connection is None:
+            self.token_connection = sqlite3.connect(
+                'db/token.db')
+        return self.token_connection
+
+    def generate_token(self, courriel):
+        # Générer un token unique
+        token_value = str(uuid.uuid4())
+
+        # Calculer le timestamp d'expiration (30 minutes à partir de maintenant)
+        expiration_timestamp = datetime.now() + datetime.timedelta(minutes=30)
+
+        # Insérer le token dans la base de données
+        try:
+            connection = self.get_token_connection().cursor()
+
+            # Insérer le token dans la table Token
+            connection.execute(
+                "INSERT INTO Token (token_value, courriel, expiration_timestamp) "
+                "VALUES (?, ?, ?)",
+                (token_value, courriel, expiration_timestamp))
+
+            connection.commit()
+            connection.close()
+
+            return token_value
+        except sqlite3.Error as e:
+            print("Erreur lors de l'insertion du token :", e)
+            return None
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:
