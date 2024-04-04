@@ -310,7 +310,7 @@ def unsubscribe_user(id_business, email):
 
 # E4
 @app.route('/confirmation-unsubscribed-user', methods=['GET'])
-def confirmation_modifs_user():
+def confirmation_unsubscribed_user():
     titre = 'Désabonnement confirmé'
     return render_template('confirmation_unsubscribe_user.html',
                            titre=titre)
