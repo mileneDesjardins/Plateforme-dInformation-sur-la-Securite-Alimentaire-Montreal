@@ -641,37 +641,6 @@ class Database:
                 return True
         return False
 
-    # TOKEN
-    def get_token_connection(self):
-        if self.token_connection is None:
-            self.token_connection = sqlite3.connect(
-                'db/token.db')
-        return self.token_connection
-
-    def generate_token(self, courriel):
-        # Générer un token unique
-        token_value = str(uuid.uuid4())
-
-        # Calculer le timestamp d'expiration (30 minutes à partir de maintenant)
-        expiration_timestamp = datetime.now() + datetime.timedelta(minutes=30)
-
-        # Insérer le token dans la base de données
-        try:
-            connection = self.get_token_connection().cursor()
-
-            # Insérer le token dans la table Token
-            connection.execute(
-                "INSERT INTO Token (token_value, courriel, expiration_timestamp) "
-                "VALUES (?, ?, ?)",
-                (token_value, courriel, expiration_timestamp))
-
-            connection.commit()
-            connection.close()
-
-            return token_value
-        except sqlite3.Error as e:
-            print("Erreur lors de l'insertion du token :", e)
-            return None
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:
@@ -722,6 +691,17 @@ class Database:
         if self.photo_connection is None:
             self.photo_connection = sqlite3.connect('db/photo.db')
         return self.photo_connection
+
+    def get_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
+                       (id_photo,))
+        photo_data = cursor.fetchone()
+        if photo_data:
+            return photo_data[0]
+        else:
+            return None
 
     def create_photo(self, photo_data):
         id_photo = str(uuid.uuid4())
