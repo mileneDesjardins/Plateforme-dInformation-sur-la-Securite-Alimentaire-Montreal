@@ -5,6 +5,7 @@ from email.mime.text import MIMEText
 
 import yaml
 
+from TokenManager import TokenManager
 from app import app
 from database import Database
 from download import import_csv
@@ -86,6 +87,7 @@ def notify(new_contraventions):
 
         # Parcourir chaque utilisateur
         unsubscribe_link = None
+        token_manager = TokenManager()
         for user in users:
             courriel = user[2]
             choix_etablissements = eval(user[3])
@@ -106,9 +108,14 @@ def notify(new_contraventions):
                 # Ajouter l'utilisateur et ses contraventions surveillées à la liste
                 destinataires_users[courriel] = contraventions_surveillees
 
+                # Générer le token pour cet utilisateur
+                token = token_manager.generate_token(id_business, courriel)
+
                 # Ajouter le lien de désabonnement uniquement si ce n'est pas l'utilisateur du YAML
                 if courriel != receiver_email:
-                    unsubscribe_link = f"/unsubscribe-user/{id_business}/{courriel}"
+                    unsubscribe_link = f"/unsubscribe/{token}"
+                else:
+                    print("Erreur lors de la génération du token.")
 
         send_courriel(sender_email, receiver_email, new_contraventions,
                       destinataires_users, unsubscribe_link)

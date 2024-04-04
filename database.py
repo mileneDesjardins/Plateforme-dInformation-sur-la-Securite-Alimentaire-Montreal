@@ -316,7 +316,7 @@ class Database:
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
-            "SELECT DISTINCT id_business, etablissement, adresse, date_importation FROM "
+            "SELECT DISTINCT id_business, etablissement, adresse FROM "
             "Contravention "
             "ORDER BY etablissement")
         cursor.execute(query)

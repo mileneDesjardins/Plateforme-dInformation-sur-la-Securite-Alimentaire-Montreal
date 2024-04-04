@@ -1,12 +1,20 @@
-
 function unsubscribeUser() {
+    var token = "{{ token }}"; // Ajoutez ici la manière de récupérer le token si nécessaire
     var idBusiness = "{{ id_business }}";
     var email = "{{ email }}";
-    fetch("/unsubscribe-user/" + idBusiness + "/" + email, {
+
+    var requestData = {
+        token: token,
+        id_business: idBusiness,
+        email: email
+    };
+
+    fetch("/api/unsubscribe", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        body: JSON.stringify(requestData)
     })
     .then(response => {
         if (response.ok) {
