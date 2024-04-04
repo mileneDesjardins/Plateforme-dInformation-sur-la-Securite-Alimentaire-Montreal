@@ -134,6 +134,7 @@ class Database:
         self.user_connection = None
         self.demandes_inspection_connection = None
         self.last_import_time = None
+        self.photos_connection = None
 
     @staticmethod
     def get_db():
@@ -146,6 +147,13 @@ class Database:
             self.contravention_connection.close()
         if self.user_connection is not None:
             self.user_connection.close()
+        if self.demandes_inspection_connection is not None:
+            self.demandes_inspection_connection.close()
+        if self.last_import_time is not None:
+            self.last_import_time.close()
+        if self.photos_connection is not None:
+            self.photos_connection.close()
+
 
     # CONTRAVENTION
     def get_contravention_connection(self):
@@ -616,3 +624,16 @@ class Database:
         query = "DELETE FROM Demandes_Inspection WHERE id = ?"
         connection.execute(query, (id_demande,))
         connection.commit()
+
+    # PHOTO
+
+    def get_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
+                       (id_photo,))
+        photo_data = cursor.fetchone()
+        if photo_data:
+            return photo_data[0]
+        else:
+            return None
