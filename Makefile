@@ -2,7 +2,7 @@ export FLASK_APP=main.py
 .PHONY: run debug doc
 
 run:
-	flask run
+	flask --debug run
 
 debug:
 	FLASK_DEBUG=1 flask run
