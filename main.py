@@ -294,8 +294,9 @@ def confirmation_modifs_user():
 @app.route('/unsubscribe-user/<id_business>/<email>', methods=['GET', 'POST'])
 def unsubscribe_user(id_business, email):
     titre = 'Désabonnement'
+    script = "/js/script_unsubscribeUser.js"
     if request.method == 'GET':
-        return render_template('unsubscribe.html', titre=titre)
+        return render_template('unsubscribe.html', titre=titre, script=script)
     else:
         db = Database.get_db()
         user = db.get_user_by_email(email)
