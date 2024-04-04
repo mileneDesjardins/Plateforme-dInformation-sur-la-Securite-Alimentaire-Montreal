@@ -1,6 +1,7 @@
 import csv
 import datetime
 import sqlite3
+import uuid
 from datetime import datetime
 from enum import Enum
 
@@ -134,7 +135,7 @@ class Database:
         self.user_connection = None
         self.demandes_inspection_connection = None
         self.last_import_time = None
-        self.photos_connection = None
+        self.photo_connection = None
 
     @staticmethod
     def get_db():
@@ -151,9 +152,8 @@ class Database:
             self.demandes_inspection_connection.close()
         if self.last_import_time is not None:
             self.last_import_time.close()
-        if self.photos_connection is not None:
-            self.photos_connection.close()
-
+        if self.photo_connection is not None:
+            self.photo_connection.close()
 
     # CONTRAVENTION
     def get_contravention_connection(self):
@@ -626,14 +626,29 @@ class Database:
         connection.commit()
 
     # PHOTO
+    def get_photo_connection(self):
+        if self.photo_connection is None:
+            self.photo_connection = sqlite3.connect('db/photo.db')
+        return self.photo_connection
 
-    def get_photo(self, id_photo):
+    def create_photo(self, photo_data):
+        id_photo = str(uuid.uuid4())
         connection = self.get_photo_connection()
-        cursor = connection.cursor()
-        cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
-                       (id_photo,))
-        photo_data = cursor.fetchone()
-        if photo_data:
-            return photo_data[0]
-        else:
-            return None
+        connection.execute("insert into Photo(id_photo, data) values(?, ?)",
+                           [id_photo, sqlite3.Binary(photo_data)])
+        connection.commit()
+        return id_photo
+
+    def update_user_photo(self, id_user, nouveau_id_photo):
+        connection = self.get_user_connection()
+        connection.execute(
+            "UPDATE User SET id_photo=? WHERE id_user=?",
+            (nouveau_id_photo, id_user)
+        )
+        connection.commit()
+
+    def delete_photo(self, id_photo):
+        connection = self.get_photo_connection()
+        connection.execute("DELETE FROM Photo WHERE id_photo = ?",
+                           (id_photo,))
+        connection.commit()
