@@ -28,7 +28,6 @@ def extract_and_update_data():
 
             # TODO detect_modifications()
 
-
             # Mettre à jour le temps de la dernière importation
             db.update_last_import_time()
 
@@ -86,6 +85,7 @@ def notify(new_contraventions):
                 f"Une erreur s'est produite lors de la lecture du fichier YAML : {e}")
 
         # Parcourir chaque utilisateur
+        unsubscribe_link = None
         for user in users:
             courriel = user[2]
             choix_etablissements = eval(user[3])
@@ -94,6 +94,7 @@ def notify(new_contraventions):
             contraventions_surveillees = set()
 
             # Parcourir chaque nouvelle contravention
+            id_business = None
             for contravention in new_contraventions:
                 id_business = contravention[1]
 
@@ -105,12 +106,16 @@ def notify(new_contraventions):
                 # Ajouter l'utilisateur et ses contraventions surveillées à la liste
                 destinataires_users[courriel] = contraventions_surveillees
 
+                # Ajouter le lien de désabonnement uniquement si ce n'est pas l'utilisateur du YAML
+                if courriel != receiver_email:
+                    unsubscribe_link = f"/unsubscribe-user/{id_business}/{courriel}"
+
         send_courriel(sender_email, receiver_email, new_contraventions,
-                      destinataires_users)
+                      destinataires_users, unsubscribe_link)
 
 
 def send_courriel(sender_email, receiver_email, new_contraventions,
-                  destinataires_users):
+                  destinataires_users, unsubscribe_link):
     port = 1025
     smtp_server = 'localhost'
 
@@ -118,15 +123,18 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
         with (smtplib.SMTP(smtp_server, port) as server):
 
             # Envoyer un courriel au courriel dans le fichier YAML
-            message_body = prepare_email_body(new_contraventions)
+            message_body = prepare_email_body(new_contraventions,
+                                              unsubscribe_link)
             message_content = prepare_message_content(message_body,
-                                                      sender_email, receiver_email)
+                                                      sender_email,
+                                                      receiver_email)
             server.sendmail(sender_email, [receiver_email],
                             message_content.as_string())
 
             # Envoyer un courriel à chaque destinataire user
             for email_destinataire, contraventions in destinataires_users.items():
-                message_body = prepare_email_body(contraventions)
+                message_body = prepare_email_body(contraventions,
+                                                  unsubscribe_link)
                 message_content = prepare_message_content(message_body,
                                                           sender_email,
                                                           email_destinataire)
@@ -138,19 +146,26 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
         print(f"Erreur lors de l'envoi de l'e-mail : {e}")
 
 
-def prepare_email_body(contraventions):
+def prepare_email_body(contraventions, unsubscribe_link):
     message_body = "<h3>Nouvelles contraventions!</h3>"
     for contravention in contraventions:
         etablissement = contravention[6]
         date = contravention[2]
         description = contravention[3]
-        unsubscribe_link = f"<a href='http://votresite.com/desabonnement/{etablissement}'>Se désabonner de {etablissement}</a>"
 
         message_body += f"<p>Établissement: {etablissement}</p>"
         message_body += "<ul>"
         message_body += f"<li>Date: {date}</li>"
         message_body += f"<li>Description: {description}</li>"
         message_body += "</ul>"
+
+        # Ajoute le lien de désabonnement si unsubscribe_link n'est pas None
+        if unsubscribe_link is not None:
+            message_body += (f"<p>Pour vous désabonner de cet établissement, "
+                             f"veuillez "
+                             f"cliquer "
+                             f"sur le lien suivant : <a href='"
+                             f"{unsubscribe_link}'>Se désabonner</a></p>")
     return message_body
 
 

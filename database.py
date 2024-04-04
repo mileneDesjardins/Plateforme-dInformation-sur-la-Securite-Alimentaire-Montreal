@@ -569,6 +569,14 @@ class Database:
             (courriel,))
         return cursor.fetchone()
 
+    def get_user_by_email(self, email):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute(
+            "SELECT * FROM User WHERE courriel = ?",
+            (email,)
+        )
+        return cursor.fetchone()
+
     def get_user_by_id(self, id_user):
         connection = self.get_user_connection()
         cursor = connection.cursor()
@@ -586,9 +594,49 @@ class Database:
 
         # Méthode pour mettre à jour les établissements choisis pour un utilisateur
 
+    # Méthode pour mettre à jour les établissements choisis pour un utilisateur
     def update_user_etablissements(self, id_user, new_etablissements):
         connection = self.get_user_connection()
         cursor = connection.cursor()
+
+        # Convertir la nouvelle liste d'établissements en format JSON
+        new_etablissements_json = json.dumps(new_etablissements)
+
+        try:
+            # Mettre à jour la ligne de l'utilisateur dans la base de données
+            cursor.execute(
+                "UPDATE User SET choix_etablissements = ? WHERE id_user = ?",
+                (new_etablissements_json, id_user)
+            )
+            connection.commit()
+            print(
+                "Liste des établissements mise à jour avec succès pour l'utilisateur",
+                id_user)
+        except Exception as e:
+            # Gérer les erreurs éventuelles
+            print(
+                "Erreur lors de la mise à jour des établissements pour l'utilisateur",
+                id_user)
+            print("Erreur détaillée:", e)
+
+    def delete_user_choix_etablissements(self, email, id_business):
+        cursor = self.get_user_connection().cursor()
+        cursor.execute(
+            "SELECT choix_etablissements FROM User WHERE courriel = ?",
+            (email,)
+        )
+        user_data = cursor.fetchone()
+        if user_data:
+            choix_etablissements = json.loads(user_data[3])
+            if id_business in choix_etablissements:
+                choix_etablissements.remove(id_business)
+                cursor.execute(
+                    "UPDATE User SET choix_etablissements = ? WHERE courriel = ?",
+                    (json.dumps(choix_etablissements), email)
+                )
+                self.get_user_connection().commit()
+                return True
+        return False
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:

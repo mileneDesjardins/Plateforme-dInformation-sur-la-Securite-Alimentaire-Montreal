@@ -291,17 +291,28 @@ def confirmation_modifs_user():
 
 
 # E4
-@app.route('/unsubscribed-user', methods=['GET', 'POST'])
-def unsubscribe_user():
+@app.route('/unsubscribe-user/<id_business>/<email>', methods=['GET', 'POST'])
+def unsubscribe_user(id_business, email):
     titre = 'Désabonnement'
     if request.method == 'GET':
-        return render_template('unsubscribed.html', titre=titre)
+        return render_template('unsubscribe.html', titre=titre)
     else:
+        db = Database.get_db()
+        user = db.get_user_by_email(email)
+        if user:
+            if db.delete_user_choix_etablissements(email, id_business):
+                return "Désabonnement réussi."
+            else:
+                return "L'utilisateur n'est pas abonné à cet établissement."
+        else:
+            return "Utilisateur non trouvé."
 
+
+# E4
 @app.route('/confirmation-unsubscribed-user', methods=['GET'])
 def confirmation_modifs_user():
     titre = 'Désabonnement confirmé'
-    return render_template('confirmation_unsubscribed_user.html',
+    return render_template('confirmation_unsubscribe_user.html',
                            titre=titre)
 
 
@@ -491,6 +502,7 @@ def supprimer_inspection(id_demande):
         return jsonify(
             error="Une erreur est survenue sur le serveur. Veuillez "
                   "réessayer plus tard"), 500
+
 
 # TODO deplacer
 def delete_demande_inspection(id_demande):
