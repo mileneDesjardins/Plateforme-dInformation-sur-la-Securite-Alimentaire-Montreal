@@ -11,6 +11,7 @@ from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
 import IDRessourceNonTrouve
+from TokenManager import TokenManager
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -228,7 +229,6 @@ def compte():
     choix_etablissements = session.get("choix_etablissements")
 
     if request.method == 'GET':
-
         if not user:
             return render_template('404.html'), 404
 
@@ -243,6 +243,7 @@ def compte():
         return render_template('compte.html', titre=titre,
                                user=user, etablissements=etablissements,
                                choix_etablissements=choix_etablissements)
+
 
     elif request.method == 'POST':
 
@@ -278,7 +279,8 @@ def compte():
 # E2
 @app.route('/photo/<id_photo>')
 def photo(id_photo):
-    photo_data = Database.get_db().get_photo(id_photo)
+    db = Database()
+    photo_data = db.get_photo(id_photo)
     if photo_data:
         return Response(photo_data, mimetype='application/octet-stream')
 
@@ -290,23 +292,52 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
-# E4
-@app.route('/unsubscribe-user/<id_business>/<email>', methods=['GET', 'POST'])
-def unsubscribe_user(id_business, email):
+@app.route('/unsubscribe/<token>', methods=['GET'])
+def unsubscribe(token):
     titre = 'Désabonnement'
     script = "/js/script_unsubscribeUser.js"
-    if request.method == 'GET':
-        return render_template('unsubscribe.html', titre=titre, script=script)
+
+    # Récupérez les informations de l'utilisateur à partir du token
+    token_manager = TokenManager()
+    token_data = token_manager.get_token_data(token)
+    if token_data:
+        id_business, email = token_data
+        return render_template('unsubscribe.html', titre=titre,
+                               script=script, id_business=id_business,
+                               email=email)
     else:
+        return "Token invalide."
+
+
+# E4
+@app.route('/api/unsubscribe', methods=['POST'])
+def unsubscribe_user():
+    # Obtenir le token du corps de la requête POST
+    token = request.json.get('token')
+
+    # Vérifiez le token pour confirmer l'identité de l'utilisateur
+    token_manager = TokenManager()
+    if token_manager.verify_token(token):
+        # Obtenir l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
+        id_business = request.json.get('id_business')
+        email = request.json.get('email')
+
+        # Supprimer l'établissement surveillé par l'utilisateur de la base de données
         db = Database.get_db()
         user = db.get_user_by_email(email)
         if user:
-            if db.delete_user_choix_etablissements(email, id_business):
-                return "Désabonnement réussi."
+            # Supprimer l'établissement surveillé de l'utilisateur
+            success = db.delete_user_choix_etablissements(email, id_business)
+            if success:
+                # Supprimer le token associé à l'utilisateur après confirmation du désabonnement
+                token_manager.delete_token(token)
+                return redirect(url_for('confirmation_unsubscribed_user'))
             else:
-                return "L'utilisateur n'est pas abonné à cet établissement."
+                return "L'établissement n'est pas surveillé par cet utilisateur."
         else:
             return "Utilisateur non trouvé."
+    else:
+        return "Token invalide."
 
 
 # E4
