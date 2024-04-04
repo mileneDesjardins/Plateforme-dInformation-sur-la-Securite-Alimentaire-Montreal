@@ -1,9 +1,11 @@
 # INF5190-Projet
 
 ### Auteurs
-Milene Desjardins - DESM31559704
+ABEA05619105 - Anne-Sophie Abel-Levesque
 
-Anne-Sophie Abel-Levesque - ABEA05619105
+DESM31559704 - Milene Desjardins
+
+
 
 
 

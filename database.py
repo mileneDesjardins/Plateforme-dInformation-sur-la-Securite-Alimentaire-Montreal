@@ -117,7 +117,7 @@ def insert_new_record(cursor, date, date_jugement,
              "proprietaire, ville, statut, date_statut, categorie, "
              "date_importation, "
              "timestamp_csv, deleted) "
-             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",)
+             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)",)
     params = (
         row[Cols.ID_POURSUITE.value], row[Cols.ID_BUSINESS.value],
         date, row[Cols.DESCRIP.value], row[Cols.ADRESSE.value],
