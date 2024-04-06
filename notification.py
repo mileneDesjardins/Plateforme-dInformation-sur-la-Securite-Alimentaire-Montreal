@@ -81,12 +81,12 @@ def notify(new_contraventions):
                 config_data = yaml.safe_load(file)
                 sender_email = config_data['sender_email']
                 receiver_email = config_data['receiver_email']
+
         except Exception as e:
             print(
                 f"Une erreur s'est produite lors de la lecture du fichier YAML : {e}")
 
         # Parcourir chaque utilisateur
-        unsubscribe_link = None
         token_manager = TokenManager()
         for user in users:
             courriel = user[2]
@@ -111,11 +111,9 @@ def notify(new_contraventions):
                 # Générer le token pour cet utilisateur
                 token = token_manager.generate_token(id_business, courriel)
 
-                # Ajouter le lien de désabonnement uniquement si ce n'est pas l'utilisateur du YAML
+                # Si l'utilisateur n'est pas l'adresse de réception spécifiée dans le fichier YAML
                 if courriel != receiver_email:
-                    unsubscribe_link = f"/unsubscribe/{token}"
-                else:
-                    print("Erreur lors de la génération du token.")
+                    unsubscribe_link = f"/unsubscribe/{token}"  # Modifier uniquement si l'utilisateur est différent du destinataire
 
         send_courriel(sender_email, receiver_email, new_contraventions,
                       destinataires_users, unsubscribe_link)
@@ -130,8 +128,7 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
         with (smtplib.SMTP(smtp_server, port) as server):
 
             # Envoyer un courriel au courriel dans le fichier YAML
-            message_body = prepare_email_body(new_contraventions,
-                                              unsubscribe_link)
+            message_body = prepare_email_body(new_contraventions, False)
             message_content = prepare_message_content(message_body,
                                                       sender_email,
                                                       receiver_email)
@@ -140,8 +137,7 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
 
             # Envoyer un courriel à chaque destinataire user
             for email_destinataire, contraventions in destinataires_users.items():
-                message_body = prepare_email_body(contraventions,
-                                                  unsubscribe_link)
+                message_body = prepare_email_body(contraventions)
                 message_content = prepare_message_content(message_body,
                                                           sender_email,
                                                           email_destinataire)
@@ -153,7 +149,7 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
         print(f"Erreur lors de l'envoi de l'e-mail : {e}")
 
 
-def prepare_email_body(contraventions, unsubscribe_link):
+def prepare_email_body(contraventions, unsubscribe_link=True):
     message_body = "<h3>Nouvelles contraventions!</h3>"
     for contravention in contraventions:
         etablissement = contravention[6]
@@ -166,13 +162,13 @@ def prepare_email_body(contraventions, unsubscribe_link):
         message_body += f"<li>Description: {description}</li>"
         message_body += "</ul>"
 
-        # Ajoute le lien de désabonnement si unsubscribe_link n'est pas None
-        if unsubscribe_link is not None:
+        if unsubscribe_link:
             message_body += (f"<p>Pour vous désabonner de cet établissement, "
                              f"veuillez "
                              f"cliquer "
                              f"sur le lien suivant : <a href='"
                              f"{unsubscribe_link}'>Se désabonner</a></p>")
+
     return message_body
 
 

@@ -2,10 +2,10 @@ export FLASK_APP=main.py
 .PHONY: run debug doc
 
 run:
-	flask --debug run
+	flask run
 
 debug:
-	FLASK_DEBUG=1 flask run
+	flask run --debug
 
 
 doc: doc.raml

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import sqlite3
 import threading
 import uuid
@@ -20,21 +21,21 @@ from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
     contrevenant_update_schema, contravention_update_schema
+from twitter import twitter_auth, callback
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
-from twitter import twitter_auth, callback
 
 load_dotenv()
 schema = JsonSchema(app)
-update_thread = threading.Thread(target=extract_and_update_data)
-update_thread.start()
 
+if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+    update_thread = threading.Thread(target=extract_and_update_data)
+    update_thread.start()
 
 if __name__ == '__main__':
     app.secret_key = "AUTH_KWESI_SECRET"
     app.run()
-
 
 
 @app.teardown_appcontext
@@ -58,7 +59,7 @@ def index():
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
 
-    twitter_auth() #TODO renommer si ca fonctionne
+    twitter_auth()  # TODO renommer si ca fonctionne
     if "id" in session:
         id_user = session.get("id_user")
         nom_complet = session.get('nom_complet')
@@ -72,7 +73,6 @@ def index():
                            )
 
 
-
 @app.route('/demo')
 def demo():
     return twitter_auth()
@@ -82,7 +82,6 @@ def demo():
 def oauth_callback():
     print("va ici")
     response = callback()
-
 
 
 # A2
