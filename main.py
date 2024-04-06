@@ -24,6 +24,7 @@ from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
 from twitter import twitter_auth, callback
+
 load_dotenv()
 schema = JsonSchema(app)
 update_thread = threading.Thread(target=extract_and_update_data)
@@ -268,6 +269,10 @@ def compte():
 
         # Récupérer les informations soumises dans le formulaire
         new_etablissements = request.form.getlist('choix_etablissements')
+
+        # Convertir les valeurs en entiers
+        new_etablissements = [int(etablissement) for etablissement in
+                              new_etablissements]
 
         # Mettre à jour les établissements sélectionnés dans la base de données
         db.update_user_etablissements(id_user, new_etablissements)
