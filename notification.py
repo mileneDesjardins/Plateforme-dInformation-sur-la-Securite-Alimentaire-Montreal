@@ -70,6 +70,7 @@ def notify(new_contraventions):
     db = Database.get_db()
     users = db.get_all_users()
     destinataires_users = dict()
+    link_tokens = {}  # Dictionnaire pour stocker les tokens par utilisateur
 
     if new_contraventions is None:
         print("Aucune nouvelle contravention à notifier.")
@@ -96,7 +97,6 @@ def notify(new_contraventions):
             contraventions_surveillees = set()
 
             # Parcourir chaque nouvelle contravention
-            id_business = None
             for contravention in new_contraventions:
                 id_business = contravention[1]
 
@@ -104,23 +104,22 @@ def notify(new_contraventions):
                 if id_business in choix_etablissements:
                     contraventions_surveillees.add(contravention)
 
+                    # Générer le token pour cet utilisateur
+                    token = token_manager.generate_token(id_business, courriel)
+                    link_tokens[
+                        courriel] = f"http://localhost:5000/unsubscribe/{token}"  # Ajout au dictionnaire
+
             if contraventions_surveillees:
                 # Ajouter l'utilisateur et ses contraventions surveillées à la liste
                 destinataires_users[courriel] = contraventions_surveillees
 
-                # Générer le token pour cet utilisateur
-                token = token_manager.generate_token(id_business, courriel)
-
-                # Si l'utilisateur n'est pas l'adresse de réception spécifiée dans le fichier YAML
-                if courriel != receiver_email:
-                    unsubscribe_link = f"/unsubscribe/{token}"  # Modifier uniquement si l'utilisateur est différent du destinataire
-
+        # Envoyer l'e-mail à chaque utilisateur
         send_courriel(sender_email, receiver_email, new_contraventions,
-                      destinataires_users, unsubscribe_link)
+                      destinataires_users, link_tokens)
 
 
 def send_courriel(sender_email, receiver_email, new_contraventions,
-                  destinataires_users, unsubscribe_link):
+                  destinataires_users, link_tokens):
     port = 1025
     smtp_server = 'localhost'
 
@@ -137,7 +136,8 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
 
             # Envoyer un courriel à chaque destinataire user
             for email_destinataire, contraventions in destinataires_users.items():
-                message_body = prepare_email_body(contraventions)
+                message_body = prepare_email_body(contraventions,
+                                                  link_token=link_tokens[email_destinataire])
                 message_content = prepare_message_content(message_body,
                                                           sender_email,
                                                           email_destinataire)
@@ -149,7 +149,8 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
         print(f"Erreur lors de l'envoi de l'e-mail : {e}")
 
 
-def prepare_email_body(contraventions, unsubscribe_link=True):
+def prepare_email_body(contraventions, unsubscribe_link=True,
+                       link_token=None):
     message_body = "<h3>Nouvelles contraventions!</h3>"
     for contravention in contraventions:
         etablissement = contravention[6]
@@ -162,12 +163,13 @@ def prepare_email_body(contraventions, unsubscribe_link=True):
         message_body += f"<li>Description: {description}</li>"
         message_body += "</ul>"
 
-        if unsubscribe_link:
+        if unsubscribe_link and link_token is not None:
             message_body += (f"<p>Pour vous désabonner de cet établissement, "
                              f"veuillez "
                              f"cliquer "
                              f"sur le lien suivant : <a href='"
-                             f"{unsubscribe_link}'>Se désabonner</a></p>")
+                             f"{link_token}'>Se désabonner</a></p>")
+            print(message_body)
 
     return message_body
 
