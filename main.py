@@ -23,11 +23,17 @@ from schema import inspection_insert_schema, valider_new_user_schema, \
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
-
+from twitter import demo, callback
 load_dotenv()
 schema = JsonSchema(app)
 update_thread = threading.Thread(target=extract_and_update_data)
 update_thread.start()
+
+
+if __name__ == '__main__':
+    app.secret_key = "AUTH_KWESI_SECRET"
+    app.run()
+
 
 
 @app.teardown_appcontext
@@ -50,7 +56,8 @@ def index():
     titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
-    print(script)
+
+    demo() #TODO renommer si ca fonctionne
 
     if "id" in session:
         id_user = session.get("id_user")
@@ -63,6 +70,14 @@ def index():
                            etablissements=etablissements,
                            nom_complet=nom_complet, id_user=id_user
                            )
+
+
+
+@app.route("/oauth/callback", methods=["GET"])
+def oauth_callback():
+    response = callback()
+    print(response)
+
 
 
 # A2
