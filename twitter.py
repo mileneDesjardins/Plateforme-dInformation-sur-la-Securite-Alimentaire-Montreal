@@ -13,6 +13,7 @@ from app import app
 with app.app_context():
     client_id = current_app.config["CLIENT_ID"]
     client_secret = current_app.config["CLIENT_SECRET"]
+    api_key = current_app.config["API_KEY"]
     auth_url = "https://twitter.com/i/oauth2/authorize"
     token_url = "https://api.twitter.com/2/oauth2/token"
     redirect_uri = current_app.config["REDIRECT_URI"]
@@ -53,10 +54,10 @@ def post_tweet(payload, new_token):
 #TODO enelver png quand fonctionne
 def upload_media():
     tweepy_auth = tweepy.OAuth1UserHandler(
-        "{}".format(os.environ.get("API_KEY")),
-        "{}".format(os.environ.get("API_SECRET")),
-        "{}".format(os.environ.get("ACCESS_TOKEN")),
-        "{}".format(os.environ.get("ACCESS_TOKEN_SECRET")),
+        "{}".format(current_app.config["API_KEY"]),
+        "{}".format(current_app.config["API_SECRET"]),
+        "{}".format(current_app.config["ACCESS_TOKEN"]),
+        "{}".format(current_app.config["ACCESS_TOKEN_SECRET"]),
     )
     tweepy_api = tweepy.API(tweepy_auth)
     url = "https://api.thecatapi.com/v1/images/search"
