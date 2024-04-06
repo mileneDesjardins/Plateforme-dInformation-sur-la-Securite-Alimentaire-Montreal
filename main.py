@@ -23,7 +23,7 @@ from schema import inspection_insert_schema, valider_new_user_schema, \
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
-from twitter import demo, callback
+from twitter import twitter_auth, callback
 load_dotenv()
 schema = JsonSchema(app)
 update_thread = threading.Thread(target=extract_and_update_data)
@@ -57,8 +57,7 @@ def index():
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
 
-    demo() #TODO renommer si ca fonctionne
-
+    twitter_auth() #TODO renommer si ca fonctionne
     if "id" in session:
         id_user = session.get("id_user")
         nom_complet = session.get('nom_complet')
@@ -73,10 +72,15 @@ def index():
 
 
 
+@app.route('/demo')
+def demo():
+    return twitter_auth()
+
+
 @app.route("/oauth/callback", methods=["GET"])
 def oauth_callback():
+    print("va ici")
     response = callback()
-    print(response)
 
 
 

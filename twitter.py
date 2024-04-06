@@ -8,9 +8,8 @@ import tweepy
 from requests_oauthlib import OAuth2Session
 from flask import (Flask, request, redirect, session, url_for, render_template,
                    current_app)
-
-
 from app import app
+
 with app.app_context():
     client_id = current_app.config["CLIENT_ID"]
     client_secret = current_app.config["CLIENT_SECRET"]
@@ -23,6 +22,18 @@ with app.app_context():
     code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
     code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
     code_challenge = code_challenge.replace("=", "")
+
+twitter = OAuth2Session()
+
+
+def twitter_auth():
+    global twitter
+    twitter = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scopes)
+    authorization_url, state = twitter.authorization_url(
+        auth_url, code_challenge=code_challenge, code_challenge_method="S256"
+    )
+    session["oauth_state"] = state
+    return redirect(authorization_url)
 
 
 
@@ -62,15 +73,6 @@ def upload_media():
     return payload
 
 
-#TODO route accueil
-def demo():
-    global twitter
-    twitter = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scopes)
-    authorization_url, state = twitter.authorization_url(
-        auth_url, code_challenge=code_challenge, code_challenge_method="S256"
-    )
-    session["oauth_state"] = state
-    return redirect(authorization_url)
 
 
 def callback():
@@ -83,4 +85,5 @@ def callback():
     )
     payload = upload_media()
     response = post_tweet(payload, token).json()
+    print("callback", response)
     return response
