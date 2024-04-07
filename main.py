@@ -59,7 +59,6 @@ def index():
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
 
-    twitter_auth()  # TODO renommer si ca fonctionne
     if "id" in session:
         id_user = session.get("id_user")
         nom_complet = session.get('nom_complet')
@@ -80,8 +79,7 @@ def demo():
 
 @app.route("/oauth/callback", methods=["GET"])
 def oauth_callback():
-    print("va ici")
-    response = callback()
+    return callback()
 
 
 # A2
