@@ -315,10 +315,11 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
-@app.route('/unsubscribe/<token>', methods=['GET'])
+@app.route('/unsubscribe-page/<token>', methods=['GET'])
 def unsubscribe(token):
     titre = 'Désabonnement'
     script = "/js/script_unsubscribeUser.js"
+    print("alloooooooooooooooooooooooooooooo")
 
     # Récupérez les informations de l'utilisateur à partir du token
     token_manager = TokenManager()

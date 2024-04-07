@@ -32,7 +32,7 @@ def extract_and_update_data():
             # Mettre à jour le temps de la dernière importation
             db.update_last_import_time()
 
-            time.sleep(10)
+            time.sleep(5)
 
 
 def detect_new_contraventions():
@@ -107,7 +107,8 @@ def notify(new_contraventions):
                     # Générer le token pour cet utilisateur
                     token = token_manager.generate_token(id_business, courriel)
                     link_tokens[
-                        courriel] = f"http://localhost:5000/unsubscribe/{token}"  # Ajout au dictionnaire
+                        courriel] = (
+                        f"http://localhost:5000/unsubscribe-page/{token}")
 
             if contraventions_surveillees:
                 # Ajouter l'utilisateur et ses contraventions surveillées à la liste
@@ -137,7 +138,8 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
             # Envoyer un courriel à chaque destinataire user
             for email_destinataire, contraventions in destinataires_users.items():
                 message_body = prepare_email_body(contraventions,
-                                                  link_token=link_tokens[email_destinataire])
+                                                  link_token=link_tokens[
+                                                      email_destinataire])
                 message_content = prepare_message_content(message_body,
                                                           sender_email,
                                                           email_destinataire)
