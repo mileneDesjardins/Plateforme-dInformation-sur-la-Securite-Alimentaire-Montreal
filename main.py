@@ -79,7 +79,6 @@ def demo():
 
 @app.route("/oauth/callback", methods=["GET"])
 def oauth_callback():
-    print("va ici")
     return callback()
 
 
