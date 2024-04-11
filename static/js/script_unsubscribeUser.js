@@ -19,7 +19,6 @@ function unsubscribeUser() {
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message); // Affiche le message reçu de l'API
         if (data.success) {
             window.location.href = '/confirmation-unsubscribed-user';
         }
