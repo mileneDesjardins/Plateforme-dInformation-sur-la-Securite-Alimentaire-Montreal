@@ -183,24 +183,23 @@ types:
         "nom_complet_client": "Prenom Nom",
         "description": "Personnes affectées à la consommation de produits",
       }
-  user:
+  User:
     type: object
     properties:
       nom_complet: string
       courriel: string
-      choix_etablissements: array
+      choix_etablissements:
+        type: array
+        items: integer
       mdp: string
-
     additionalProperties: false
     example: |
       {
         "nom_complet": "John Doe",
         "courriel": "john.doe@example.com",
         "choix_etablissements": [14313, 46508],
-        "mpd": "mot_de_passe_secret"
+        "mdp": "mot_de_passe_secret"
       }
-
-
 /api:
   /contrevenants:
     /start/{date1}/end/{date2}:
@@ -296,8 +295,6 @@ types:
               application/json:
                 example: |
                   []
-
-
       patch:
         description: Modifie partiellement l'établissement associé au ID spécifié en paramètre, selon les modifications spécifiées.
         body:
@@ -346,6 +343,7 @@ types:
             description: Le ID spécifié en paramètre n'est pas un entier valide.
           404:
             description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
+
   /contraventions:
     patch:
       description: Modifie partiellement les informations d'une contravention, selon les modifications spécifiées.
@@ -353,56 +351,56 @@ types:
         application/json:
           type: InfoContravention
       responses:
-            200:
-              body:
-                application/json:
-                  type: Contravention[]
-                example: |
-                  [
-                    {
-                      "id_poursuite": 100,
-                      "id_business": 200,
-                      "date": "2022-11-05",
-                      "description": "Personnes affectées à la consommation de produits",
-                      "adresse": "123 avenue Chemin, Montréal, Québec",
-                      "date_jugement": "2022-12-05",
-                      "etablissement": "Nom Établissement",
-                      "montant": 100,
-                      "proprietaire": "Nom Proprietaire",
-                      "ville": "Montréal",
-                      "statut": "Ouvert",
-                      "date_statut": "2024-01-02",
-                      "categorie": "Restaurant"
-                    },
-                    {
-                      "id_poursuite": 300,
-                      "id_business": 350,
-                      "date": "2020-11-05",
-                      "description": "Personnes affectées à la consommation de produits",
-                      "adresse": "123 avenue Chemin, Montréal, Québec",
-                      "date_jugement": "2020-12-05",
-                      "etablissement": "Nom Établissement",
-                      "montant": 500,
-                      "proprietaire": "Nom Proprietaire",
-                      "ville": "Montréal",
-                      "statut": "Ouvert",
-                      "date_statut": "2024-01-02",
-                      "categorie": "Restaurant"
-                    }
-                  ]
-            400:
-              description: Une erreur reliée au schéma JSON a été rencontrée.
-              body:
-                application/json:
-                example: |
-                  {
-                    "error": "Error validating against schema",
-                    "errors": [
-                      "'id_business' is a required property"
-                    ]
-                  }
-            404:
-              description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
+        200:
+          body:
+            application/json:
+              type: Contravention[]
+            example: |
+              [
+                {
+                  "id_poursuite": 100,
+                  "id_business": 200,
+                  "date": "2022-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2022-12-05",
+                  "etablissement": "Nom Établissement",
+                  "montant": 100,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant"
+                },
+                {
+                  "id_poursuite": 300,
+                  "id_business": 350,
+                  "date": "2020-11-05",
+                  "description": "Personnes affectées à la consommation de produits",
+                  "adresse": "123 avenue Chemin, Montréal, Québec",
+                  "date_jugement": "2020-12-05",
+                  "etablissement": "Nom Établissement",
+                  "montant": 500,
+                  "proprietaire": "Nom Proprietaire",
+                  "ville": "Montréal",
+                  "statut": "Ouvert",
+                  "date_statut": "2024-01-02",
+                  "categorie": "Restaurant"
+                }
+              ]
+        400:
+          description: Une erreur reliée au schéma JSON a été rencontrée.
+          body:
+            application/json:
+            example: |
+              {
+                "error": "Error validating against schema",
+                "errors": [
+                  "'id_business' is a required property"
+                ]
+              }
+        404:
+          description: Le id_business ne correspondent à aucun contrevenant. Aucune modification n'a été apportée.
     /{id_poursuite}:
       uriParameters:
         id_poursuite:
@@ -526,25 +524,46 @@ types:
             {
               "nom_complet": "John Doe",
               "courriel": "john.doe@example.com",
-              "choix_etablissements": [14313, 46508],
+              "choix_etablissements": [1234, 43546],
               "mdp": "mot_de_passe_secret"
             }
-    responses:
-      201:
-        description: Le profil utilisateur a été créé avec succès.
-        body:
-          application/json:
-            example: |
-              {
-                "message": "Profil utilisateur créé avec succès."
-              }
-      400:
-        description: Les données fournies sont invalides ou manquantes.
-        body:
-          application/json:
-            example: |
-              {
-                "error": "Données invalides ou manquantes.",
-                "details": "Veuillez vérifier les données fournies et réessayer
-               ."
-              }
+      responses:
+        201:
+          description: Le profil utilisateur a été créé avec succès.
+        400:
+          description: Les données fournies sont invalides ou manquantes.
+
+
+  /unsubscribe:
+    post:
+      description: Permet à un utilisateur de se désabonner d'un établissement surveillé.
+      body:
+        application/json:
+          type: object
+          properties:
+            token:
+              type: string
+              required: true
+              description: Token d'authentification de l'utilisateur.
+            id_business:
+              type: integer
+              required: true
+              description: Identifiant de l'établissement duquel l'utilisateur souhaite se désabonner.
+            email:
+              type: string
+              required: true
+              description: Adresse email de l'utilisateur qui demande le désabonnement.
+                example:
+                {
+                  "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345",
+                  "id_business": 42,
+                  "courriel": "utilisateur@example.com"
+                }
+      responses:
+        200:
+          description: L'utilisateur a été désabonné avec succès de l'établissement.
+        400:
+          description: L'utilisateur tente de se désabonner d'un établissement qui n'est pas surveillé.
+        404:
+          description: L'adresse email fournie ne correspond à aucun utilisateur enregistré.
+
