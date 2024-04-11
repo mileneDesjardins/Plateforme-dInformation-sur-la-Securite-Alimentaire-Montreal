@@ -71,7 +71,8 @@
                                     id="select-etablissement"
                                     class="form-control">
                                 {% for etablissement in etablissements %}
-                                    <option value="{{ etablissement[0] }}">{{ etablissement[1] }} - {{ etablissement[2] }}</option>
+                                    <option value="{{ etablissement[0] }}">{{ etablissement[1] }}
+                                        - {{ etablissement[2] }}</option>
                                 {% endfor %}
                             </select>
                             <button type="button" id="btn-info-etablissement"

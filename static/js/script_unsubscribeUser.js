@@ -1,7 +1,8 @@
 function unsubscribeUser() {
-    var token = "{{ token }}"; // Ajoutez ici la manière de récupérer le token si nécessaire
-    var idBusiness = "{{ id_business }}";
-    var email = "{{ email }}";
+    var btn = document.getElementById("confirm-unsubscribe-btn");
+    var token = btn.getAttribute('data-token');
+    var idBusiness = btn.getAttribute('data-id-business');
+    var email = btn.getAttribute('data-email');
 
     var requestData = {
         token: token,
@@ -16,23 +17,18 @@ function unsubscribeUser() {
         },
         body: JSON.stringify(requestData)
     })
-    .then(response => {
-        if (response.ok) {
-            return response.text(); // Renvoie la réponse du serveur
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message); // Affiche le message reçu de l'API
+        if (data.success) {
+            window.location.href = '/confirmation-unsubscribed-user';
         }
-        throw new Error("Erreur lors de la demande : " + response.status);
-    })
-    .then(message => {
-        // Afficher la réponse de la requête AJAX
-        alert(message);
-        // Rediriger vers une autre page ou effectuer d'autres actions si nécessaire
     })
     .catch(error => {
         console.error("Erreur lors de la demande :", error);
     });
 }
 
-// Ajouter un gestionnaire d'événements au bouton de confirmation
 document.getElementById("confirm-unsubscribe-btn").addEventListener("click", function () {
     unsubscribeUser();
 });

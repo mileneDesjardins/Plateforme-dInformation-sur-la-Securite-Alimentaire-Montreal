@@ -50,12 +50,7 @@
                                 style="width: 100%;">
                             {% for etablissement in etablissements %}
                                 {% if etablissement[0] is defined %}
-                                    {% set id_business_str = etablissement[0]|string %}
-                                    {% if choix_etablissements is not none
-                                    and id_business_str in
-                                    choix_etablissements %} {# vérifie si
-                                    l'id_business actuel est présent dans la
-                                    liste choix_etablissements. Si c'est le cas, l'option est marquée comme sélectionnée (selected).#}
+                                    {% if choix_etablissements is not none and etablissement[0] in choix_etablissements %}
                                         <option value="{{ etablissement[0] }}"
                                                 selected>
                                             {{ etablissement[1] }}

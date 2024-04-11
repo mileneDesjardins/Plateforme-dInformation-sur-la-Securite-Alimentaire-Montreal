@@ -332,8 +332,9 @@ def unsubscribe(token):
             # Mettre à jour l'expiration du token ici, si nécessaire
             token_manager.update_token_expiration(token)
 
-            # Continuer à rendre la page de désabonnement avec les données de l'utilisateur
-            id_business, email = token_data
+            email = token_data[0]
+            id_business = token_data[1]
+
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, id_business=id_business,
                                    email=email, token=token, message=message)
@@ -346,32 +347,31 @@ def unsubscribe(token):
 # E4
 @app.route('/api/unsubscribe', methods=['POST'])
 def unsubscribe_user():
-    # Obtenir le token du corps de la requête POST
+    # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
     token = request.json.get('token')
+    id_business = request.json.get('id_business')
+    email = request.json.get('email')
 
-    # Vérifiez le token pour confirmer l'identité de l'utilisateur
+    # Instance de TokenManager pour gérer les opérations liées aux tokens
     token_manager = TokenManager()
-    if token_manager.verify_token(token):
-        # Obtenir l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
-        id_business = request.json.get('id_business')
-        email = request.json.get('email')
 
-        # Supprimer l'établissement surveillé par l'utilisateur de la base de données
-        db = Database.get_db()
-        user = db.get_user_by_email(email)
-        if user:
-            # Supprimer l'établissement surveillé de l'utilisateur
-            success = db.delete_user_choix_etablissements(email, id_business)
-            if success:
-                # Supprimer le token associé à l'utilisateur après confirmation du désabonnement
-                token_manager.delete_token(token)
-                return redirect(url_for('confirmation_unsubscribed_user'))
-            else:
-                return "L'établissement n'est pas surveillé par cet utilisateur."
+    # Supprimer l'établissement surveillé par l'utilisateur de la base de données
+    db = Database.get_db()
+    user = db.get_user_by_email(email)
+    print(user)
+    if user:
+        success = db.delete_user_choix_etablissements(email, id_business)
+        if success:
+            token_manager.delete_token(token)
+            # Retourner une réponse JSON indiquant le succès
+            return jsonify(
+                {"success": True, "message": "Désabonnement réussi."}), 200
         else:
-            return "Utilisateur non trouvé."
+            return jsonify({"success": False,
+                            "message": "L'établissement n'est pas surveillé par cet utilisateur."}), 400
     else:
-        return "Token invalide."
+        return jsonify(
+            {"success": False, "message": "Utilisateur non trouvé."}), 404
 
 
 # E4

@@ -623,24 +623,39 @@ class Database:
             print("Erreur détaillée:", e)
 
     def delete_user_choix_etablissements(self, email, id_business):
-        cursor = self.get_user_connection().cursor()
-        cursor.execute(
-            "SELECT choix_etablissements FROM User WHERE courriel = ?",
-            (email,)
-        )
-        user_data = cursor.fetchone()
-        if user_data:
-            choix_etablissements = json.loads(user_data[3])
-            if id_business in choix_etablissements:
-                choix_etablissements.remove(id_business)
-                cursor.execute(
-                    "UPDATE User SET choix_etablissements = ? WHERE courriel = ?",
-                    (json.dumps(choix_etablissements), email)
-                )
-                self.get_user_connection().commit()
-                return True
-        return False
+        # Convertir id_business en entier pour s'assurer de la compatibilité de type
+        id_business = int(
+            id_business)  # Assurez-vous que cette ligne est placée ici
+        connection = self.get_user_connection()
+        cursor = connection.cursor()
+        try:
+            # Sélectionner les choix d'établissements de l'utilisateur
+            cursor.execute(
+                "SELECT choix_etablissements FROM User WHERE courriel = ?",
+                (email,)
+            )
+            user_data = cursor.fetchone()
 
+            if user_data:
+                choix_etablissements = json.loads(user_data[0])
+
+                # Vérifier si l'établissement est dans la liste de l'utilisateur et le supprimer
+                if id_business in choix_etablissements:
+                    choix_etablissements.remove(id_business)
+                    cursor.execute(
+                        "UPDATE User SET choix_etablissements = ? WHERE "
+                        "courriel = ?",
+                        (json.dumps(choix_etablissements), email)
+                    )
+                    connection.commit()
+                    return True
+        except Exception as e:
+            print(
+                f"Erreur lors de la suppression de l'établissement {id_business} pour l'utilisateur {email}: {e}")
+            return False
+        finally:
+            cursor.close()  # Assurez-vous de fermer le curseur
+            connection.close()  # Et de fermer la connexion
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:

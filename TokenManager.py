@@ -64,7 +64,7 @@ class TokenManager:
             if result and result[0] is None:
                 connection.execute(
                     "UPDATE Token SET expiration_timestamp = ? WHERE token_value = ?",
-                    (datetime.now() + timedelta(minutes=1), token)
+                    (datetime.now() + timedelta(minutes=30), token)
                 )
 
                 connection.connection.commit()
@@ -80,22 +80,6 @@ class TokenManager:
                   e)
             return False
 
-    def verify_token(self, token):
-        try:
-            connection = self.get_token_connection().cursor()
-
-            connection.execute(
-                "SELECT expiration_timestamp FROM Token WHERE token_value = ?",
-                (token,))
-            result = connection.fetchone()
-            if result:
-                expiration_timestamp = result[0]
-                if expiration_timestamp > datetime.now():
-                    return True
-            return False
-        except sqlite3.Error as e:
-            print("Erreur lors de la vérification du token :", e)
-            return False
 
     def is_token_expired(self, token):
         try:
@@ -113,7 +97,8 @@ class TokenManager:
                 expiration_timestamp = result[0]
                 if expiration_timestamp:
                     # Convertir le expiration_timestamp en objet datetime
-                    expiration_datetime = datetime.strptime(expiration_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+                    expiration_datetime = datetime.strptime(
+                        expiration_timestamp, "%Y-%m-%d %H:%M:%S.%f")
                     if datetime.now() > expiration_datetime:
                         # Le token est expiré
                         print("Token expiré.")
@@ -136,4 +121,24 @@ class TokenManager:
             print(
                 "Erreur lors de la tentative de vérification de l'expiration du token :",
                 e)
+            return False
+
+    def delete_token(self, token):
+        try:
+            connection = self.get_token_connection().cursor()
+
+            # Exécuter la requête de suppression
+            connection.execute(
+                "DELETE FROM Token WHERE token_value = ?",
+                (token,)
+            )
+
+            # Valider les changements dans la base de données
+            connection.connection.commit()
+            print("Token supprimé avec succès.")
+
+            connection.close()
+            return True
+        except sqlite3.Error as e:
+            print("Erreur lors de la suppression du token :", e)
             return False
