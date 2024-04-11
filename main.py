@@ -317,18 +317,30 @@ def confirmation_modifs_user():
 def unsubscribe(token):
     titre = 'Désabonnement'
     script = "/js/script_unsubscribeUser.js"
-    print("alloooooooooooooooooooooooooooooo")
+    message = None  # Variable pour stocker le message à afficher sur la page
 
     # Récupérez les informations de l'utilisateur à partir du token
     token_manager = TokenManager()
-    token_data = token_manager.get_token_data(token)
-    if token_data:
-        id_business, email = token_data
-        return render_template('unsubscribe.html', titre=titre,
-                               script=script, id_business=id_business,
-                               email=email)
+    if token_manager.is_token_expired(token):
+        message = "Ce lien de désabonnement a expiré."
+        return render_template('unsubscribe.html', titre=titre, script=script,
+                               message=message)
     else:
-        return "Token invalide."
+        # Vérifier si le token est valide et récupérer les données associées
+        token_data = token_manager.get_token_data(token)
+        if token_data:
+            # Mettre à jour l'expiration du token ici, si nécessaire
+            token_manager.update_token_expiration(token)
+
+            # Continuer à rendre la page de désabonnement avec les données de l'utilisateur
+            id_business, email = token_data
+            return render_template('unsubscribe.html', titre=titre,
+                                   script=script, id_business=id_business,
+                                   email=email, token=token, message=message)
+        else:
+            message = "Token invalide."
+            return render_template('unsubscribe.html', titre=titre,
+                                   script=script, message=message)
 
 
 # E4
