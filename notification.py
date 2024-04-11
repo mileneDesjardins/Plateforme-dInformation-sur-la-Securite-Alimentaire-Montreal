@@ -137,7 +137,7 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
             # Envoyer un courriel à chaque destinataire utilisateur pour ses contraventions
             for email_destinataire, contraventions in destinataires_users.items():
                 # Initialiser un message global pour cet utilisateur
-                global_message_body = "<h3>Nouvelles contraventions!</h3>"
+                global_message_body = ""
                 for contravention in contraventions:
                     id_business = contravention[
                         1]
@@ -166,7 +166,6 @@ def prepare_email_body(contraventions, unsubscribe_link=True,
         etablissement = contravention[6]
         date = contravention[2]
         description = contravention[3]
-        id_business = contravention[1]
 
         message_body += f"<p>Établissement: {etablissement}</p>"
         message_body += "<ul>"
