@@ -106,8 +106,7 @@ def notify(new_contraventions):
 
                     # Générer le token pour cet utilisateur
                     token = token_manager.generate_token(id_business, courriel)
-                    link_tokens[
-                        courriel] = (
+                    link_tokens[(courriel, id_business)] = (
                         f"http://localhost:5000/unsubscribe-page/{token}")
 
             if contraventions_surveillees:
@@ -135,16 +134,25 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
             server.sendmail(sender_email, [receiver_email],
                             message_content.as_string())
 
-            # Envoyer un courriel à chaque destinataire user
+            # Envoyer un courriel à chaque destinataire utilisateur pour ses contraventions
             for email_destinataire, contraventions in destinataires_users.items():
-                message_body = prepare_email_body(contraventions,
-                                                  link_token=link_tokens[
-                                                      email_destinataire])
-                message_content = prepare_message_content(message_body,
+                # Initialiser un message global pour cet utilisateur
+                global_message_body = "<h3>Nouvelles contraventions!</h3>"
+                for contravention in contraventions:
+                    id_business = contravention[
+                        1]
+                    # Générer le corps du message pour chaque contravention, incluant le lien de désinscription
+                    individual_message_body = prepare_email_body(
+                        [contravention], unsubscribe_link=True,
+                        link_token=link_tokens.get(
+                            (email_destinataire, id_business)))
+                    global_message_body += individual_message_body
+
+                # Préparer et envoyer le message global à l'utilisateur
+                message_content = prepare_message_content(global_message_body,
                                                           sender_email,
                                                           email_destinataire)
-                # Envoyer le courriel à l'utilisateur concerné
-                server.sendmail(sender_email, [email_destinataire],
+                server.sendmail(sender_email, email_destinataire,
                                 message_content.as_string())
 
     except Exception as e:
@@ -158,6 +166,7 @@ def prepare_email_body(contraventions, unsubscribe_link=True,
         etablissement = contravention[6]
         date = contravention[2]
         description = contravention[3]
+        id_business = contravention[1]
 
         message_body += f"<p>Établissement: {etablissement}</p>"
         message_body += "<ul>"
