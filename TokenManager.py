@@ -12,7 +12,7 @@ class TokenManager:
             self.token_connection = sqlite3.connect('db/token.db')
         return self.token_connection
 
-    def generate_token(self, id_business, courriel):
+    def generate_token(self, id_business, courriel, etablissement):
         # Générer un token unique
         token_value = str(uuid.uuid4())
 
@@ -22,8 +22,10 @@ class TokenManager:
 
             # Insérer le token dans la table Token
             connection.execute(
-                "INSERT INTO Token (token_value, courriel, id_business, expiration_timestamp) VALUES (?, ?, ?, NULL)",
-                (token_value, courriel, id_business))
+                "INSERT INTO Token (token_value, courriel, id_business, "
+                "etablissement, expiration_timestamp) VALUES (?, ?, ?, ?, "
+                "NULL)",
+                (token_value, courriel, id_business, etablissement))
 
             connection.connection.commit()
             connection.close()
@@ -39,7 +41,8 @@ class TokenManager:
 
             # Récupérer les informations associées au token
             conn.execute(
-                "SELECT courriel, id_business FROM Token WHERE token_value = ?",
+                "SELECT courriel, id_business, etablissement FROM Token WHERE "
+                "token_value = ?",
                 (token,))
             result = conn.fetchone()
             if result:

@@ -334,10 +334,12 @@ def unsubscribe(token):
 
             email = token_data[0]
             id_business = token_data[1]
+            etablissement = token_data[2]
 
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, id_business=id_business,
-                                   email=email, token=token, message=message)
+                                   email=email, token=token,
+                                   message=message, etablissement=etablissement)
         else:
             message = "Token invalide."
             return render_template('unsubscribe.html', titre=titre,

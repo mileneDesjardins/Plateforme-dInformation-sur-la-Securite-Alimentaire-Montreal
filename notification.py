@@ -99,13 +99,16 @@ def notify(new_contraventions):
             # Parcourir chaque nouvelle contravention
             for contravention in new_contraventions:
                 id_business = contravention[1]
+                etablissement = contravention[6]
 
                 # Vérifier si cette contravention est surveillée par l'utilisateur
                 if id_business in choix_etablissements:
                     contraventions_surveillees.add(contravention)
 
                     # Générer le token pour cet utilisateur
-                    token = token_manager.generate_token(id_business, courriel)
+                    token = token_manager.generate_token(id_business,
+                                                         courriel,
+                                                         etablissement)
                     link_tokens[(courriel, id_business)] = (
                         f"http://localhost:5000/unsubscribe-page/{token}")
 
