@@ -72,7 +72,8 @@ def _build_contravention(modifs_request):
         ville=modifs_request.get('ville'),
         statut=modifs_request.get('statut'),
         date_statut=modifs_request.get('date_statut'),
-        categorie=modifs_request.get('categorie')
+        categorie=modifs_request.get('categorie'),
+        date_importation=modifs_request.get('date_importation')
     )
     return contrevenant
 
@@ -502,7 +503,6 @@ class Database:
         self.update_adresse(id_business, contrevenant)
         self.update_nom_etablissement(id_business, contrevenant)
         self.update_proprietaire(id_business, contrevenant)
-        self.update_ville(id_business, contrevenant)
         self.update_statut(id_business, contrevenant)
         self.update_date_statut(id_business, contrevenant)
 

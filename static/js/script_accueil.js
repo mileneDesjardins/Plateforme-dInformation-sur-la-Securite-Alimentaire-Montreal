@@ -109,7 +109,6 @@ function getInfoContrevenant() {
     let etablissement = document.getElementById('modif-etablissement').value;
     let proprietaire = document.getElementById('modif-proprietaire').value;
     let adresse = document.getElementById('modif-adresse').value;
-    let ville = document.getElementById('modif-ville').value;
     let statut = document.getElementById('modif-statut').value;
     let dateStatut = document.getElementById('modif-date_statut').value;
 
@@ -126,10 +125,6 @@ function getInfoContrevenant() {
         formData['adresse'] = adresse;
     }
 
-    if (ville !== '') {
-        formData['ville'] = adresse;
-    }
-
     if (statut !== '') {
         formData['statut'] = statut;
     }
@@ -137,7 +132,7 @@ function getInfoContrevenant() {
     if (dateStatut !== '') {
         formData['date_statut'] = statut;
     }
-
+    console.log(formData);
     return formData;
 }
 
