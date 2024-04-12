@@ -1,27 +1,29 @@
 import csv
-import time
+import os
+import tempfile
+import urllib.request
 
 from database import Database
 
 
 def import_csv():
-    # Création de l'objet Database
-    db = Database()
-    # Spécifiez le chemin d'accès à votre fichier CSV
-    file_path = r"/mnt/c/Users/Public/violations.csv"
+    db = Database.get_db()
 
-    try:
-        # Ouverture du fichier CSV
-        with open(file_path, 'r', encoding='utf-8') as csv_file:
-            contenu = csv.reader(csv_file)
+    url = 'https://data.montreal.ca/dataset/05a9e718-6810-4e73-8bb9-5955efeb91a0/resource/7f939a08-be8a-45e1-b208-d8744dca8fc6/download/violations.csv'
 
-            # Appel de la fonction pour insérer les contraventions depuis le CSV
-            db.insert_contraventions_from_csv(csv_file.name)
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    response = urllib.request.urlopen(req)
 
-        print("Importation des données CSV réussie.")
-    except Exception as e:
-        print(
-            f"Une erreur s'est produite lors de l'importation du fichier CSV : {e}")
+    # Créer un fichier temporaire pour stocker le contenu CSV
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        temp_file.write(response.read())
 
+        # Lecture du contenu du fichier CSV
+    with open(temp_file.name, 'r', encoding='utf-8') as csv_file:
+        contenu = csv.reader(csv_file)
 
+        # Appel de la fonction pour insérer les contraventions depuis le CSV
+        db.insert_contraventions_from_csv(csv_file.name)
 
+        # Nettoyer le fichier temporaire
+    os.unlink(temp_file.name)

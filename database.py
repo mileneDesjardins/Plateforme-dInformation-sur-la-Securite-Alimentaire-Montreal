@@ -244,7 +244,7 @@ class Database:
     def get_new_contraventions(self, last_import_time):
         # Obtention de la connexion à la base de données des contraventions
         connection = self.get_contravention_connection()
-        connection.set_trace_callback(print)
+        # connection.set_trace_callback(print)
         cursor = connection.cursor()
 
         # Utiliser l'heure actuelle comme new_import_time

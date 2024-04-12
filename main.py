@@ -360,7 +360,6 @@ def unsubscribe_user():
     # Supprimer l'établissement surveillé par l'utilisateur de la base de données
     db = Database.get_db()
     user = db.get_user_by_email(email)
-    print(user)
     if user:
         success = db.delete_user_choix_etablissements(email, id_business)
         if success:
