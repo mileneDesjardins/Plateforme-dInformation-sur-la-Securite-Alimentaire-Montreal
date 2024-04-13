@@ -15,7 +15,7 @@ function onFastSearchSubmit() {
         return;
     }
     document.getElementById("result-fast-search").innerHTML = '';
-    let apiUrl = `/api/contrevenant?start-date=${startDate}&end-date=${endDate}`;
+    let apiUrl = `/api/contrevenants?start-date=${startDate}&end-date=${endDate}`;
 
     fetch(apiUrl)
         .then(response => response.json())
