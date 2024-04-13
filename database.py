@@ -228,9 +228,10 @@ class Database:
                                       existing_data, row, timestamp_csv)
                     else:
 
-                    #Insérer les données dans la base de données
+                        # Insérer les données dans la base de données
                         cursor.execute(insertion, (
-                            row[0], row[1], date, row[3], row[4], date_jugement,
+                            row[0], row[1], date, row[3], row[4],
+                            date_jugement,
                             row[6],
                             row[7],
                             row[8], row[9], row[10], date_statut, row[12],
@@ -255,10 +256,12 @@ class Database:
         else:
             print("Aucune nouvelle donnée insérée.")
 
+    # TODO verfier 14 et 15
     def sync_row(self, cursor, date, date_jugement, date_statut, existing_data,
                  row, timestamp_csv):
-        if self.can_be_update(existing_data[14],
-                              existing_data[14]):
+        if self.can_be_update(existing_data[Cols.TSP_MOD.value],
+                              existing_data[Cols.TSP_CSV.value],
+                              existing_data[Cols.DELETED.value]):
             # Mettre à jour les données existantes dans la base de données
             cursor.execute(
                 "UPDATE Contravention SET date=?, description=?, adresse=?, "
@@ -271,7 +274,10 @@ class Database:
                  row[0], row[1])
             )
 
-    def can_be_update(self, timestamp_modif, timestamp_csv):
+
+    # TODO pourrait enlever timstamps csv et garder date importation
+    # TODO si date modif nest plus nulle, alors on ne peut plus sync
+    def can_be_update(self, timestamp_modif, timestamp_csv, deleted):
         if timestamp_modif is None:
             return True
         if isinstance(timestamp_modif, str):
@@ -281,7 +287,7 @@ class Database:
             timestamp_csv = datetime.strptime(timestamp_csv,
                                               '%Y-%m-%d %H:%M:%S.%f')
 
-        return timestamp_csv > timestamp_modif
+        return timestamp_csv > timestamp_modif and deleted == 0
 
     def get_new_contraventions(self, last_import_time):
         # Obtention de la connexion à la base de données des contraventions
@@ -314,8 +320,9 @@ class Database:
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
-        query = ("SELECT * FROM Contravention WHERE etablissement LIKE ? OR "
-                 "adresse LIKE ? OR proprietaire LIKE ?")
+        query = ("SELECT * FROM Contravention WHERE deleted=0 AND "
+                 "etablissement LIKE ? OR "
+                 "adresse LIKE ? OR proprietaire LIKE ? ")
         param = ('%' + keywords + '%')
         cursor.execute(query, (param, param, param))
         all_data = cursor.fetchall()
@@ -323,7 +330,8 @@ class Database:
 
     def get_contraventions_between(self, date1, date2):
         cursor = self.get_contravention_connection().cursor()
-        query = "SELECT * FROM Contravention WHERE date >= ? AND date <= ?"
+        query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ? "
+                 "AND deleted=0")
         param = (date1, date2)
         cursor.execute(query, param)
         all_data = cursor.fetchall()
@@ -332,7 +340,7 @@ class Database:
     def get_contraventions_business_between(self, date1, date2, id_business):
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ? "
-                 "AND id_business=?")
+                 "AND id_business=? AND deleted=0")
         param = (date1, date2, id_business)
         cursor.execute(query, param)
         all_data = cursor.fetchall()
@@ -359,8 +367,8 @@ class Database:
         cursor = connection.cursor()
         query = (
             "SELECT DISTINCT id_business, etablissement, adresse FROM "
-            "Contravention "
-            "ORDER BY etablissement")
+            "Contravention WHERE deleted=0 "
+            "ORDER BY etablissement ")
         cursor.execute(query)
         results = cursor.fetchall()
         return results
@@ -368,7 +376,8 @@ class Database:
     def get_info_contrevenant_by_name(self, etablissement):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        query = "SELECT * FROM Contravention WHERE etablissement = ?"
+        query = ("SELECT * FROM Contravention WHERE etablissement = ?"
+                 " AND deleted=0")
         cursor.execute(query, (etablissement,))
         contraventions = cursor.fetchall()
         return [_build_contravention_dict(item) for item in contraventions]
@@ -565,20 +574,6 @@ class Database:
                  "deleted=1 WHERE id_business =?")
         try:
             cursor.execute(query, (datetime.now(), id_business))
-            connection.commit()
-            return True
-        except sqlite3.Error as e:
-            connection.rollback()
-            return False
-
-    def delete_contravention(self, id_poursuite):
-        self.validates_poursuite_exists(id_poursuite)
-        connection = self.get_contravention_connection()
-        cursor = connection.cursor()
-        query = ("UPDATE Contravention SET timestamp_modif=?, "
-                 "deleted=1 WHERE id_poursuite=?")
-        try:
-            cursor.execute(query, (datetime.now(), id_poursuite))
             connection.commit()
             return True
         except sqlite3.Error as e:

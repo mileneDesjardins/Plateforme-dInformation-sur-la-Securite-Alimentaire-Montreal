@@ -68,10 +68,10 @@ function sendModifContrevenant(textResponse) {
         sendPatch(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
-                    textResponse.innerHTML = `<span style="color: #069506; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
+                    textResponse.innerHTML = `<span style="color: #149804; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
                     onFastSearchSubmit();
                 } else {
-                    textResponse.innerHTML = `<span style="color: red; font-weight: bold;">${MSG_ERREUR_MODIF}</span>`;
+                    textResponse.innerHTML = `<span style="color: #c70101; font-weight: bold;">${MSG_ERREUR_MODIF}</span>`;
                 }
             })
     }
