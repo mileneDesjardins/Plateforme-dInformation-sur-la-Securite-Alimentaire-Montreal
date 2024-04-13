@@ -33,30 +33,31 @@
                         </div>
                     {% endif %}
 
-
                 </div>
 
-                <div class="container">
-                    <form class="row mt-5 g-2">
-                        <div class="col-md-2">
+
+                <div class="container mt-5">
+                    <form class="row mt-5 g-2 align-items-end">
+                        <div class="col-md-2 position-relative">
                             <div class="form-floating my-1">
                                 <input type="date" name="start-date" id="start-date" class="form-control">
                                 <label for="start-date">Début</label>
-                                <div class="invalid-feedback d-block" id="error-start-date"></div>
+                                <div class="invalid-feedback d-block position-absolute" id="error-start-date"></div>
                             </div>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-md-2 position-relative">
                             <div class="form-floating my-1">
                                 <input type="date" name="end-date" id="end-date" class="form-control">
                                 <label for="end-date">Fin</label>
-                                <div class="invalid-feedback d-block" id="error-end-date"></div>
+                                <div class="invalid-feedback d-block position-absolute" id="error-end-date"></div>
                             </div>
                         </div>
 
-                        <div class="col-md-2">
-                            <button id="btn-fast-search" class="btn btn-outline-success my-1" type="button">Search
-                            </button>
+                        <div class="col-md-2 text-start">
+                            <div class="form-floating my-1">
+                                <button id="btn-fast-search" class="btn btn-primary" type="button">Trouver</button>
+                            </div>
                         </div>
 
                         <div class="col-md-4">
@@ -67,11 +68,17 @@
                                         - {{ etablissement[2] }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" id="btn-info-etablissement" class="btn btn-primary my-1"
-                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search
-                            </button>
+                        </div>
+
+                        <div class="col-md-2 text-start">
+                            <div class="form-floating my-1">
+                                <button type="button" id="btn-info-etablissement" class="btn btn-primary"
+                                        data-bs-toggle="modal" data-bs-target="#staticBackdrop">Trouver
+                                </button>
+                            </div>
                         </div>
                     </form>
+
                 </div>
 
 
