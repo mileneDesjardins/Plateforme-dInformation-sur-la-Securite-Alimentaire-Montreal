@@ -397,8 +397,8 @@ def count_contraventions(contraventions):
     return occurrences
 
 
-# A4 TODO rechanger route pour mettre query parameter
-@app.route('/api/contrevenant', methods=['GET'])
+# A4
+@app.route('/api/contrevenants', methods=['GET'])
 def contrevenants():
     date1 = request.args.get('start-date')
     date2 = request.args.get('end-date')
