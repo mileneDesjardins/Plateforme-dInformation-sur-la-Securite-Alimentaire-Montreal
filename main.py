@@ -21,7 +21,7 @@ from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
     contrevenant_update_schema, contravention_update_schema
-from twitter import twitter_auth, callback
+from twitter import twitter_request_token, callback
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
@@ -74,7 +74,7 @@ def index():
 
 @app.route('/demo')
 def demo():
-    return twitter_auth()
+    return twitter_request_token()
 
 
 @app.route("/oauth/callback", methods=["GET"])

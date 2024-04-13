@@ -5,7 +5,7 @@ import re
 import requests
 import tweepy
 
-from requests_oauthlib import OAuth2Session
+from requests_oauthlib import OAuth1Session
 from flask import (Flask, request, redirect, session, url_for, render_template,
                    current_app, jsonify)
 from app import app
@@ -13,56 +13,97 @@ from app import app
 with app.app_context():
     client_id = current_app.config["CLIENT_ID"]
     client_secret = current_app.config["CLIENT_SECRET"]
-    api_key = current_app.config["API_KEY"]
-    auth_url = "https://twitter.com/i/oauth2/authorize"
-    token_url = "https://api.twitter.com/2/oauth2/token"
-    redirect_uri = current_app.config["REDIRECT_URI"]
-    scopes = ["tweet.read", "users.read", "tweet.write", "offline.access"]
-    code_verifier = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8")
-    code_verifier = re.sub("[^a-zA-Z0-9]+", "", code_verifier)
-    code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
-    code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
-    code_challenge = code_challenge.replace("=", "")
+    consumer_key = current_app.config["API_KEY"]
+    consumer_secret = current_app.config["API_SECRET"]
 
-twitter = OAuth2Session()
+authorize_url = "https://twitter.com/oauth/authorize"
+request_token_url = "https://api.twitter.com/oauth/request_token"
+access_token_url = 'https://api.twitter.com/oauth/access_token'
+callback_url = "http://127.0.0.1:5000/oauth/callback"
 
 
-def twitter_auth():
-    global twitter
-    twitter = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scopes)
-    authorization_url, state = twitter.authorization_url(
-        auth_url, code_challenge=code_challenge, code_challenge_method="S256"
+def twitter_request_token():
+    twitter = OAuth1Session(consumer_key, client_secret=consumer_secret)
+
+    # REQUEST TOKEN
+    fetch_response = twitter.fetch_request_token(request_token_url)
+    session["oauth_token"] = fetch_response.get("oauth_token")
+    session["oauth_token_secret"] = fetch_response.get(
+        "oauth_token_secret")
+
+    # AUTHORIZE
+    auth_url = twitter.authorization_url(authorize_url,
+                                         oauth_token=session["oauth_token"])
+    return redirect(auth_url)
+
+
+def request_token(twitter):
+    fetch_response = twitter.fetch_request_token(request_token_url)
+    session["oauth_token"] = fetch_response.get("oauth_token")
+    session["oauth_token_secret"] = fetch_response.get(
+        "oauth_token_secret")
+
+
+def callback():
+    # CALLBACK RECOIT OAUTH
+    oauth_verifier = request.args.get('oauth_verifier')
+    oauth_token = session.get('oauth_token')
+    oauth_token_secret = session.get('oauth_token_secret')
+
+    twitter = OAuth1Session(
+        consumer_key,
+        client_secret=consumer_secret,
+        resource_owner_key=oauth_token,
+        resource_owner_secret=oauth_token_secret,
+        verifier=oauth_verifier
     )
-    session["oauth_state"] = state
-    return redirect(authorization_url)
+
+    access_token_dict = twitter.fetch_access_token(access_token_url)
+    access_token = access_token_dict.get('oauth_token')
+    access_token_secret = access_token_dict.get('oauth_token_secret')
+
+    payload = upload_media()
+    response = post_tweet(payload, access_token, access_token_secret).json()
+
+    return response
 
 
-def post_tweet(payload, new_token):
-    return requests.request(
-        "POST",
+def post_tweet(payload, access_token, secret_token):
+    # Créer l'en-tête d'autorisation OAuth1
+    auth_header = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+
+    # Ajouter le token secret dans l'en-tête
+    oauth_params = {
+        "oauth_consumer_key": "YOUR_CONSUMER_KEY",
+        "oauth_nonce": "",
+        "oauth_signature_method": "HMAC-SHA1",
+        "oauth_timestamp": "",  # Remplir avec le timestamp UNIX actuel
+        "oauth_token": access_token,
+        "oauth_version": "1.0",
+    }
+
+    # Générer la signature OAuth1
+    # Ceci est un exemple basique, vous devrez utiliser une bibliothèque pour générer la signature correcte
+    # La signature est basée sur les paramètres OAuth et votre clé secrète de consommateur et votre secret de token
+    # oauth_signature = generate_oauth_signature(oauth_params, "YOUR_CONSUMER_SECRET", access_token_secret)
+
+    # Ajouter la signature à l'en-tête d'autorisation
+    # auth_header["Authorization"] += f', oauth_signature="{oauth_signature}"'
+
+    # Envoyer la requête POST avec l'en-tête d'autorisation
+    response = requests.post(
         "https://api.twitter.com/2/tweets",
         json=payload,
-        headers={
-            "Authorization": "Bearer {}".format(new_token["access_token"]),
-            "Content-Type": "application/json",
-        },
+        headers=auth_header,
     )
+
+    return response
 
 
 def upload_media():
     test = {"text": "hevxcvxvcbcvbccllo"}
     payload = test
     return payload
-
-
-def callback():
-    code = request.args.get("code")
-    token = twitter.fetch_token(
-        token_url=token_url,
-        client_secret=client_secret,
-        code_verifier=code_verifier,
-        code=code,
-    )
-    payload = upload_media()
-    response = post_tweet(payload, token).json()
-    return response
