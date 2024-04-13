@@ -396,8 +396,10 @@ def count_contraventions(contraventions):
 
 
 # A4 TODO rechanger route pour mettre query parameter
-@app.route('/api/contrevenant/start/<date1>/end/<date2>', methods=['GET'])
-def contrevenants(date1, date2):
+@app.route('/api/contrevenant', methods=['GET'])
+def contrevenants():
+    date1 = request.args.get('start-date')
+    date2 = request.args.get('end-date')
     db = Database.get_db()
     try:
         validates_dates(date1, date2)

@@ -202,14 +202,16 @@ types:
       }
 /api:
   /contrevenant:
-    /start/{date1}/end/{date2}:
-      uriParameters:
-        date1:
-          description: Date de début au format AAAA-MM-DD.
+    get:
+      queryParameters:
+        start-date:
+          description: Date de début au format ^\d{4}-\d{2}-\d{2}$.
           type: string
-        date2:
-          description: Date de fin au format AAAA-MM-DD.
+            pattern:^\d{4}-\d{2}-\d{2}$
+        end-date:
+          description: Date de fin au format.
           type: string
+            pattern:^\d{4}-\d{2}-\d{2}$
       get:
         description: Récupère les contraventions en fonction d'une plage de dates spécifiées.
         responses:

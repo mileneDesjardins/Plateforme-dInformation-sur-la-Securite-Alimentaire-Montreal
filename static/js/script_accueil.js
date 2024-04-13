@@ -15,7 +15,7 @@ function onFastSearchSubmit() {
         return;
     }
     document.getElementById("result-fast-search").innerHTML = '';
-    let apiUrl = `/api/contrevenant/start/${startDate}/end/${endDate}`;
+    let apiUrl = `/api/contrevenant?start-date=${startDate}&end-date=${endDate}`;
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -57,7 +57,6 @@ function OnSaveModificationSubmit() {
     let textResponse = document.getElementById('reponse-requete');
     textResponse.innerHTML = "";
     sendModifContrevenant(textResponse);
-    //sendModifContravention(textResponse);
 }
 
 
@@ -69,7 +68,8 @@ function sendModifContrevenant(textResponse) {
         sendPatch(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
-                    textResponse.innerHTML = `<span style="color: #07ca07; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
+                    textResponse.innerHTML = `<span style="color: #069506; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
+                    onFastSearchSubmit();
                 } else {
                     textResponse.innerHTML = `<span style="color: red; font-weight: bold;">${MSG_ERREUR_MODIF}</span>`;
                 }
