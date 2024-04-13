@@ -69,13 +69,6 @@ def index():
                            nom_complet=nom_complet, id_user=id_user
                            )
 
-
-
-@app.route("/oauth/callback", methods=["GET"])
-def oauth_callback():
-    return callback()
-
-
 # A2
 @app.route('/search', methods=['GET'])
 def search():
@@ -403,7 +396,7 @@ def count_contraventions(contraventions):
 
 
 # A4 TODO rechanger route pour mettre query parameter
-@app.route('/api/contrevenants/start/<date1>/end/<date2>', methods=['GET'])
+@app.route('/api/contrevenant/start/<date1>/end/<date2>', methods=['GET'])
 def contrevenants(date1, date2):
     db = Database.get_db()
     try:
@@ -422,7 +415,7 @@ def contrevenants(date1, date2):
 
 
 # A6
-@app.route('/api/contrevenants/<id_business>', methods=['GET'])
+@app.route('/api/contrevenant/<id_business>', methods=['GET'])
 def info_etablissements(id_business):
     try:
         validates_is_integer(id_business, "Le id_business")
@@ -438,7 +431,7 @@ def info_etablissements(id_business):
                        "Veuillez réessayer plus tard.")
 
 
-@app.route('/api/contrevenants/<id_business>', methods=['PATCH'])
+@app.route('/api/contrevenant/<id_business>', methods=['PATCH'])
 @basic_auth_required
 @schema.validate(contrevenant_update_schema)
 def modify_contrevenant(id_business):
@@ -462,49 +455,6 @@ def update_contrevenant(id_business, modifs_request):
     Database.get_db().update_contrevenant(id_business, modifs_request)
     modified = Database.get_db().get_info_contrevenant(id_business)
     return jsonify(modified), 200
-
-
-@app.route('/api/contraventions', methods=['PATCH'])
-@basic_auth_required
-@schema.validate(contravention_update_schema)
-def modify_contravention():
-    modifs_requests = request.get_json()
-    modified_objects = []
-    try:
-        return update_contraventions(modified_objects, modifs_requests)
-    except ValueError as e:
-        error_msg = {"error": str(e)}
-        return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
-        return jsonify("La ressource n'a pu être modifée.", e.message), 404
-
-
-# TODO pas une route, mais ailleurs ? ou juste plus bas ?
-def update_contraventions(modified_objects, modifs_requests):
-    db = Database.get_db()
-    for modifs_request in modifs_requests:
-        id_poursuite = modifs_request.get('id_poursuite')
-        validates_is_integer(id_poursuite, "Le id_poursuite")
-        db.update_contravention(id_poursuite, modifs_request)
-        modified_objects.append(db.get_info_poursuite(id_poursuite))
-    return jsonify(modified_objects)
-
-
-@app.route('/api/contraventions/<id_poursuite>',
-           methods=['DELETE'])
-@basic_auth_required
-def delete_contravention(id_poursuite):
-    try:
-        validates_is_integer(id_poursuite, "Le id_poursuite")
-        Database.get_db().delete_contravention(id_poursuite)
-        return jsonify("La contravention a bien été supprimée"), 200
-    except ValueError as e:
-        error_msg = {"error": str(e)}
-        return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
-        return jsonify(e.message), 404
-    except sqlite3.Error as e:
-        return jsonify("Une erreur est survenue :"), 500
 
 
 @app.route('/api/contrevenant/<id_business>',

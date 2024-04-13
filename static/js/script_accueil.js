@@ -15,7 +15,7 @@ function onFastSearchSubmit() {
         return;
     }
     document.getElementById("result-fast-search").innerHTML = '';
-    let apiUrl = `/api/contrevenants/start/${startDate}/end/${endDate}`;
+    let apiUrl = `/api/contrevenant/start/${startDate}/end/${endDate}`;
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -35,7 +35,7 @@ function onFastSearchSubmit() {
 
 function OnGetInfoEtablissementSubmit() {
     let id_business = document.getElementById('select-etablissement').value;
-    let apiUrl = `/api/contrevenants/${id_business}`;
+    let apiUrl = `/api/contrevenant/${id_business}`;
 
     fetch(apiUrl)
         .then(response => response.json())
@@ -65,7 +65,7 @@ function sendModifContrevenant(textResponse) {
     contrevenantToSend = getInfoContrevenant();
     if (!isObjectEmpty(contrevenantToSend)) {
         idBusiness = document.getElementById('modif-id-business').value;
-        let modifContrevenantURL = `/api/contrevenants/${idBusiness}`;
+        let modifContrevenantURL = `/api/contrevenant/${idBusiness}`;
         sendPatch(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
@@ -77,31 +77,14 @@ function sendModifContrevenant(textResponse) {
     }
 }
 
-function sendModifContravention(textResponse) {
-    contraventionsToSend = getInfoContraventions();
-    if (!isArrayEmpty(contraventionsToSend)) {
-        let modifContrevenantURL = `/api/contraventions`;
-        sendPatch(modifContrevenantURL, contraventionsToSend)
-            .then(response => {
-                if (response.ok) {
-                    textResponse.innerHTML = MSG_SUCESS_MODIF;
-                } else {
-                    textResponse.innerHTML = MSG_ERREUR_MODIF;
-                }
-            })
-    } else {
-        textResponse.innerHTML = MSG_NOTHING_TO_MODIFY;
-    }
-}
+
 
 
 function isObjectEmpty(jsonObj) {
     return Object.keys(jsonObj).length === 0;
 }
 
-function isArrayEmpty(jsonArray) {
-    return jsonArray.length === 0;
-}
+
 
 function getInfoContrevenant() {
     let formData = {}
@@ -135,42 +118,6 @@ function getInfoContrevenant() {
     return formData;
 }
 
-function getInfoContraventions() {
-    tableRows = document.getElementById('modif-contravention-table').rows.length;
-    let formArray = [];
-    for (let i = 1; i < tableRows; i++) {
-        formData = {}
-        let montant = document.getElementById(`modif-montant-${i}`).value;
-        let dateVisite = document.getElementById(`modif-date-visite-${i}`).value;
-        let dateJugement = document.getElementById(`modif-date-jugement-${i}`).value;
-        let categorie = document.getElementById(`modif-categorie-${i}`).value;
-        let description = document.getElementById(`modif-description-${i}`).value;
-        let idPoursuite = document.getElementById(`modif-id-poursuite-${i}`).value;
-
-        if (dateVisite !== '') {
-            formData['date'] = dateVisite;
-        }
-        if (dateJugement !== '') {
-            formData['date_jugement'] = dateJugement;
-        }
-        if (montant !== '') {
-            formData['montant'] = montant;
-        }
-        if (categorie !== '') {
-            formData['categorie'] = categorie;
-        }
-        if (description !== '') {
-            formData['description'] = description;
-        }
-
-        if (!isObjectEmpty(formData)) {
-            formData['id_poursuite'] = idPoursuite;
-            formArray.push(formData);
-        }
-
-    }
-    return formArray;
-}
 
 
 function openModalModifier(id_business, startDate, endDate) {
@@ -217,7 +164,7 @@ function OnDeleteContravention(svgId) {
     textResponse.innerHTML = "";
     let row = svgId.charAt(svgId.length - 1);
     let idPoursuite = document.getElementById(`modif-id-poursuite-${row}`).value;
-    let apiURL = `/api/contraventions/${idPoursuite}`
+    let apiURL = `/api/contravention/${idPoursuite}`
     const request = new Request(apiURL, {
         method: 'DELETE',
         headers: {
