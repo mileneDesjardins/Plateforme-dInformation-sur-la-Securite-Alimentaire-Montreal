@@ -1,6 +1,6 @@
 const MSG_NOTHING_TO_MODIFY = "Aucune modification à apporter.";
-const MSG_SUCESS_MODIF = "Les modifications ont été apportées avec succès.";
-const MSG_ERREUR_MODIF = "Les modifications n'ont pu être apportées.";
+const MSG_SUCESS_MODIF = "Modifications enregistrée ";
+const MSG_ERREUR_MODIF = "Modifications annulées";
 const MSG_SUCCES_DELETE_CONTREVENANT = "Le contrevenant a bien été supprimé.";
 const MSG_ERROR_DELETE_CONTREVENANT = "Une erreur est survenue, le contrevenant n'a pu être supprimé."
 const MSG_SUCCES_DELETE_CONTRAVENTION = "La contravention a bien été supprimée.";
@@ -57,7 +57,7 @@ function OnSaveModificationSubmit() {
     let textResponse = document.getElementById('reponse-requete');
     textResponse.innerHTML = "";
     sendModifContrevenant(textResponse);
-    sendModifContravention(textResponse);
+    //sendModifContravention(textResponse);
 }
 
 
@@ -69,10 +69,9 @@ function sendModifContrevenant(textResponse) {
         sendPatch(modifContrevenantURL, contrevenantToSend)
             .then(response => {
                 if (response.ok) {
-                    textResponse.innerHTML = MSG_SUCESS_MODIF;
-
+                    textResponse.innerHTML = `<span style="color: #07ca07; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
                 } else {
-                    textResponse.innerHTML = MSG_ERREUR_MODIF;
+                    textResponse.innerHTML = `<span style="color: red; font-weight: bold;">${MSG_ERREUR_MODIF}</span>`;
                 }
             })
     }
