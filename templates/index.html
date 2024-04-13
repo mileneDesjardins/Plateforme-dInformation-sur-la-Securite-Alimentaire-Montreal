@@ -33,58 +33,48 @@
                         </div>
                     {% endif %}
 
-                    <div class="row ">
-                        <form>
-                            <div class="form-floating my-1 col-md-2">
 
-                                <input type="date" name="start-date"
-                                       id="start-date" class="form-control">
+                </div>
+
+                <div class="container">
+                    <form class="row mt-5 g-2">
+                        <div class="col-md-2">
+                            <div class="form-floating my-1">
+                                <input type="date" name="start-date" id="start-date" class="form-control">
                                 <label for="start-date">Début</label>
-                                <div class="invalid-feedback d-block"
-                                     id="error-start-date"></div>
+                                <div class="invalid-feedback d-block" id="error-start-date"></div>
                             </div>
+                        </div>
 
-                            <div class="form-floating my-1 col-md-2">
-
-                                <input type="date" name="end-date"
-                                       id="end-date" class="form-control">
+                        <div class="col-md-2">
+                            <div class="form-floating my-1">
+                                <input type="date" name="end-date" id="end-date" class="form-control">
                                 <label for="end-date">Fin</label>
-                                <div class="invalid-feedback d-block"
-                                     id="error-end-date"></div>
+                                <div class="invalid-feedback d-block" id="error-end-date"></div>
                             </div>
+                        </div>
 
-                            <div class="col-md-2">
-                                <button id="btn-fast-search"
-                                        class="btn btn-outline-success"
-                                        type="button">Search
-                                </button>
-                            </div>
+                        <div class="col-md-2">
+                            <button id="btn-fast-search" class="btn btn-outline-success my-1" type="button">Search
+                            </button>
+                        </div>
 
-                        </form>
-
-
-                        <!-- Search information by etablissement -->
-
-                        <div class="col-md-4 ">
+                        <div class="col-md-4">
                             <label for="select-etablissement">Établissement</label>
-                            <select name="etablissement"
-                                    id="select-etablissement"
-                                    class="form-control">
+                            <select name="etablissement" id="select-etablissement" class="form-control">
                                 {% for etablissement in etablissements %}
                                     <option value="{{ etablissement[0] }}">{{ etablissement[1] }}
                                         - {{ etablissement[2] }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="button" id="btn-info-etablissement"
-                                    class="btn btn-primary"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdrop">
-                                Search
+                            <button type="button" id="btn-info-etablissement" class="btn btn-primary my-1"
+                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">Search
                             </button>
                         </div>
-                    </div>
-
+                    </form>
                 </div>
+
+
                 <!-- Modal recherche etablissement -->
                 <div class="modal fade" id="staticBackdrop"
                      data-bs-backdrop="static" data-bs-keyboard="false"
