@@ -37,33 +37,43 @@
 ### E4 10xp
 
 #### Comment tester reblabla
-UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
-                                                                          id_poursuite = 10002;
 
 UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
-                                                                          id_poursuite = 4455;
+id_poursuite = 10002;
+
+UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 4455;
 
 ### E4 10xp
 
 #### Comment tester reblabla
 
-
-
 ### F1 15xp
 
 #### Comment tester reblabla
-
-
 
 ## Anne-Sophie Abel-Levesque ABEA05619105
 
 ### A2 10xp
 
-#### Comment tester blabla
+#### Étapes pour tester
+- Aller sur la page d'accueil (la barre de recherche est également accessible partout sur le site) 
+- Cliquer sur la barre de recherche en haut à droite de la page
+- Effectuer une recherche
+    - Par nom et/ou établissement et/ou rue
+    - vide (envoyer une requête vide)
 
 ### A4 10xp
 
-#### Comment tester reblabla
+#### Étapes pour tester
+Effectuez une requête `GET` à la route `api/contrevenants?start-date<date1>&end-date=<date2>` via l'extension YARC (ou tout autre REST client), en remplaçant `date1` et `date2` par les dates que vous souhaitez testés.  
+
+Un exemple de requête valide : 
+
+```text
+api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
+```
+
 
 ### A5 10xp
 
@@ -85,9 +95,9 @@ UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 
 #### Comment tester reblabla
 
-
 ### D4 15xp
 
 #### Comment tester reblabla
+
 Mettre user et mdp dans fichier .quelquechose 
 
