@@ -1,7 +1,11 @@
 import base64
 import hashlib
+import hmac
 import os
 import re
+import time
+import uuid
+
 import requests
 import tweepy
 
@@ -62,48 +66,59 @@ def callback():
     access_token = access_token_dict.get('oauth_token')
     access_token_secret = access_token_dict.get('oauth_token_secret')
 
-    payload = upload_media()
-    response = post_tweet(payload, access_token, access_token_secret).json()
-
-    return response
+    status = "ok!"
+    return update_status(status, access_token, access_token_secret)
 
 
-def post_tweet(payload, access_token, secret_token):
-    # Créer l'en-tête d'autorisation OAuth1
-    auth_header = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-    }
+def update_status(status, access_token, access_token_secret):
+    url = 'https://api.twitter.com/1.1/statuses/update.json'
+    method = 'POST'
 
-    # Ajouter le token secret dans l'en-tête
     oauth_params = {
-        "oauth_consumer_key": "YOUR_CONSUMER_KEY",
-        "oauth_nonce": "",
+        "oauth_consumer_key": consumer_key,
+        "oauth_nonce": generate_nonce(),
         "oauth_signature_method": "HMAC-SHA1",
-        "oauth_timestamp": "",  # Remplir avec le timestamp UNIX actuel
-        "oauth_token": access_token,
+        "oauth_timestamp": generate_timestamp(),
+        "oauth_token": session.get("oauth_token"),
         "oauth_version": "1.0",
     }
 
-    # Générer la signature OAuth1
-    # Ceci est un exemple basique, vous devrez utiliser une bibliothèque pour générer la signature correcte
-    # La signature est basée sur les paramètres OAuth et votre clé secrète de consommateur et votre secret de token
-    # oauth_signature = generate_oauth_signature(oauth_params, "YOUR_CONSUMER_SECRET", access_token_secret)
+    params = '&'.join([f'{k}={v}' for k, v in oauth_params.items()])
+    signature = generate_signature(consumer_secret, access_token_secret, url,
+                                   params, method)
 
-    # Ajouter la signature à l'en-tête d'autorisation
-    # auth_header["Authorization"] += f', oauth_signature="{oauth_signature}"'
+    headers = {
+        "Authorization": f'OAuth oauth_consumer_key="{consumer_key}",'
+                         f' oauth_nonce="{oauth_params["oauth_nonce"]}",'
+                         f' oauth_signature="{requests.utils.quote(signature, safe="")}", '
+                         f'oauth_signature_method="HMAC-SHA1",'
+                         f' oauth_timestamp="{oauth_params["oauth_timestamp"]}",'
+                         f' oauth_token="{access_token}", oauth_version="1.0"',
+    }
 
-    # Envoyer la requête POST avec l'en-tête d'autorisation
-    response = requests.post(
-        "https://api.twitter.com/2/tweets",
-        json=payload,
-        headers=auth_header,
-    )
+    payload = {
+        'status': status,
+    }
 
-    return response
+    response = requests.post(url, headers=headers, data=payload)
+    return response.json()
 
 
-def upload_media():
-    test = {"text": "hevxcvxvcbcvbccllo"}
-    payload = test
-    return payload
+def generate_nonce():
+    return str(uuid.uuid4())
+
+
+def generate_timestamp():
+    return str(int(time.time()))
+
+
+def generate_signature(consumer_secret, access_token_secret, url, params,
+                       method):
+    key = consumer_secret + "&" + access_token_secret
+    signature_base_string = '&'.join(
+        [method.upper(), requests.utils.quote(url, safe=''),
+         requests.utils.quote(params, safe='')])
+    hashed = hmac.new(key.encode(), signature_base_string.encode(),
+                      hashlib.sha1)
+    signature = base64.b64encode(hashed.digest()).decode()
+    return signature
