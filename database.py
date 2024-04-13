@@ -353,6 +353,7 @@ class Database:
         query = """
         SELECT etablissement, COUNT(*) as nbr_infractions
         FROM Contravention
+        WHERE deleted=0
         GROUP BY etablissement
         ORDER BY nbr_infractions DESC
         """

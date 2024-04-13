@@ -69,6 +69,7 @@ def index():
                            nom_complet=nom_complet, id_user=id_user
                            )
 
+
 # A2
 @app.route('/search', methods=['GET'])
 def search():
@@ -326,7 +327,8 @@ def unsubscribe(token):
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, id_business=id_business,
                                    email=email, token=token,
-                                   message=message, etablissement=etablissement)
+                                   message=message,
+                                   etablissement=etablissement)
         else:
             message = "Token invalide."
             return render_template('unsubscribe.html', titre=titre,
@@ -482,6 +484,16 @@ def modal_etablissements():
     infos_obtenues = request.get_json()
     return render_template('modal_etablissement.html',
                            results=infos_obtenues)
+
+
+@app.route('/dropdown_etablissement', methods=['GET'])
+def update_dropdown_etablissement():
+    try:
+        etablissements = Database.get_db().get_distinct_etablissements()
+        return jsonify(etablissements)
+    except Exception as e:
+        return jsonify({"error": "Une erreur est survenue, "
+                                 "veuillez réessayer plus tard."}, 500)
 
 
 @app.route('/api/demande-inspection', methods=['POST'])

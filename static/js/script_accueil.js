@@ -29,7 +29,7 @@ function onFastSearchSubmit() {
             addEventListenersOnCells();
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err); //TODO afficher message
+            console.log("Erreur côté serveur");
         });
 }
 
@@ -48,7 +48,7 @@ function OnGetInfoEtablissementSubmit() {
             document.getElementById('modal-content').innerHTML = htmlContent;
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err); //TODO afficher message
+            console.log("Erreur côté serveur");
         });
 }
 
@@ -70,6 +70,7 @@ function sendModifContrevenant(textResponse) {
                 if (response.ok) {
                     textResponse.innerHTML = `<span style="color: #149804; font-weight: bold;">${MSG_SUCESS_MODIF}</span>`;
                     onFastSearchSubmit();
+                    updateDropdown();
                 } else {
                     textResponse.innerHTML = `<span style="color: #c70101; font-weight: bold;">${MSG_ERREUR_MODIF}</span>`;
                 }
@@ -78,12 +79,9 @@ function sendModifContrevenant(textResponse) {
 }
 
 
-
-
 function isObjectEmpty(jsonObj) {
     return Object.keys(jsonObj).length === 0;
 }
-
 
 
 function getInfoContrevenant() {
@@ -114,10 +112,8 @@ function getInfoContrevenant() {
     if (dateStatut !== '') {
         formData['date_statut'] = statut;
     }
-    console.log(formData);
     return formData;
 }
-
 
 
 function openModalModifier(id_business, startDate, endDate) {
@@ -132,7 +128,7 @@ function openModalModifier(id_business, startDate, endDate) {
             addEventListenerOnSVGDeletes();
         })
         .catch(err => {
-            console.log("Erreur côté serveur", err);  //TODO afficher message
+            console.log("Erreur côté serveur");
         })
 }
 
@@ -152,6 +148,7 @@ function OnDeleteContrevenant() {
         if (response.ok) {
             textResponse.innerHTML = MSG_SUCCES_DELETE_CONTREVENANT
             onFastSearchSubmit();
+            updateDropdown();
         } else {
             textResponse.innerHTML = MSG_ERROR_DELETE_CONTREVENANT
         }
@@ -159,27 +156,6 @@ function OnDeleteContrevenant() {
 }
 
 
-function OnDeleteContravention(svgId) {
-    let textResponse = document.getElementById('reponse-requete');
-    textResponse.innerHTML = "";
-    let row = svgId.charAt(svgId.length - 1);
-    let idPoursuite = document.getElementById(`modif-id-poursuite-${row}`).value;
-    let apiURL = `/api/contravention/${idPoursuite}`
-    const request = new Request(apiURL, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    fetch(request).then(response => {
-        if (response.ok) {
-            textResponse.innerHTML = MSG_SUCCES_DELETE_CONTRAVENTION;
-            onFastSearchSubmit();
-        } else {
-            textResponse.innerHTML = MSG_ERROR_DELETE_CONTRAVENTION;
-        }
-    })
-}
 
 function sendPatch(URL, objectToSend) {
     return fetch(URL, {
@@ -203,6 +179,26 @@ function sendPost(URL, objectToSend) {
 }
 
 
+function updateDropdown() {
+    fetch('/dropdown_etablissement')
+        .then(response => response.json())
+        .then(data => {
+            let dropdown = document.getElementById('select-etablissement');
+            dropdown.innerHTML = '';
+            data.forEach(item => {
+                let option = document.createElement('option');
+                option.value = item[0];
+                option.textContent = item[1] + ' - ' + item[2];
+                dropdown.appendChild(option);
+                console.log( option.textContent);
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération des données :', error);
+        });
+}
+
+
 document.getElementById('btn-fast-search').addEventListener("click", onFastSearchSubmit);
 document.getElementById('btn-info-etablissement').addEventListener("click", OnGetInfoEtablissementSubmit);
 
@@ -220,9 +216,6 @@ function addEventListenersOnCells() {
 
 function addEventListenerOnSVGDeletes() {
     document.getElementById(`svg-delete-contrevenant`).addEventListener(`click`, OnDeleteContrevenant);
-    document.querySelectorAll('svg.delete').forEach(svg => {
-        svg.addEventListener("click", () => OnDeleteContravention(svg.id))
-    })
 }
 
 
