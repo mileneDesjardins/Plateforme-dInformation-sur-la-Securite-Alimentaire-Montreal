@@ -9,6 +9,7 @@ from TokenManager import TokenManager
 from app import app
 from database import Database
 from download import import_csv
+from twitter import twitter_post
 
 
 def extract_and_update_data():
@@ -51,6 +52,10 @@ def detect_new_contraventions():
                 f"{num_new_contraventions} nouvelles contraventions détectées :")
             for contravention in new_contraventions:
                 print(f"- {contravention[6]}")
+
+                twitter_post(contravention[6])
+
+
             # Include a message mentioning the number of contraventions detected
             print(
                 f"Nombre total de nouvelles contraventions détectées : {num_new_contraventions}")

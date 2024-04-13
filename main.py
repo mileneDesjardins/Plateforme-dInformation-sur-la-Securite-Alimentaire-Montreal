@@ -21,7 +21,6 @@ from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
     contrevenant_update_schema, contravention_update_schema
-from twitter import twitter_request_token, callback
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
@@ -58,7 +57,6 @@ def index():
     titre = "Accueil"
     etablissements = Database.get_db().get_distinct_etablissements()
     script = "/js/script_accueil.js"
-
     if "id" in session:
         id_user = session.get("id_user")
         nom_complet = session.get('nom_complet')
@@ -71,10 +69,6 @@ def index():
                            nom_complet=nom_complet, id_user=id_user
                            )
 
-
-@app.route('/demo')
-def demo():
-    return twitter_request_token()
 
 
 @app.route("/oauth/callback", methods=["GET"])

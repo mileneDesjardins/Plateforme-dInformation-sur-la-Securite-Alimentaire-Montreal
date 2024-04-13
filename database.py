@@ -215,14 +215,38 @@ class Database:
                     continue
 
                 try:
-                    # Insérer les données dans la base de données
-                    cursor.execute(insertion, (
-                        row[0], row[1], date, row[3], row[4], date_jugement,
-                        row[6],
-                        row[7],
-                        row[8], row[9], row[10], date_statut, row[12],
-                        date_importation, timestamp_csv, deleted))
-                    new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
+                    # verifier si deja dans base de donnnes  si oui, update
+                    cursor.execute(
+                        "SELECT * FROM Contravention WHERE id_poursuite=? AND id_business=?",
+                        (row[0], row[1])
+                    )
+                    existing_data = cursor.fetchone()
+
+                    if existing_data is not None:
+
+                        if self.can_be_update(existing_data[14],
+                                              existing_data[14]):
+                            # Mettre à jour les données existantes dans la base de données
+                            cursor.execute(
+                                "UPDATE Contravention SET date=?, description=?, adresse=?, "
+                                "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
+                                "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+                                "WHERE id_poursuite=? AND id_business=?",
+                                (date, row[3], row[4], date_jugement, row[6],
+                                 row[7], row[8], row[9],
+                                 row[10], date_statut, row[12], timestamp_csv,
+                                 row[0], row[1])
+                            )
+                    else:
+
+                    #Insérer les données dans la base de données
+                        cursor.execute(insertion, (
+                            row[0], row[1], date, row[3], row[4], date_jugement,
+                            row[6],
+                            row[7],
+                            row[8], row[9], row[10], date_statut, row[12],
+                            date_importation, timestamp_csv, deleted))
+                        new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
                 except sqlite3.IntegrityError:
                     # Gérer les erreurs d'unicité en les ignorant
                     # print(
@@ -241,6 +265,18 @@ class Database:
             print("Nouvelles données insérées avec succès.")
         else:
             print("Aucune nouvelle donnée insérée.")
+
+    def can_be_update(self, timestamp_modif, timestamp_csv):
+        if timestamp_modif is None:
+            return True
+        if isinstance(timestamp_modif, str):
+            timestamp_modif = datetime.strptime(timestamp_modif,
+                                                '%Y-%m-%d %H:%M:%S.%f')
+        if isinstance(timestamp_csv, str):
+            timestamp_csv = datetime.strptime(timestamp_csv,
+                                              '%Y-%m-%d %H:%M:%S.%f')
+
+        return timestamp_csv > timestamp_modif
 
     def get_new_contraventions(self, last_import_time):
         # Obtention de la connexion à la base de données des contraventions
