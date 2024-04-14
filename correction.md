@@ -321,7 +321,7 @@ api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ![img_26.png](static/img/correction/img_26.png)
 
 
-### D1 15xp
+### D1 15xp - A-S.A-L.
 
 #### Tester le service REST
 
@@ -350,18 +350,17 @@ SELECT * FROM DemandesInspection where id=1;
 ```
 
 #### Tester la fonctionnalité
+**TODO count ???**
 
 1- Cliquer sur l'onglet `Plainte` en haut à gauche de l'écran
 2- Remplissez et soumettez le formulaire
 3- 
 
-### D1 15xp - A-S.A-L.
-
-#### Comment tester reblabla
-
-TODO mettre route
 
 ### D2 5xp - A-S.A-L.
+
+1- Effectuez une requête `POST` à la route `api/demande-inspection` via l'extension YARC (ou tout autre REST client). Voici
+un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 #### Comment tester reblabla
 
