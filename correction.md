@@ -77,10 +77,6 @@ id_poursuite = 1523;`
 
 ### E1 15xp - M.D.
 
-#### Comment tester reblabla
-
-### E2 15xp - M.D.
-
 #### Comment tester :
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
@@ -91,13 +87,34 @@ id_poursuite = 1523;`
 ![img_14.png](img_14.png)
 ![img_15.png](img_15.png)
 
+
+### E2 15xp - M.D.
+
+#### Comment tester :
 ###### Vérification de la création de compte
 
-1. Pour valider la création de votre compte, veuillez vous connecter en utilisant l'adresse courriel "henri123@hotmail.com" et le mot de passe "henri123".
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
+   page d'accueil.
+3. Cliquer sur "Se connecter" utiliser l'adresse courriel "henri123@hotmail.
+   com" et le mot de passe "henri123".
+![img_17.png](img_17.png)
 ![img_16.png](img_16.png)
-
-
-
+4. Cliquer sur l'onglet "Compte"
+![img_18.png](img_18.png)
+5. Voici à quoi ressemble le compte présentement :
+![img_19.png](img_19.png)
+6. Nous allons sélectionner différents établissements à surveiller :
+![img_20.png](img_20.png)
+7. Cliquer sur "Enregistrer les modifications"
+![img_21.png](img_21.png)
+8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix se sont 
+   bien enregistrés :
+![img_22.png](img_22.png)
+9. Ajouter une photo et cliquer sur enregistrez
+10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien enregistrée :
+![img_24.png](img_24.png)
 ### E3 5xp - M.D.
 
 #### Comment tester :
