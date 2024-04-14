@@ -180,19 +180,23 @@ commande suivante dans votre terminal :
 2. Veuillez répéter les étapes en E3
 3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en 
    question
-4. Cliquer sur le bouton "Confirmer le désabonnement" :
-![img_6.png](img_6.png)
-5. Voici la page de confirmation :
+4. Cliquer sur le bouton "Confirmer le désabonnement"
+![img_10.png](img_10.png)
+5. Voici la page de confirmation
 ![img_7.png](img_7.png)
 
 ###### Vérification du désabonnement
-Maintenant nous pouvons se connecter en tant que "Manuel Roger" afin 
+Maintenant, nous pouvons se connecter en tant que "**Manuel Roger**" afin 
 d'accéder à son compte et vérifier si le désabonner à bien fonctionner. 
 Nous pouvons voir que le désabonnement à partir d'un lien envoyé par 
-courriel fonctionne bien
+courriel a bien fonctionné.
 
-![img_8.png](img_8.png)
+![img_11.png](img_11.png)
 
+Si on clique à nouveau dans le lien du courriel, nous sommes redirigés vers 
+la page de désabonnement, mais un message indique que nous sommes 
+déjà désabonné de cet établissement.
+![img_12.png](img_12.png)
 ### F1 15xp
 
 #### Comment tester reblabla
