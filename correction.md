@@ -196,7 +196,7 @@ Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé ve
 
 #### Comment tester :
 
-
+Voici le lien vers le site : https://projet-session.fly.dev/
 
 
 ### A2 10xp - A-S.A-L.
