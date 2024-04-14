@@ -134,7 +134,7 @@ class Database:
     def __init__(self):
         self.contravention_connection = None
         self.user_connection = None
-        self.demandes_inspection_connection = None
+        self.demande_inspection_connection = None
         self.last_import_time = None
         self.photo_connection = None
         self.token_connection = None
@@ -150,8 +150,8 @@ class Database:
             self.contravention_connection.close()
         if self.user_connection is not None:
             self.user_connection.close()
-        if self.demandes_inspection_connection is not None:
-            self.demandes_inspection_connection.close()
+        if self.demande_inspection_connection is not None:
+            self.demande_inspection_connection.close()
         if self.last_import_time is not None:
             self.last_import_time.close()
         if self.photo_connection is not None:
@@ -684,19 +684,19 @@ class Database:
             connection.close()
 
     def get_demandes_inspection_connection(self):
-        if self.demandes_inspection_connection is None:
-            self.demandes_inspection_connection = sqlite3.connect(
-                'db/demandes_inspection.db')
-        return self.demandes_inspection_connection
+        if self.demande_inspection_connection is None:
+            self.demande_inspection_connection = sqlite3.connect(
+                'db/demande_inspection.db')
+        return self.demande_inspection_connection
 
     def disconnect_demandes_inspection(self):
-        if self.demandes_inspection_connection is not None:
-            self.demandes_inspection_connection.close()
+        if self.demande_inspection_connection is not None:
+            self.demande_inspection_connection.close()
 
     def insert_demande_inspection(self, demande_inspection):
         cursor = self.get_demandes_inspection_connection().cursor()
         query = (
-            "INSERT INTO Demandes_Inspection (etablissement, adresse, ville, "
+            "INSERT INTO DemandesInspection (etablissement, adresse, ville, "
             "date_visite, nom_complet_client, description ) "
             "VALUES (?,?,?,?,?,?)")
         params = (
@@ -706,12 +706,12 @@ class Database:
             demande_inspection.nom_complet_client,
             demande_inspection.description)
         cursor.execute(query, params)
-        self.demandes_inspection_connection.commit()
+        self.demande_inspection_connection.commit()
         return cursor.lastrowid
 
     def get_demande_inspection(self, id_demande):
         cursor = self.get_demandes_inspection_connection().cursor()
-        query = "SELECT * FROM Demandes_Inspection WHERE id = ?"
+        query = "SELECT * FROM DemandesInspection WHERE id = ?"
         cursor.execute(query, (id_demande,))
         demande = cursor.fetchone()
 
@@ -724,7 +724,7 @@ class Database:
 
     def delete_demande_inspection(self, id_demande):
         connection = self.get_demandes_inspection_connection()
-        query = "DELETE FROM Demandes_Inspection WHERE id = ?"
+        query = "DELETE FROM DemandesInspection WHERE id = ?"
         connection.execute(query, (id_demande,))
         connection.commit()
 
