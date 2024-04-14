@@ -5,7 +5,6 @@
 * Milene Desjardins - DESM31559704
 
 ### A1 10xp - M.D.
-
 #### Comment tester :
 
 Importation des données avec la base de données "Contravention" déjà
@@ -19,8 +18,10 @@ Création de la base de données "Contravention"
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
 
-### B1 5xp - M.D.
+### A3 5xp - M.D.
+#### Comment tester :
 
+### B1 5xp - M.D.
 #### Comment tester :
 
 Utilisation MailDev
@@ -64,19 +65,15 @@ id_poursuite = 1523;`
    make`
 
 ### C1 10xp - M.D.
-
 #### Comment tester reblabla
 
 ### C2 5xp - M.D.
-
 #### Comment tester reblabla
 
 ### C3 5xp - M.D.
-
 #### Comment tester reblabla
 
 ### E1 15xp - M.D.
-
 #### Comment tester :
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
@@ -116,7 +113,6 @@ id_poursuite = 1523;`
 10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien enregistrée :
 ![img_24.png](static/img/correction/img_24.png)
 ### E3 5xp - M.D.
-
 #### Comment tester :
 
 ###### Utilisation MailDev
@@ -202,7 +198,6 @@ commande suivante dans votre terminal : `$ make`
 
 
 ### E4 10xp - M.D.
-
 #### Comment tester :
 
 ###### Désabonnement
@@ -225,14 +220,12 @@ Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé ve
 
 
 ### F1 15xp - M.D.
-
 #### Comment tester :
 
 Voici le lien vers le site : https://projet-session.fly.dev/
 
 
 ### A2 10xp - A-S.A-L.
-
 #### Étapes pour tester
 
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
@@ -248,7 +241,6 @@ Voici le lien vers le site : https://projet-session.fly.dev/
     - vide (envoyer une requête vide)
 
 ### A4 10xp - A-S.A-L.
-
 #### Étapes pour tester
 
 Effectuez une requête `GET` à la
@@ -263,27 +255,21 @@ api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ```
 
 ### A5 10xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 ### A6 10xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 ### D1 15xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 ### D2 5xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 ### D3 15xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 ### D4 15xp - A-S.A-L.
-
 #### Comment tester reblabla
 
 Mettre user et mdp dans fichier .quelquechose 
