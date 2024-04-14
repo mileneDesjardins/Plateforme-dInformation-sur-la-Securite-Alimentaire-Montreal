@@ -718,6 +718,7 @@ class Database:
             demande_inspection.description)
         cursor.execute(query, params)
         self.demandes_inspection_connection.commit()
+        return cursor.lastrowid
 
     def get_demande_inspection(self, id_demande):
         cursor = self.get_demandes_inspection_connection().cursor()

@@ -497,7 +497,7 @@ def update_dropdown_etablissement():
 
 
 @app.route('/api/demande-inspection', methods=['POST'])
-#@schema.validate(inspection_insert_schema)
+@schema.validate(inspection_insert_schema)
 def demande_inspection():
     try:
         demande = request.get_json()
@@ -509,12 +509,12 @@ def demande_inspection():
                                              demande["description"])
         id_demande = Database.get_db().insert_demande_inspection(nouvelle_demande)
         demande_creee = Database.get_db().get_demande_inspection(id_demande)
-        #test = json.dumps(demande_creee.__dict__)
+        test = demande_creee.dictionnaire()
         response = {
             "message": "Utilisateur ajouté",
-            "demande_creee": "test"
+            "demande_creee": test
         }
-        return "test", 201
+        return jsonify(response), 201
     except Exception as e:
         print(e)
         return jsonify(

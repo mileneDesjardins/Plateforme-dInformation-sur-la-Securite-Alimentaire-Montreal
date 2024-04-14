@@ -33,7 +33,7 @@ def extract_and_update_data():
             # Mettre à jour le temps de la dernière importation
             db.update_last_import_time()
 
-            time.sleep(20)
+            time.sleep(1000)
 
 
 def detect_new_contraventions():

@@ -22,3 +22,14 @@ class DemandeInspection:
 
     def set_id(self, id):
         self.id = id
+
+    def dictionnaire(self):
+        return {
+            'id': self.id,
+            'etablissement': self.etablissement,
+            'adresse': self.adresse,
+            'ville': self.ville,
+            'date_visite': self.date_visite,
+            'nom_complet_client': self.nom_complet_client,
+            'description': self.description
+        }
