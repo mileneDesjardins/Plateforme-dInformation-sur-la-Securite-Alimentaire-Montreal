@@ -4,7 +4,10 @@
 
 ### A1 10xp
 
-#### Comment tester blabla
+#### Comment tester :
+vous ne devez faire qu’un script Python qui télécharge les données et insère les données 
+dans la base de données. 
+
 
 ### A2 5xp
 
