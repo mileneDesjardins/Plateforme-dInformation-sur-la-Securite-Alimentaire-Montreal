@@ -1,21 +1,64 @@
+let etablissementInput = document.getElementById('plainte-etablissement');
+let adresseInput = document.getElementById('plainte-adresse');
+let villeInput = document.getElementById('plainte-ville');
+let dateVisiteInput = document.getElementById('plainte-date');
+let nomCompletClientInput = document.getElementById('plainte-nom-complet');
+let descriptionInput = document.getElementById('plainte-description');
+
+
+etablissementInput.addEventListener('input', removeInvalidClass);
+adresseInput.addEventListener('input', removeInvalidClass);
+villeInput.addEventListener('input', removeInvalidClass);
+dateVisiteInput.addEventListener('input', removeInvalidClass);
+nomCompletClientInput.addEventListener('input', removeInvalidClass);
+descriptionInput.addEventListener('input', removeInvalidClass);
+
+function removeInvalidClass(event) {
+    let input = event.target;
+    input.classList.remove('is-invalid');
+    input.nextElementSibling.innerText = '';
+}
 function onSubmitPlainte() {
-    /*
-    * if (!isValidDate('plainte-date')) {
-        return;
+    if (checkInputsFilled()) {
+        jsonToSend = createJson();
+        sendQueryPlainte(jsonToSend);
     }
-    * */
-    jsonToSend = createJson();
-    sendQueryPlainte(jsonToSend);
+}
+
+function checkInputsFilled() {
+    let etablissementValid = validateInputFilled(etablissementInput);
+    let adresseValid = validateInputFilled(adresseInput);
+    let villeValid = validateInputFilled(villeInput);
+    let dateVisiteValid = validateInputFilled(dateVisiteInput);
+    let nomCompletClientValid = validateInputFilled(nomCompletClientInput);
+    let descriptionValid = validateInputFilled(descriptionInput);
+
+    return etablissementValid && adresseValid && villeValid && dateVisiteValid && nomCompletClientValid && descriptionValid;
+}
+
+function validateInputFilled(input) {
+    let isValid = input.checkValidity();
+    if (!isValid) {
+        input.classList.add('is-invalid');
+        input.nextElementSibling.innerText = 'Veuillez remplir ce champ.';
+    }
+    return isValid;
 }
 
 
+function isFilled() {
+    let etablissementInput = document.getElementById('plainte-etablissement');
+    let formIsValid = etablissementInput.checkValidity();
+    return formIsValid;
+}
+
 function createJson() {
-    let etablissement = document.getElementById('plainte-etablissement').value;
-    let adresse = document.getElementById('plainte-adresse').value;
-    let ville = document.getElementById('plainte-ville').value;
-    let date_visite = document.getElementById('plainte-date').value;
-    let nom_complet_client = document.getElementById('plainte-nom-complet').value;
-    let description = document.getElementById('plainte-description').value;
+    let etablissement = etablissementInput.value;
+    let adresse = adresseInput.value;
+    let ville = villeInput.value;
+    let date_visite = dateVisiteInput.value;
+    let nom_complet_client = nomCompletClientInput.value;
+    let description = descriptionInput.value;
     let plainteJson = {
         etablissement: etablissement,
         adresse: adresse,

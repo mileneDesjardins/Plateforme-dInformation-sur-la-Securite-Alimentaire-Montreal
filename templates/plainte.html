@@ -6,7 +6,7 @@
             <path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v6a2.5 2.5 0 0 1-2.5 2.5H9.366a1 1 0 0 1-.866.5h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 .866.5H11.5A1.5 1.5 0 0 0 13 12h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5"></path>
         </svg>
     </div>
-    <form method="POST">
+    <form method="POST" novalidate>
         <div class="container" style="max-width: 30%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Plainte</h1>
             <h2 class="h5 mb-3 fw-normal">Veuillez entrer les informations</h2>
@@ -14,35 +14,35 @@
                 <input type="text" name="plainte-etablissement"
                        class="form-control"
                        id="plainte-etablissement"
-                       placeholder="Nom de l'établissement">
+                       placeholder="Nom de l'établissement" required>
                 <label for="plainte-etablissement">Nom de
                     l'établissement</label>
             </div>
             <div class="form-floating my-1">
                 <input type="text" name="plainte-adresse" class="form-control"
-                       id="plainte-adresse" placeholder="Adresse">
+                       id="plainte-adresse" placeholder="Adresse" required>
                 <label for="plainte-adresse">Adresse</label>
             </div>
             <div class="form-floating my-1">
                 <input type="text" name="plainte-ville" class="form-control"
-                       id="plainte-ville" placeholder="Ville">
+                       id="plainte-ville" placeholder="Ville" required>
                 <label for="plainte-ville">Ville</label>
             </div>
             <div class="form-floating my-1">
                 <input type="date" name="plainte-date" class="form-control"
-                       id="plainte-date">
+                       id="plainte-date" required>
                 <label for="plainte-date">Date de la visite</label>
             </div>
             <div class="form-floating my-1">
                 <input type="text" name="plainte-nom-complet" class="form-control"
-                       id="plainte-nom-complet" placeholder="Nom complet">
+                       id="plainte-nom-complet" placeholder="Nom complet" required>
                 <label for="plainte-nom-complet">Votre nom complet</label>
             </div>
             <div class="form-floating my-1">
-                <textarea type="text" name="plainte-description"
+                <textarea name="plainte-description"
                           class="form-control"
                           id="plainte-description"
-                          placeholder="description"> </textarea>
+                          placeholder="description" required> </textarea>
                 <label for="plainte-description">Description de
                     l'évènement</label>
             </div>
