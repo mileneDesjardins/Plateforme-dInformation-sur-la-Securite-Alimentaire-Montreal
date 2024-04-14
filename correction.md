@@ -97,9 +97,7 @@ Installation de docker
 ###### Vérification de l'installation de Docker
 
 2. Ouvrez un terminal et tapez la commande suivante pour vérifier si Docker
-   est correctement installé :
-
-   `docker --version`
+   est correctement installé : `docker --version`
 
 ###### Installation de MailDev
 
@@ -163,9 +161,7 @@ id_poursuite = 1523;`
 
 ###### Lancement de l'application
 5. Pour démarrer l'application et appliquer les modifications, utilisez la 
-commande suivante dans votre terminal :
-   
-   `$ make`
+commande suivante dans votre terminal : `$ make`
 
 6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
 
@@ -178,9 +174,7 @@ commande suivante dans votre terminal :
 #### Comment tester :
 
 ###### Désabonnement
-1. Lancez l'application avec la commande suivante dans votre terminal : 
-
-   `$ make`
+1. Lancez l'application avec la commande suivante dans votre terminal : `$ make`
 2. Veuillez répéter les étapes en E3
 3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en 
    question
@@ -190,22 +184,18 @@ commande suivante dans votre terminal :
 ![img_7.png](img_7.png)
 
 ###### Vérification du désabonnement
-Maintenant, nous pouvons se connecter en tant que "**Manuel Roger**" afin 
-d'accéder à son compte et vérifier si le désabonner à bien fonctionner. 
-Nous pouvons voir que le désabonnement à partir d'un lien envoyé par 
-courriel a bien fonctionné.
+Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour accéder à son compte et confirmer que le désabonnement via un lien reçu par courriel a été effectué avec succès.
 
 ![img_11.png](img_11.png)
 
-Si on clique à nouveau dans le lien du courriel, nous sommes redirigés vers 
-la page de désabonnement, mais un message indique que nous sommes 
-déjà désabonné de cet établissement.
+Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé vers la page de désabonnement, où un message s'affichera pour l'informer qu'il est déjà désabonné de cet établissement.
 ![img_12.png](img_12.png)
 
 
 ### F1 15xp - M.D.
 
-#### Comment tester reblabla
+#### Comment tester :
+
 
 
 
