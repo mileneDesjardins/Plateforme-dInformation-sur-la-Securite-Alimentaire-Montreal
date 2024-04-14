@@ -13,11 +13,13 @@ dateVisiteInput.addEventListener('input', removeInvalidClass);
 nomCompletClientInput.addEventListener('input', removeInvalidClass);
 descriptionInput.addEventListener('input', removeInvalidClass);
 
+
 function removeInvalidClass(event) {
     let input = event.target;
     input.classList.remove('is-invalid');
     input.nextElementSibling.innerText = '';
 }
+
 function onSubmitPlainte() {
     if (checkInputsFilled()) {
         jsonToSend = createJson();
@@ -33,8 +35,10 @@ function checkInputsFilled() {
     let nomCompletClientValid = validateInputFilled(nomCompletClientInput);
     let descriptionValid = validateInputFilled(descriptionInput);
 
-    return etablissementValid && adresseValid && villeValid && dateVisiteValid && nomCompletClientValid && descriptionValid;
+    return etablissementValid && adresseValid && villeValid && dateVisiteValid
+        && nomCompletClientValid && descriptionValid;
 }
+
 
 function validateInputFilled(input) {
     let isValid = input.checkValidity();
@@ -45,12 +49,6 @@ function validateInputFilled(input) {
     return isValid;
 }
 
-
-function isFilled() {
-    let etablissementInput = document.getElementById('plainte-etablissement');
-    let formIsValid = etablissementInput.checkValidity();
-    return formIsValid;
-}
 
 function createJson() {
     let etablissement = etablissementInput.value;

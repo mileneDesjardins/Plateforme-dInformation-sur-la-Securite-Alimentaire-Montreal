@@ -5,3 +5,7 @@
 .small-col-modal{
     width: 80%;
 }
+
+.text-area-vertical{
+    height: 200px !important;
+}
