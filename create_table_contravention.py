@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('db/test_contravention.db')
+conn = sqlite3.connect('db/contravention.db')
 
 cursor = conn.cursor()
 
@@ -34,4 +34,4 @@ conn.commit()
 cursor.close()
 conn.close()
 
-print("La table TEST_CONTRAVENTION a été créée avec succès dans le fichier 'contravention.db'.")
+print("La table CONTRAVENTION a été créée avec succès dans le fichier 'contravention.db'.")
