@@ -12,7 +12,7 @@ from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
 import IDRessourceNonTrouve
-from TokenManager import TokenManager
+from token_manager import TokenManager
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required

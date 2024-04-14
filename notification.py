@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 
 import yaml
 
-from TokenManager import TokenManager
+from token_manager import TokenManager
 from app import app
 from database import Database
 from download import import_csv
