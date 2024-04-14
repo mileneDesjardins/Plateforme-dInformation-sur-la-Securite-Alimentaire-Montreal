@@ -130,7 +130,6 @@ commande suivante dans votre terminal : `$ make`
    page d'accueil.
 3. Cliquer sur "Se connecter" utiliser l'adresse courriel "henri123@hotmail.
    com" et le mot de passe "henri123".
-![img_17.png](static/img/correction/img_17.png)
 ![img_16.png](static/img/correction/img_16.png)
 4. Cliquer sur l'onglet "Compte"
 ![img_18.png](static/img/correction/img_18.png)
