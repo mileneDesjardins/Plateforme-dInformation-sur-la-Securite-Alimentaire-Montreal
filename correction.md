@@ -14,9 +14,12 @@ Création de la base de données "Contravention"
 1. Lancez la création de la table en exécutant : `$ python3 
    create_table_contravention.py`
 
-### A2 5xp
 
-#### Comment tester reblabla
+### B1 5xp
+
+#### Comment tester :
+1. Ouvrir la console de la table Contravention
+2. 
 
 ### C1 10xp
 
@@ -65,11 +68,16 @@ id_poursuite = 4455;
 ### A2 10xp
 
 #### Étapes pour tester
+1. Lancez l'application avec la commande suivante dans votre terminal : `$ 
+   make`
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la page d'accueil.
 - Aller sur la page d'accueil (la barre de recherche est également accessible partout sur le site) 
 - Cliquer sur la barre de recherche en haut à droite de la page
 - Effectuer une recherche
     - Par nom et/ou établissement et/ou rue
     - vide (envoyer une requête vide)
+
+
 
 ### A4 10xp
 
