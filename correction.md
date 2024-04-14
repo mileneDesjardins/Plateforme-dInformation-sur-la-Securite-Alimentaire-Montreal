@@ -5,12 +5,14 @@
 ### A1 10xp
 
 #### Comment tester :
-Importer les données avec BD Contravention déjà créée
-1. Ouvrir le terminal dans le dossier du projet
-2. `$ python3 download.py`
+Importation des données avec la base de données "Contravention" déjà 
+configurée.
+1. Ouvrez le terminal dans le répertoire du projet.
+2. Exécutez la commande suivante : `$ python3 download.py`
 
-Créer BD Contravention
-1. `$ python3 create_table_contravention.py`
+Création de la base de données "Contravention"
+1. Lancez la création de la table en exécutant : `$ python3 
+   create_table_contravention.py`
 
 ### A2 5xp
 
