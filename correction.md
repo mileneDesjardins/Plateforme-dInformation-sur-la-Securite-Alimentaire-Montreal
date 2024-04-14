@@ -35,7 +35,7 @@ Utilisation MailDev
 2. Ouvrir le terminal et exécuter :
     3. `$ docker pull maildev/maildev`
     4. `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
-       ![img.png](img.png)
+       ![img.png](static/img/correction/img.png)
        Pour plus d'informations, veuillez lire la
        documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
 5. Ouvrir docker
@@ -53,8 +53,8 @@ Nous devrons modifier la date d'importation de 2 contraventions
 
 UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
-![img_2.png](img_2.png)
-![img_1.png](img_1.png)
+![img_2.png](static/img/correction/img_2.png)
+![img_1.png](static/img/correction/img_1.png)
 
 3. Remplacer la date pour la date du jour et ajuster l'heure pour une heure
    future soit 1 minute plus tard que l'heure actuelle.
@@ -84,8 +84,8 @@ id_poursuite = 1523;`
    page d'accueil.
 2. Cliquer sur le bouton "Création de compte"
 3. Compléter tous les champs et cliquer sur "Créer un compte"
-![img_14.png](img_14.png)
-![img_15.png](img_15.png)
+![img_14.png](static/img/correction/img_14.png)
+![img_15.png](static/img/correction/img_15.png)
 
 
 ### E2 15xp - M.D.
@@ -99,22 +99,22 @@ id_poursuite = 1523;`
    page d'accueil.
 3. Cliquer sur "Se connecter" utiliser l'adresse courriel "henri123@hotmail.
    com" et le mot de passe "henri123".
-![img_17.png](img_17.png)
-![img_16.png](img_16.png)
+![img_17.png](static/img/correction/img_17.png)
+![img_16.png](static/img/correction/img_16.png)
 4. Cliquer sur l'onglet "Compte"
-![img_18.png](img_18.png)
+![img_18.png](static/img/correction/img_18.png)
 5. Voici à quoi ressemble le compte présentement :
-![img_19.png](img_19.png)
+![img_19.png](static/img/correction/img_19.png)
 6. Nous allons sélectionner différents établissements à surveiller :
-![img_20.png](img_20.png)
+![img_20.png](static/img/correction/img_20.png)
 7. Cliquer sur "Enregistrer les modifications"
-![img_21.png](img_21.png)
+![img_21.png](static/img/correction/img_21.png)
 8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix se sont 
    bien enregistrés :
-![img_22.png](img_22.png)
+![img_22.png](static/img/correction/img_22.png)
 9. Ajouter une photo et cliquer sur enregistrez
 10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien enregistrée :
-![img_24.png](img_24.png)
+![img_24.png](static/img/correction/img_24.png)
 ### E3 5xp - M.D.
 
 #### Comment tester :
@@ -142,7 +142,7 @@ affichant ensuite dans une interface web.
    `$ docker pull maildev/maildev`
 
    `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
-   ![img.png](img.png)
+   ![img.png](static/img/correction/img.png)
    Pour plus d'informations, veuillez lire la
    documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
 
@@ -179,8 +179,8 @@ id_poursuite = 6119;`
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
 
-![img_2.png](img_2.png)
-![img_1.png](img_1.png)
+![img_2.png](static/img/correction/img_2.png)
+![img_1.png](static/img/correction/img_1.png)
 
 ###### Mise à jour des dates :
 
@@ -197,8 +197,8 @@ commande suivante dans votre terminal : `$ make`
 
 6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
 
-![img_4.png](img_4.png)
-![img_5.png](img_5.png)
+![img_4.png](static/img/correction/img_4.png)
+![img_5.png](static/img/correction/img_5.png)
 
 
 ### E4 10xp - M.D.
@@ -211,17 +211,17 @@ commande suivante dans votre terminal : `$ make`
 3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en 
    question
 4. Cliquer sur le bouton "Confirmer le désabonnement"
-![img_10.png](img_10.png)
+![img_10.png](static/img/correction/img_10.png)
 5. Voici la page de confirmation
-![img_7.png](img_7.png)
+![img_7.png](static/img/correction/img_7.png)
 
 ###### Vérification du désabonnement
 Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour accéder à son compte et confirmer que le désabonnement via un lien reçu par courriel a été effectué avec succès.
 
-![img_11.png](img_11.png)
+![img_11.png](static/img/correction/img_11.png)
 
 Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé vers la page de désabonnement, où un message s'affichera pour l'informer qu'il est déjà désabonné de cet établissement.
-![img_12.png](img_12.png)
+![img_12.png](static/img/correction/img_12.png)
 
 
 ### F1 15xp - M.D.
