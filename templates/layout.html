@@ -51,19 +51,19 @@
                         </div>
                     </a>
                 </li>
-                {% if 'id' in session %}
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center"
-                           href="/plainte"
-                           style="height: 100%;">
-                            <div class="container">
-                                <div class="row justify-content-center">
-                                    Plainte
-                                </div>
-                            </div>
-                        </a>
-                    </li>
 
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center"
+                       href="/plainte"
+                       style="height: 100%;">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                Plainte
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% if 'id' in session %}
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center"
                            href="{{ url_for('compte') }}"
@@ -109,7 +109,7 @@
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js') }}"></script>
 <script src="{{ url_for('static', filename='/vendor/bootstrap-5.3.3-dist/js/bootstrap.js') }}"></script>
 <script src="{{ url_for('static', filename='/js/validations.js') }}"></script>
-}
+
 {% if script is defined %}
     <script src="{{ script }}"></script>
 {% endif %}
