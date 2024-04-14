@@ -1,8 +1,10 @@
-# Correction projet INF5190-H24
+# Correction projet INF5190-H24 | ABEA05619105, DESM31559704
 
-## Milene Desjarins - DESM31559704
+### Autrices:  
+* Anne-Sophie Abel-Levesque ABEA05619105
+* Milene Desjardins - DESM31559704
 
-### A1 10xp
+### A1 10xp - M.D.
 
 #### Comment tester :
 
@@ -17,7 +19,7 @@ Création de la base de données "Contravention"
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
 
-### B1 5xp
+### B1 5xp - M.D.
 
 #### Comment tester :
 
@@ -61,27 +63,27 @@ id_poursuite = 1523;`
 5. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 
-### C1 10xp
+### C1 10xp - M.D.
 
 #### Comment tester reblabla
 
-### C2 5xp
+### C2 5xp - M.D.
 
 #### Comment tester reblabla
 
-### C3 5xp
+### C3 5xp - M.D.
 
 #### Comment tester reblabla
 
-### E1 15xp
+### E1 15xp - M.D.
 
 #### Comment tester reblabla
 
-### E2 15xp
+### E2 15xp - M.D.
 
 #### Comment tester reblabla
 
-### E3 5xp
+### E3 5xp - M.D.
 
 #### Comment tester :
 
@@ -169,7 +171,9 @@ commande suivante dans votre terminal :
 
 ![img_4.png](img_4.png)
 ![img_5.png](img_5.png)
-### E4 10xp
+
+
+### E4 10xp - M.D.
 
 #### Comment tester :
 
@@ -197,13 +201,15 @@ Si on clique à nouveau dans le lien du courriel, nous sommes redirigés vers
 la page de désabonnement, mais un message indique que nous sommes 
 déjà désabonné de cet établissement.
 ![img_12.png](img_12.png)
-### F1 15xp
+
+
+### F1 15xp - M.D.
 
 #### Comment tester reblabla
 
-## Anne-Sophie Abel-Levesque ABEA05619105
 
-### A2 10xp
+
+### A2 10xp - A-S.A-L.
 
 #### Étapes pour tester
 
@@ -219,7 +225,7 @@ déjà désabonné de cet établissement.
     - Par nom et/ou établissement et/ou rue
     - vide (envoyer une requête vide)
 
-### A4 10xp
+### A4 10xp - A-S.A-L.
 
 #### Étapes pour tester
 
@@ -234,27 +240,27 @@ Un exemple de requête valide :
 api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ```
 
-### A5 10xp
+### A5 10xp - A-S.A-L.
 
 #### Comment tester reblabla
 
-### A6 10xp
+### A6 10xp - A-S.A-L.
 
 #### Comment tester reblabla
 
-### D1 15xp
+### D1 15xp - A-S.A-L.
 
 #### Comment tester reblabla
 
-### D2 5xp
+### D2 5xp - A-S.A-L.
 
 #### Comment tester reblabla
 
-### D3 15xp
+### D3 15xp - A-S.A-L.
 
 #### Comment tester reblabla
 
-### D4 15xp
+### D4 15xp - A-S.A-L.
 
 #### Comment tester reblabla
 
