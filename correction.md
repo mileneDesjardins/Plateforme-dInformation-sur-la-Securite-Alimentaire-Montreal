@@ -171,8 +171,27 @@ commande suivante dans votre terminal :
 ![img_5.png](img_5.png)
 ### E4 10xp
 
-#### Comment tester reblabla
+#### Comment tester :
 
+###### Désabonnement
+1. Lancez l'application avec la commande suivante dans votre terminal : 
+
+   `$ make`
+2. Veuillez répéter les étapes en E3
+3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en 
+   question
+4. Cliquer sur le bouton "Confirmer le désabonnement" :
+![img_6.png](img_6.png)
+5. Voici la page de confirmation :
+![img_7.png](img_7.png)
+
+###### Vérification du désabonnement
+Maintenant nous pouvons se connecter en tant que "Manuel Roger" afin 
+d'accéder à son compte et vérifier si le désabonner à bien fonctionner. 
+Nous pouvons voir que le désabonnement à partir d'un lien envoyé par 
+courriel fonctionne bien
+
+![img_8.png](img_8.png)
 
 ### F1 15xp
 

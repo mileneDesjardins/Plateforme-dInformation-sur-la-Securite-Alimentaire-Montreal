@@ -12,7 +12,7 @@ class TokenManager:
             self.token_connection = sqlite3.connect('db/token.db')
         return self.token_connection
 
-    def generate_token(self, id_business, courriel, etablissement):
+    def generate_token(self, id_business, courriel, etablissement, adresse):
         # Générer un token unique
         token_value = str(uuid.uuid4())
 
@@ -23,9 +23,8 @@ class TokenManager:
             # Insérer le token dans la table Token
             connection.execute(
                 "INSERT INTO Token (token_value, courriel, id_business, "
-                "etablissement, expiration_timestamp) VALUES (?, ?, ?, ?, "
-                "NULL)",
-                (token_value, courriel, id_business, etablissement))
+                "etablissement, adresse, expiration_timestamp) VALUES (?, ?, ?, ?, ?, NULL)",
+                (token_value, courriel, id_business, etablissement, adresse))
 
             connection.connection.commit()
             connection.close()
@@ -39,9 +38,9 @@ class TokenManager:
         try:
             conn = self.get_token_connection().cursor()
 
-            # Récupérer les informations associées au token
             conn.execute(
-                "SELECT courriel, id_business, etablissement FROM Token WHERE "
+                "SELECT courriel, id_business, etablissement, adresse FROM "
+                "Token WHERE "
                 "token_value = ?",
                 (token,))
             result = conn.fetchone()
@@ -82,7 +81,6 @@ class TokenManager:
             print("Erreur lors de la mise à jour de l'expiration du token :",
                   e)
             return False
-
 
     def is_token_expired(self, token):
         try:
