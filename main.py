@@ -332,7 +332,7 @@ def unsubscribe(token):
                                    etablissement=etablissement,
                                    adresse=adresse)
         else:
-            message = "Token invalide."
+            message = "Vous êtes déjà désabonné de cet établissement."
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, message=message)
 
