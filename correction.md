@@ -81,7 +81,22 @@ id_poursuite = 1523;`
 
 ### E2 15xp - M.D.
 
-#### Comment tester reblabla
+#### Comment tester :
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
+   page d'accueil.
+2. Cliquer sur le bouton "Création de compte"
+3. Compléter tous les champs et cliquer sur "Créer un compte"
+![img_14.png](img_14.png)
+![img_15.png](img_15.png)
+
+###### Vérification de la création de compte
+
+1. Pour valider la création de votre compte, veuillez vous connecter en utilisant l'adresse courriel "henri123@hotmail.com" et le mot de passe "henri123".
+![img_16.png](img_16.png)
+
+
 
 ### E3 5xp - M.D.
 
