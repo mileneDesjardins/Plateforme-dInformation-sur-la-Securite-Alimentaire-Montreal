@@ -12,7 +12,7 @@ from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
 import IDRessourceNonTrouve
-from TokenManager import TokenManager
+from token_manager import TokenManager
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -323,14 +323,16 @@ def unsubscribe(token):
             email = token_data[0]
             id_business = token_data[1]
             etablissement = token_data[2]
+            adresse = token_data[3]
 
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, id_business=id_business,
                                    email=email, token=token,
                                    message=message,
-                                   etablissement=etablissement)
+                                   etablissement=etablissement,
+                                   adresse=adresse)
         else:
-            message = "Token invalide."
+            message = "Vous êtes déjà désabonné de cet établissement."
             return render_template('unsubscribe.html', titre=titre,
                                    script=script, message=message)
 

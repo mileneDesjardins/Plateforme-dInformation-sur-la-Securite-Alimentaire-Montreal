@@ -30,6 +30,9 @@
                             <a href="/connection"
                                class="btn btn-primary w-100 py-2 my-3">Se
                                 connecter</a>
+                            <a href="{{ url_for('create_user') }}"
+                               class="btn btn-secondary w-100 py-2
+                               my-1">Création de compte</a>
                         </div>
                     {% endif %}
 
@@ -40,25 +43,33 @@
                     <form class="row mt-5 g-2 align-items-end">
                         <div class="col-md-2 position-relative">
                             <div class="form-floating my-1">
-                                <input type="date" name="start-date" id="start-date" class="form-control">
+                                <input type="date" name="start-date"
+                                       id="start-date" class="form-control">
                                 <label for="start-date">Début</label>
-                                <div class="invalid-feedback d-block position-absolute" id="error-start-date"></div>
+                                <div class="invalid-feedback d-block position-absolute"
+                                     id="error-start-date"></div>
                             </div>
                         </div>
 
                         <div class="col-md-2 position-relative">
                             <div class="form-floating my-1">
-                                <input type="date" name="end-date" id="end-date" class="form-control">
+                                <input type="date" name="end-date"
+                                       id="end-date" class="form-control">
                                 <label for="end-date">Fin</label>
-                                <div class="invalid-feedback d-block position-absolute" id="error-end-date"></div>
+                                <div class="invalid-feedback d-block position-absolute"
+                                     id="error-end-date"></div>
                             </div>
                         </div>
 
                         <div class="col-md-2 text-start">
                             <div class="form-floating my-1">
-                                <button id="btn-fast-search" class="btn btn-primary" type="button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-search" viewBox="0 0 16 16">
+                                <button id="btn-fast-search"
+                                        class="btn btn-primary" type="button">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="16" height="16"
+                                         fill="currentColor"
+                                         class="bi bi-search"
+                                         viewBox="0 0 16 16">
                                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                                     </svg>
                                 </button>
@@ -67,9 +78,14 @@
 
 
                         <div class="col-md-4 text-start">
-                            <label for="select-etablissement">Établissement :</label>
-                            <select name="etablissement" id="select-etablissement" class="form-control">
-                                <option value="" disabled selected>-- Sélectionner --</option>
+                            <label for="select-etablissement">Établissement
+                                :</label>
+                            <select name="etablissement"
+                                    id="select-etablissement"
+                                    class="form-control">
+                                <option value="" disabled selected>--
+                                    Sélectionner --
+                                </option>
                                 {% for etablissement in etablissements %}
                                     <option value="{{ etablissement[0] }}">{{ etablissement[1] }}
                                         - {{ etablissement[2] }}</option>
@@ -80,10 +96,16 @@
 
                         <div class="col-md-2 text-start">
                             <div class="form-floating my-1">
-                                <button type="button" id="btn-info-etablissement" class="btn btn-primary"
-                                        data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                         class="bi bi-search" viewBox="0 0 16 16">
+                                <button type="button"
+                                        id="btn-info-etablissement"
+                                        class="btn btn-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdrop">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="16" height="16"
+                                         fill="currentColor"
+                                         class="bi bi-search"
+                                         viewBox="0 0 16 16">
                                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                                     </svg>
                                 </button>

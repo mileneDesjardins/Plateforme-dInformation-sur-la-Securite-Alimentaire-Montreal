@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 
 import yaml
 
-from TokenManager import TokenManager
+from token_manager import TokenManager
 from app import app
 from database import Database
 from download import import_csv
@@ -105,6 +105,7 @@ def notify(new_contraventions):
             for contravention in new_contraventions:
                 id_business = contravention[1]
                 etablissement = contravention[6]
+                adresse = contravention[4]
 
                 # Vérifier si cette contravention est surveillée par l'utilisateur
                 if id_business in choix_etablissements:
@@ -113,7 +114,8 @@ def notify(new_contraventions):
                     # Générer le token pour cet utilisateur
                     token = token_manager.generate_token(id_business,
                                                          courriel,
-                                                         etablissement)
+                                                         etablissement,
+                                                         adresse)
                     link_tokens[(courriel, id_business)] = (
                         f"http://localhost:5000/unsubscribe-page/{token}")
 

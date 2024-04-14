@@ -274,7 +274,6 @@ class Database:
                  row[0], row[1])
             )
 
-
     # TODO pourrait enlever timstamps csv et garder date importation
     # TODO si date modif nest plus nulle, alors on ne peut plus sync
     def can_be_update(self, timestamp_modif, timestamp_csv, deleted):
@@ -590,16 +589,21 @@ class Database:
     def create_user(self, user):
         connection = self.get_user_connection()
         cursor = connection.cursor()
-        choix_etablissements_json = json.dumps(user.choix_etablissements)
-        cursor.execute(
-            "INSERT INTO User (nom_complet, courriel, "
-            "choix_etablissements, mdp_hash, mdp_salt)"
-            "VALUES (?, ?, ?, ?, ?)",
-            (user.nom_complet, user.courriel, choix_etablissements_json,
-             user.mdp_hash,
-             user.mdp_salt)
-        )
-        connection.commit()
+        try:
+            choix_etablissements_json = json.dumps(user.choix_etablissements)
+            cursor.execute(
+                "INSERT INTO User (nom_complet, courriel, choix_etablissements, mdp_hash, mdp_salt)"
+                "VALUES (?, ?, ?, ?, ?)",
+                (user.nom_complet, user.courriel, choix_etablissements_json,
+                 user.mdp_hash, user.mdp_salt)
+            )
+            connection.commit()
+        except Exception as e:
+            print(f"Failed to create user {user.courriel}: {e}")
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
 
     def get_user_login_infos(self, courriel):
         cursor = self.get_user_connection().cursor()
@@ -632,9 +636,6 @@ class Database:
         cursor.execute("SELECT * FROM User")
         return cursor.fetchall()
 
-        # Méthode pour mettre à jour les établissements choisis pour un utilisateur
-
-    # Méthode pour mettre à jour les établissements choisis pour un utilisateur
     def update_user_etablissements(self, id_user, new_etablissements):
         connection = self.get_user_connection()
         cursor = connection.cursor()
@@ -691,8 +692,8 @@ class Database:
                 f"Erreur lors de la suppression de l'établissement {id_business} pour l'utilisateur {email}: {e}")
             return False
         finally:
-            cursor.close()  # Assurez-vous de fermer le curseur
-            connection.close()  # Et de fermer la connexion
+            cursor.close()
+            connection.close()
 
     def get_demandes_inspection_connection(self):
         if self.demandes_inspection_connection is None:

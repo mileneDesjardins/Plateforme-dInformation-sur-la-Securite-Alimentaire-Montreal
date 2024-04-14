@@ -6,6 +6,7 @@ CREATE TABLE Token
     courriel             VARCHAR(100) NOT NULL,
     id_business          INTEGER      NOT NULL,
     etablissement        TEXT         NOT NULL,
+    adresse              TEXT         NOT NULL,
     FOREIGN KEY (courriel) REFERENCES User (courriel)
 );
 
