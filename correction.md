@@ -1,19 +1,18 @@
 # Correction projet INF5190-H24 | ABEA05619105, DESM31559704
 
 ### Autrices:  
-* Anne-Sophie Abel-Levesque ABEA05619105
+* Anne-Sophie Abel-Levesque - ABEA05619105
 * Milene Desjardins - DESM31559704
 
 ### A1 10xp - M.D.
 #### Comment tester :
 
-Importation des données avec la base de données "Contravention" déjà
-configurée.
+###### Importation des données avec la base de données "Contravention" déjà configurée.
 
 1. Ouvrez le terminal dans le répertoire du projet.
 2. Exécutez la commande suivante : `$ python3 download.py`
 
-Création de la base de données "Contravention"
+###### Création de la base de données "Contravention"
 
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
@@ -24,45 +23,80 @@ Création de la base de données "Contravention"
 ### B1 5xp - M.D.
 #### Comment tester :
 
-Utilisation MailDev
+###### Utilisation MailDev
 
-1. Veuillez installer Docker sur
-   l'ordinateur : https://www.docker.com/get-started/
-2. Vérifier l'installation : Ouvrez le terminal et entrez la commande :
-   `docker --version`
-1. Installation de MailDev sur Docker. Il agit comme un serveur SMTP de
-   test qui capture tous les emails envoyés et les rend visibles dans une
-   interface web.
-2. Ouvrir le terminal et exécuter :
-    3. `$ docker pull maildev/maildev`
-    4. `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
-       ![img.png](static/img/correction/img.png)
-       Pour plus d'informations, veuillez lire la
-       documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
-5. Ouvrir docker
-6. Démarrer le container contenant l'image maildev/maildev
-7. Ouvrez http://localhost:1080/
+Installation de docker
 
-Nouvelles dates d'importation
-Nous devrons modifier la date d'importation de 2 contraventions
+1. Commencez par installer Docker sur votre ordinateur en suivant ce lien :
+   https://www.docker.com/get-started/
 
-1. Ouvrir la console de la table Contravention
-2. Écrire ces instruction :
-   `UPDATE Contravention SET date_importation =
-   '2024-04-01 12:08:00:000' WHERE
-   id_poursuite = 6119;
+###### Vérification de l'installation de Docker
 
-UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+2. Ouvrez un terminal et tapez la commande suivante pour vérifier si Docker
+   est correctement installé : `docker --version`
+
+###### Installation de MailDev
+
+MailDev est un serveur SMTP de test qui intercepte tous les emails envoyés, les
+affichant ensuite dans une interface web.
+
+3. Pour installer MailDev, ouvrez votre terminal et exécutez les commandes
+   suivantes :
+
+   `$ docker pull maildev/maildev`
+
+   `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
+   ![img.png](static/img/correction/img.png)
+   Pour plus d'informations, veuillez lire la
+   documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
+
+###### Démarrage de MailDev
+
+6. Lancez Docker et démarrez le conteneur contenant l'image de MailDev.
+
+###### Accéder à MailDev
+
+7. Ouvrez un navigateur et allez sur : http://localhost:1080/ pour accéder à
+   l'interface de MailDev.
+
+##### Gestion des nouvelles dates d'importation
+
+Pour tester le scénario d'envoi de notifications de nouvelles contraventions,
+suivez ces étapes :
+
+Il est nécessaire d'ajuster les dates d'importation de deux contraventions afin
+de tester le scénario suivant : l'adresse email spécifiée sous "**monitoring**"
+dans le fichier YAML doit recevoir une notification contenant les détails des
+deux contraventions.
+
+1. Ouvrez la console de gestion de votre base de données et accédez à la
+   table des Contraventions.
+2. Inscrivez les commandes suivantes **sans les exécuter**,car il faut ajuster 
+   les dates d'importation :
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 6119;`
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
-![img_2.png](static/img/correction/img_2.png)
-![img_1.png](static/img/correction/img_1.png)
+![img.png](img.png)
 
-3. Remplacer la date pour la date du jour et ajuster l'heure pour une heure
-   future soit 1 minute plus tard que l'heure actuelle.
+###### Mise à jour des dates :
 
-4. commit les changements
-5. Lancez l'application avec la commande suivante dans votre terminal : `$
-   make`
+3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
+   configurant pour un **moment futur** (par exemple, **une minute après l'heure
+   courante**).
+
+###### Validation des modifications
+4. Enregistrez les changements dans la base de données.
+
+###### Lancement de l'application
+5. Pour démarrer l'application et appliquer les modifications, utilisez la 
+commande suivante dans votre terminal : `$ make`
+
+6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
+
+![img_5.png](static/img/correction/img_5.png)
 
 ### C1 10xp - M.D.
 #### Comment tester reblabla
