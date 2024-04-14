@@ -5,21 +5,61 @@
 ### A1 10xp
 
 #### Comment tester :
-Importation des données avec la base de données "Contravention" déjà 
+
+Importation des données avec la base de données "Contravention" déjà
 configurée.
+
 1. Ouvrez le terminal dans le répertoire du projet.
 2. Exécutez la commande suivante : `$ python3 download.py`
 
 Création de la base de données "Contravention"
-1. Lancez la création de la table en exécutant : `$ python3 
-   create_table_contravention.py`
 
+1. Lancez la création de la table en exécutant : `$ python3
+   create_table_contravention.py`
 
 ### B1 5xp
 
 #### Comment tester :
+
+Utilisation MailDev
+
+1. Veuillez installer Docker sur
+   l'ordinateur : https://www.docker.com/get-started/
+2. Vérifier l'installation : Ouvrez le terminal et entrez la commande :
+   `docker --version`
+1. Installation de MailDev sur Docker. Il agit comme un serveur SMTP de
+   test qui capture tous les emails envoyés et les rend visibles dans une
+   interface web.
+2. Ouvrir le terminal et exécuter :
+    3. `$ docker pull maildev/maildev`
+    4. `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
+       ![img.png](img.png)
+       Pour plus d'informations, veuillez lire la
+       documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
+5. Ouvrir docker
+6. Démarrer le container contenant l'image maildev/maildev
+7. Ouvrez http://localhost:1080/
+
+Nouvelles dates d'importation
+Nous devrons modifier la date d'importation de 2 contraventions
+
 1. Ouvrir la console de la table Contravention
-2. 
+2. Écrire ces instruction :
+   `UPDATE Contravention SET date_importation =
+   '2024-04-01 12:08:00:000' WHERE
+   id_poursuite = 6119;
+
+UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 1523;`
+![img_2.png](img_2.png)
+![img_1.png](img_1.png)
+
+3. Remplacer la date pour la date du jour et ajuster l'heure pour une heure
+   future soit 1 minute plus tard que l'heure actuelle.
+
+4. commit les changements
+5. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
 
 ### C1 10xp
 
@@ -43,21 +83,96 @@ Création de la base de données "Contravention"
 
 ### E3 5xp
 
-#### Comment tester reblabla
+#### Comment tester :
 
+###### Utilisation MailDev
+
+Installation de docker
+
+1. Commencez par installer Docker sur votre ordinateur en suivant ce lien :
+   https://www.docker.com/get-started/
+
+###### Vérification de l'installation de Docker
+
+2. Ouvrez un terminal et tapez la commande suivante pour vérifier si Docker
+   est correctement installé :
+
+   `docker --version`
+
+###### Installation de MailDev
+
+MailDev est un serveur SMTP de test qui intercepte tous les emails envoyés, les
+affichant ensuite dans une interface web.
+
+3. Pour installer MailDev, ouvrez votre terminal et exécutez les commandes
+   suivantes :
+
+   `$ docker pull maildev/maildev`
+
+   `$ docker run -p 1080:1080 -p 1025:1025 maildev/maildev`
+   ![img.png](img.png)
+   Pour plus d'informations, veuillez lire la
+   documentation : https://github.com/maildev/maildev/tree/master?tab=readme-ov-file
+
+###### Démarrage de MailDev
+
+6. Lancez Docker et démarrez le conteneur contenant l'image de MailDev.
+
+###### Accéder à MailDev
+
+7. Ouvrez un navigateur et allez sur : http://localhost:1080/ pour accéder à
+   l'interface de MailDev.
+
+##### Gestion des nouvelles dates d'importation
+
+Pour tester le scénario d'envoi de notifications de nouvelles contraventions,
+suivez ces étapes :
+
+Il est nécessaire d'ajuster les dates d'importation de deux contraventions afin
+de tester le scénario suivant : l'adresse email spécifiée sous "**monitoring**"
+dans le fichier YAML doit recevoir une notification contenant les détails des
+deux contraventions. Par ailleurs, l'utilisateur "**Manuel Roger**" doit uniquement
+recevoir une notification pour la contravention associée à **_id_business=116921_**,
+étant donné que l'autre contravention ne figure pas parmi celles qu'il
+surveille.
+
+1. Ouvrez la console de gestion de votre base de données et accédez à la
+   table des Contraventions.
+2. Inscrivez les commandes suivantes **sans les exécuter** pour ajuster les dates 
+   d'importation :
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 6119;`
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 1523;`
+
+![img_2.png](img_2.png)
+![img_1.png](img_1.png)
+
+###### Mise à jour des dates :
+
+3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
+   configurant pour un **moment futur** (par exemple, **une minute après l'heure
+   courante**).
+
+###### Validation des modifications
+4. Enregistrez les changements dans la base de données.
+
+###### Lancement de l'application
+5. Pour démarrer l'application et appliquer les modifications, utilisez la 
+commande suivante dans votre terminal :
+   
+   `$ make`
+
+6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
+
+![img_4.png](img_4.png)
+![img_5.png](img_5.png)
 ### E4 10xp
 
 #### Comment tester reblabla
 
-UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
-id_poursuite = 10002;
-
-UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
-id_poursuite = 4455;
-
-### E4 10xp
-
-#### Comment tester reblabla
 
 ### F1 15xp
 
@@ -68,28 +183,33 @@ id_poursuite = 4455;
 ### A2 10xp
 
 #### Étapes pour tester
-1. Lancez l'application avec la commande suivante dans votre terminal : `$ 
+
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la page d'accueil.
-- Aller sur la page d'accueil (la barre de recherche est également accessible partout sur le site) 
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
+   page d'accueil.
+
+- Aller sur la page d'accueil (la barre de recherche est également accessible
+  partout sur le site)
 - Cliquer sur la barre de recherche en haut à droite de la page
 - Effectuer une recherche
     - Par nom et/ou établissement et/ou rue
     - vide (envoyer une requête vide)
 
-
-
 ### A4 10xp
 
 #### Étapes pour tester
-Effectuez une requête `GET` à la route `api/contrevenants?start-date<date1>&end-date=<date2>` via l'extension YARC (ou tout autre REST client), en remplaçant `date1` et `date2` par les dates que vous souhaitez testés.  
 
-Un exemple de requête valide : 
+Effectuez une requête `GET` à la
+route `api/contrevenants?start-date<date1>&end-date=<date2>` via l'extension
+YARC (ou tout autre REST client), en remplaçant `date1` et `date2` par les
+dates que vous souhaitez testés.
+
+Un exemple de requête valide :
 
 ```text
 api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ```
-
 
 ### A5 10xp
 
