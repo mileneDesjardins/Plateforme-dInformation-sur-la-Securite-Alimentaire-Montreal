@@ -5,7 +5,7 @@ conn = sqlite3.connect('db/test_contravention.db')
 cursor = conn.cursor()
 
 create_table_query = """
-CREATE TABLE TEST_CONTRAVENTION
+CREATE TABLE CONTRAVENTION
 (
     id_poursuite     INTEGER  NOT NULL PRIMARY KEY,
     id_business      INTEGER  NOT NULL,
@@ -34,4 +34,4 @@ conn.commit()
 cursor.close()
 conn.close()
 
-print("La table TEST_CONTRAVENTION a été créée avec succès dans le fichier 'test_contravention.db'.")
+print("La table TEST_CONTRAVENTION a été créée avec succès dans le fichier 'contravention.db'.")

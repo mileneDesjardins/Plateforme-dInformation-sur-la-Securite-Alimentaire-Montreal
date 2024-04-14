@@ -5,9 +5,12 @@
 ### A1 10xp
 
 #### Comment tester :
-vous ne devez faire qu’un script Python qui télécharge les données et insère les données 
-dans la base de données. 
+Importer les données avec BD Contravention déjà créée
+1. Ouvrir le terminal dans le dossier du projet
+2. `$ python3 download.py`
 
+Créer BD Contravention
+1. `$ python3 create_table_contravention.py`
 
 ### A2 5xp
 
