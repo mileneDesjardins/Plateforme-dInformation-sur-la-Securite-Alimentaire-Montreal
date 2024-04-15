@@ -374,6 +374,7 @@ un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 Mettre user et mdp dans fichier .quelquechose
 
-## B2 10xp
+## B2 10xp A-S.A-L.
+TODO enlever photo
 
-
+@Inspection61614
