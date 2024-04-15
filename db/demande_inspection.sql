@@ -1,4 +1,4 @@
-CREATE TABLE Demandes_Inspection
+CREATE TABLE DemandesInspection
 (
     id                 INTEGER NOT NULL PRIMARY KEY,
     etablissement      TEXT    NOT NULL,

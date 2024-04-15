@@ -1,10 +1,12 @@
 # Correction projet INF5190-H24 | ABEA05619105, DESM31559704
 
-### Autrices:  
+### Autrices:
+
 * Anne-Sophie Abel-Levesque - ABEA05619105
 * Milene Desjardins - DESM31559704
 
 ### A1 10xp - M.D.
+
 #### Comment tester :
 
 ###### Importation des données avec la base de données "Contravention" déjà configurée.
@@ -18,9 +20,11 @@
    create_table_contravention.py`
 
 ### A3 5xp - M.D.
+
 #### Comment tester :
 
 ### B1 5xp - M.D.
+
 #### Comment tester :
 
 ###### Utilisation MailDev
@@ -71,7 +75,7 @@ deux contraventions.
 
 1. Ouvrez la console de gestion de votre base de données et accédez à la
    table des Contraventions.
-2. Inscrivez les commandes suivantes **sans les exécuter**,car il faut ajuster 
+2. Inscrivez les commandes suivantes **sans les exécuter**,car il faut ajuster
    les dates d'importation :
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
@@ -88,40 +92,48 @@ id_poursuite = 1523;`
    courante**).
 
 ###### Validation des modifications
+
 4. Enregistrez les changements dans la base de données.
 
 ###### Lancement de l'application
-5. Pour démarrer l'application et appliquer les modifications, utilisez la 
-commande suivante dans votre terminal : `$ make`
 
-6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
+5. Pour démarrer l'application et appliquer les modifications, utilisez la
+   commande suivante dans votre terminal : `$ make`
+
+6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la
+   réception des notifications.
 
 ![img_5.png](static/img/correction/img_5.png)
 
 ### C1 10xp - M.D.
+
 #### Comment tester reblabla
 
 ### C2 5xp - M.D.
+
 #### Comment tester reblabla
 
 ### C3 5xp - M.D.
+
 #### Comment tester reblabla
 
 ### E1 15xp - M.D.
+
 #### Comment tester :
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
 2. Cliquer sur le bouton "Création de compte"
 3. Compléter tous les champs et cliquer sur "Créer un compte"
-![img_14.png](static/img/correction/img_14.png)
-![img_15.png](static/img/correction/img_15.png)
-
+   ![img_14.png](static/img/correction/img_14.png)
+   ![img_15.png](static/img/correction/img_15.png)
 
 ### E2 15xp - M.D.
 
 #### Comment tester :
+
 ###### Vérification de la création de compte
 
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
@@ -132,20 +144,22 @@ commande suivante dans votre terminal : `$ make`
    com" et le mot de passe "henri123".
 ![img_16.png](static/img/correction/img_16.png)
 4. Cliquer sur l'onglet "Compte"
-![img_18.png](static/img/correction/img_18.png)
+   ![img_18.png](static/img/correction/img_18.png)
 5. Voici à quoi ressemble le compte présentement :
-![img_19.png](static/img/correction/img_19.png)
+   ![img_19.png](static/img/correction/img_19.png)
 6. Nous allons sélectionner différents établissements à surveiller :
-![img_20.png](static/img/correction/img_20.png)
+   ![img_20.png](static/img/correction/img_20.png)
 7. Cliquer sur "Enregistrer les modifications"
-![img_21.png](static/img/correction/img_21.png)
-8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix se sont 
+   ![img_21.png](static/img/correction/img_21.png)
+8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix se sont
    bien enregistrés :
-![img_22.png](static/img/correction/img_22.png)
+   ![img_22.png](static/img/correction/img_22.png)
 9. Ajouter une photo et cliquer sur enregistrez
 10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien enregistrée :
-![img_24.png](static/img/correction/img_24.png)
+    ![img_24.png](static/img/correction/img_24.png)
+
 ### E3 5xp - M.D.
+
 #### Comment tester :
 
 ###### Utilisation MailDev
@@ -199,7 +213,7 @@ surveille.
 
 1. Ouvrez la console de gestion de votre base de données et accédez à la
    table des Contraventions.
-2. Inscrivez les commandes suivantes **sans les exécuter** pour ajuster les dates 
+2. Inscrivez les commandes suivantes **sans les exécuter** pour ajuster les dates
    d'importation :
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
@@ -218,63 +232,67 @@ id_poursuite = 1523;`
    courante**).
 
 ###### Validation des modifications
+
 4. Enregistrez les changements dans la base de données.
 
 ###### Lancement de l'application
-5. Pour démarrer l'application et appliquer les modifications, utilisez la 
-commande suivante dans votre terminal : `$ make`
 
-6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la réception des notifications.
+5. Pour démarrer l'application et appliquer les modifications, utilisez la
+   commande suivante dans votre terminal : `$ make`
+
+6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la
+   réception des notifications.
 
 ![img_4.png](static/img/correction/img_4.png)
 ![img_5.png](static/img/correction/img_5.png)
 
-
 ### E4 10xp - M.D.
+
 #### Comment tester :
 
 ###### Désabonnement
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$ make`
 2. Veuillez répéter les étapes en E3
-3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en 
+3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en
    question
 4. Cliquer sur le bouton "Confirmer le désabonnement"
-![img_10.png](static/img/correction/img_10.png)
+   ![img_10.png](static/img/correction/img_10.png)
 5. Voici la page de confirmation
-![img_7.png](static/img/correction/img_7.png)
+   ![img_7.png](static/img/correction/img_7.png)
 
 ###### Vérification du désabonnement
-Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour accéder à son compte et confirmer que le désabonnement via un lien reçu par courriel a été effectué avec succès.
+
+Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour accéder à son compte et confirmer que le
+désabonnement via un lien reçu par courriel a été effectué avec succès.
 
 ![img_11.png](static/img/correction/img_11.png)
 
-Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé vers la page de désabonnement, où un message s'affichera pour l'informer qu'il est déjà désabonné de cet établissement.
+Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé vers la page de désabonnement, où un
+message s'affichera pour l'informer qu'il est déjà désabonné de cet établissement.
 ![img_12.png](static/img/correction/img_12.png)
 
-
 ### F1 15xp - M.D.
+
 #### Comment tester :
 
 Voici le lien vers le site : https://projet-session.fly.dev/
 
-
 ### A2 10xp - A-S.A-L.
-#### Étapes pour tester
 
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
 
-- Aller sur la page d'accueil (la barre de recherche est également accessible
-  partout sur le site)
-- Cliquer sur la barre de recherche en haut à droite de la page
-- Effectuer une recherche
+3. Aller sur la page d'accueil (la barre de recherche est également accessible
+   partout sur le site)
+4. Cliquer sur la barre de recherche en haut à droite de la page
+5. Effectuer une recherche
     - Par nom et/ou établissement et/ou rue
     - vide (envoyer une requête vide)
 
 ### A4 10xp - A-S.A-L.
-#### Étapes pour tester
 
 Effectuez une requête `GET` à la
 route `api/contrevenants?start-date<date1>&end-date=<date2>` via l'extension
@@ -288,22 +306,74 @@ api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ```
 
 ### A5 10xp - A-S.A-L.
-#### Comment tester reblabla
+
+1. Aller sur la page d'accueil
+2. Saisisser une date de début et une date de fin de recherche puis lancer une recherche
+
+![img_25.png](static/img/correction/img_25.png)
 
 ### A6 10xp - A-S.A-L.
-#### Comment tester reblabla
+
+1. Aller sur la page d'accueil
+2. Saisisser une date de début et une date de fin de recherche puis lancer une recherche
+
+![img_26.png](static/img/correction/img_26.png)
+
 
 ### D1 15xp - A-S.A-L.
-#### Comment tester reblabla
+
+#### Tester le service REST
+
+1- Effectuez une requête `POST` à la route `api/demande-inspection` via l'extension YARC (ou tout autre REST client). Voici
+un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
+
+```json
+{
+  "etablissement": "Nom Établissement",
+  "adresse": "123 avenue Chemin, Québec",
+  "ville": "Montréal",
+  "date_visite": "2022-11-05",
+  "nom_complet_client": "Prenom Nom",
+  "description": "Personnes affectées à la consommation de produits"
+}
+```
+
+2- Vérifier que la demande ait bien été insérée dans la base de données en 
+effectuant les commandes suivantes (remplacer le id par celui envoyé dans la réponse du serveur)
+
+```sh
+sqlite3 demande_inspection.db
+```
+```sqlite3
+SELECT * FROM DemandesInspection where id=1;
+```
+
+#### Tester la fonctionnalité
+**TODO count ???**
+
+1- Cliquer sur l'onglet `Plainte` en haut à gauche de l'écran
+2- Remplissez et soumettez le formulaire
+3- 
+
 
 ### D2 5xp - A-S.A-L.
+
+1- Effectuez une requête `POST` à la route `api/demande-inspection` via l'extension YARC (ou tout autre REST client). Voici
+un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
+
 #### Comment tester reblabla
 
 ### D3 15xp - A-S.A-L.
+
 #### Comment tester reblabla
 
 ### D4 15xp - A-S.A-L.
+
 #### Comment tester reblabla
 
-Mettre user et mdp dans fichier .quelquechose 
+Mettre user et mdp dans fichier .quelquechose
 
+## B2 10xp A-S.A-L.
+TODO enlever photo
+
+@Inspection61614

@@ -2,10 +2,16 @@
     cursor: pointer;
 }
 
-.small-col-modal{
+.small-col-modal {
     width: 80%;
 }
 
-.text-area-vertical{
+.text-area-vertical {
     height: 200px !important;
+}
+
+.style-form {
+    max-width: 40%;
+    margin: auto;
+    text-align: center;
 }

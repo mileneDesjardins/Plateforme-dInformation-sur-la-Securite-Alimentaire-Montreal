@@ -176,13 +176,14 @@ types:
     additionalProperties: false
     example: |
       {
-        "etablissement": "Nom Établissement",
-        "adresse": "123 avenue Chemin, Québec",
-        "ville": "Montréal",
-        "date_visite": "2022-11-05",
-        "nom_complet_client": "Prenom Nom",
-        "description": "Personnes affectées à la consommation de produits",
+        "etablissement": "Nom de l'établissement",
+        "adresse": "Adresse de l'établissement",
+        "ville": "Ville",
+        "date_visite": "2024-04-14",
+        "nom_complet_client": "Nom complet du client",
+        "description": "Description de la visite"
       }
+
   User:
     type: object
     properties:
@@ -413,14 +414,16 @@ types:
               type: DemandeInspection
               example: |
                 {
-                 "id": 45,
-                 "etablissement": Restaurant XYZ,
-                 "adresse": "123 rue LeChemin",
-                 "ville": "VilleCity",
-                 "date_visite": "2022-11-05",
-                 "nom_client": "Joe",
-                 "prenom_client": "Dane",
-                 "Description": "Aliments insalubres",
+                  "demande_creee": {
+                    "adresse": "Adresse de l'établissement",
+                    "date_visite": "2024-04-14",
+                    "description": "Description de la visite",
+                    "etablissement": "Nom de l'établissement",
+                    "id": 41,
+                    "nom_complet_client": "Nom complet du client",
+                    "ville": "Ville"
+                  },
+                  "message": "Utilisateur ajouté"
                 }
         400:
           description: Une erreur reliée au schéma JSON a été rencontrée.

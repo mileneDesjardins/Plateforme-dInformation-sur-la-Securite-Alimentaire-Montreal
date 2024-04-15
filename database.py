@@ -134,7 +134,7 @@ class Database:
     def __init__(self):
         self.contravention_connection = None
         self.user_connection = None
-        self.demandes_inspection_connection = None
+        self.demande_inspection_connection = None
         self.last_import_time = None
         self.photo_connection = None
         self.token_connection = None
@@ -150,8 +150,8 @@ class Database:
             self.contravention_connection.close()
         if self.user_connection is not None:
             self.user_connection.close()
-        if self.demandes_inspection_connection is not None:
-            self.demandes_inspection_connection.close()
+        if self.demande_inspection_connection is not None:
+            self.demande_inspection_connection.close()
         if self.last_import_time is not None:
             self.last_import_time.close()
         if self.photo_connection is not None:
@@ -215,29 +215,23 @@ class Database:
                     continue
 
                 try:
-                    # verifier si deja dans base de donnnees  si oui, update
-                    cursor.execute(
-                        "SELECT * FROM Contravention WHERE id_poursuite=? AND id_business=?",
-                        (row[0], row[1])
-                    )
-                    existing_data = cursor.fetchone()
-
-                    if existing_data is not None:
-
-                        self.sync_row(cursor, date, date_jugement, date_statut,
-                                      existing_data, row, timestamp_csv)
-                    else:
-
-                        # Insérer les données dans la base de données
-                        cursor.execute(insertion, (
-                            row[0], row[1], date, row[3], row[4],
-                            date_jugement,
-                            row[6],
-                            row[7],
-                            row[8], row[9], row[10], date_statut, row[12],
-                            date_importation, timestamp_csv, deleted))
-                        new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
+                    # Insérer les données dans la base de données
+                    cursor.execute(insertion, (
+                        row[0], row[1], date, row[3], row[4],
+                        date_jugement,
+                        row[6],
+                        row[7],
+                        row[8], row[9], row[10], date_statut, row[12],
+                        date_importation, timestamp_csv, deleted))
+                    new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
                 except sqlite3.IntegrityError:
+                    # Essaie de mettre a jour la base de donnees
+                    if (self.can_be_updated(row[Cols.ID_POURSUITE.value],
+                                            row[Cols.ID_BUSINESS.value],
+                                            cursor)):
+                        self.sync_row(cursor, date, date_jugement, date_statut,
+                                      row, timestamp_csv)
+
                     # Gérer les erreurs d'unicité en les ignorant
                     # print(
                     #     f"Ignorer l'insertion pour id_poursuite existant: "
@@ -256,37 +250,31 @@ class Database:
         else:
             print("Aucune nouvelle donnée insérée.")
 
-    # TODO verfier 14 et 15
-    def sync_row(self, cursor, date, date_jugement, date_statut, existing_data,
+    def sync_row(self, cursor, date, date_jugement, date_statut,
                  row, timestamp_csv):
-        if self.can_be_update(existing_data[Cols.TSP_MOD.value],
-                              existing_data[Cols.TSP_CSV.value],
-                              existing_data[Cols.DELETED.value]):
-            # Mettre à jour les données existantes dans la base de données
-            cursor.execute(
-                "UPDATE Contravention SET date=?, description=?, adresse=?, "
-                "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
-                "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
-                "WHERE id_poursuite=? AND id_business=?",
-                (date, row[3], row[4], date_jugement, row[6],
-                 row[7], row[8], row[9],
-                 row[10], date_statut, row[12], timestamp_csv,
-                 row[0], row[1])
-            )
 
-    # TODO pourrait enlever timstamps csv et garder date importation
-    # TODO si date modif nest plus nulle, alors on ne peut plus sync
-    def can_be_update(self, timestamp_modif, timestamp_csv, deleted):
-        if timestamp_modif is None:
-            return True
-        if isinstance(timestamp_modif, str):
-            timestamp_modif = datetime.strptime(timestamp_modif,
-                                                '%Y-%m-%d %H:%M:%S.%f')
-        if isinstance(timestamp_csv, str):
-            timestamp_csv = datetime.strptime(timestamp_csv,
-                                              '%Y-%m-%d %H:%M:%S.%f')
+        # Mettre à jour les données existantes dans la base de données
+        cursor.execute(
+            "UPDATE Contravention SET date=?, description=?, adresse=?, "
+            "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
+            "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+            "WHERE id_poursuite=? AND id_business=?",
+            (date, row[3], row[4], date_jugement, row[6],
+             row[7], row[8], row[9],
+             row[10], date_statut, row[12], timestamp_csv,
+             row[0], row[1])
+        )
 
-        return timestamp_csv > timestamp_modif and deleted == 0
+    def can_be_updated(self, id_poursuite, id_business, cursor):
+        params = (id_poursuite, id_business)
+        cursor.execute(
+            "SELECT * FROM Contravention WHERE id_poursuite=? "
+            "AND id_business=?", params)
+        contravention = cursor.fetchone()
+        if contravention is not None:
+            return (contravention[Cols.TSP_MOD.value] is None and
+                    contravention[Cols.DELETED.value] == 0)
+        return False
 
     def get_new_contraventions(self, last_import_time):
         # Obtention de la connexion à la base de données des contraventions
@@ -696,19 +684,19 @@ class Database:
             connection.close()
 
     def get_demandes_inspection_connection(self):
-        if self.demandes_inspection_connection is None:
-            self.demandes_inspection_connection = sqlite3.connect(
-                'db/demandes_inspection.db')
-        return self.demandes_inspection_connection
+        if self.demande_inspection_connection is None:
+            self.demande_inspection_connection = sqlite3.connect(
+                'db/demande_inspection.db')
+        return self.demande_inspection_connection
 
     def disconnect_demandes_inspection(self):
-        if self.demandes_inspection_connection is not None:
-            self.demandes_inspection_connection.close()
+        if self.demande_inspection_connection is not None:
+            self.demande_inspection_connection.close()
 
     def insert_demande_inspection(self, demande_inspection):
         cursor = self.get_demandes_inspection_connection().cursor()
         query = (
-            "INSERT INTO Demandes_Inspection (etablissement, adresse, ville, "
+            "INSERT INTO DemandesInspection (etablissement, adresse, ville, "
             "date_visite, nom_complet_client, description ) "
             "VALUES (?,?,?,?,?,?)")
         params = (
@@ -718,11 +706,12 @@ class Database:
             demande_inspection.nom_complet_client,
             demande_inspection.description)
         cursor.execute(query, params)
-        self.demandes_inspection_connection.commit()
+        self.demande_inspection_connection.commit()
+        return cursor.lastrowid
 
     def get_demande_inspection(self, id_demande):
         cursor = self.get_demandes_inspection_connection().cursor()
-        query = "SELECT * FROM Demandes_Inspection WHERE id = ?"
+        query = "SELECT * FROM DemandesInspection WHERE id = ?"
         cursor.execute(query, (id_demande,))
         demande = cursor.fetchone()
 
@@ -735,7 +724,7 @@ class Database:
 
     def delete_demande_inspection(self, id_demande):
         connection = self.get_demandes_inspection_connection()
-        query = "DELETE FROM Demandes_Inspection WHERE id = ?"
+        query = "DELETE FROM DemandesInspection WHERE id = ?"
         connection.execute(query, (id_demande,))
         connection.commit()
 
