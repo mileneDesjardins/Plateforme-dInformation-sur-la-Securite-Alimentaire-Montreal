@@ -1,18 +1,19 @@
+import atexit
 import hashlib
 import json
-import os
 import sqlite3
-import threading
+import subprocess
 import uuid
 import xml.etree.ElementTree as ET
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask import (jsonify, g, request, redirect, Response, session,
                    url_for, render_template)
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
 import IDRessourceNonTrouve
-from token_manager import TokenManager
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -20,7 +21,8 @@ from database import Database
 from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
-    contrevenant_update_schema, contravention_update_schema
+    contrevenant_update_schema
+from token_manager import TokenManager
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
     validates_dates, is_empty
@@ -28,12 +30,17 @@ from validations import validates_is_integer, is_incomplete, doesnt_exist, \
 load_dotenv()
 schema = JsonSchema(app)
 
-if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-    update_thread = threading.Thread(target=extract_and_update_data)
-    update_thread.start()
+
+def start_scheduler():
+    extract_and_update_data()
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=start_scheduler,
+                  trigger=CronTrigger(hour=16, minute=39, second=0))
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
-    app.secret_key = "AUTH_KWESI_SECRET"
     app.run()
 
 
@@ -509,7 +516,8 @@ def demande_inspection():
                                              demande["date_visite"],
                                              demande["nom_complet_client"],
                                              demande["description"])
-        id_demande = Database.get_db().insert_demande_inspection(nouvelle_demande)
+        id_demande = Database.get_db().insert_demande_inspection(
+            nouvelle_demande)
         demande_creee = Database.get_db().get_demande_inspection(id_demande)
         test = demande_creee.dictionnaire()
         response = {

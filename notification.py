@@ -15,25 +15,16 @@ from twitter import twitter_post
 def extract_and_update_data():
     with app.app_context():
         db = Database.get_db()
-        db.update_last_import_time()
 
-        while True:
-            print("Extraction et mise à jour des données en cours...")
+        print("Extraction et mise à jour des données en cours...")
+        import_successful = import_csv()  # Assurez-vous que cette fonction retourne un booléen indiquant le succès ou l'échec
+        print("Extraction et mise à jour des données terminées.")
 
-            # Code pour extraire et mettre à jour les données
-            import_csv()
-
-            print("Extraction et mise à jour des données terminées.")
-
-            # Appel à la fonction pour détecter les nouvelles contraventions
-            _ = detect_new_contraventions()
-
-            # TODO detect_modifications()
-
-            # Mettre à jour le temps de la dernière importation
+        if import_successful:
+            # Mise à jour de la dernière heure d'importation seulement si de nouvelles données ont été importées
             db.update_last_import_time()
 
-            time.sleep(1000)
+        _ = detect_new_contraventions()
 
 
 def detect_new_contraventions():
