@@ -49,8 +49,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.disconnect()
-    # Enregistrez la fermeture du planificateur à la sortie
-    # update_thread.join()
 
 
 @app.errorhandler(JsonValidationError)
