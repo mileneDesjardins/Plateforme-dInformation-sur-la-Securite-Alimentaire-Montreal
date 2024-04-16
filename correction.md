@@ -23,7 +23,7 @@
 
 #### Comment tester :
 
-Pour tester si le BackgroundScheduler fonctionne sans attendre à minuit, 
+Pour tester si le BackgroundScheduler fonctionne sans attendre à minuit,
 suivez ces étapes :
 
 ###### Gestion des nouvelles dates d'importation
@@ -56,7 +56,7 @@ id_poursuite = 1523;`
 6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
    après** l'heure actuelle.
    Exemple:
-![img_3.png](static/img/correction/img_31.png)
+   ![img_3.png](static/img/correction/img_31.png)
 
 ### B1 5xp - M.D.
 
@@ -149,9 +149,56 @@ id_poursuite = 1523;`
 
 ![img_5.png](static/img/correction/img_5.png)
 
-### C1 10xp - M.D.
+### C1 /api/etablissements 10xp - M.D.
 
-#### Comment tester reblabla
+#### Comment tester :
+
+###### Documentation avec RAML
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+   accéder à la documentation RAML.
+4. Sélectionner la route '/api/etablissements'
+5. ![img_113.png](img_113.png)
+
+###### Installation YARC
+
+1. Ouvrir Chrome : Lancez le navigateur **Google Chrome** sur votre ordinateur.
+
+2. Accéder au Chrome Web Store : Allez sur le site du Chrome Web Store. Vous
+   pouvez y accéder directement en tapant chrome web store dans la barre de
+   recherche Google et en cliquant sur le premier résultat, ou en entrant l'URL
+   suivante dans votre navigateur : Chrome Web Store.
+
+3. Rechercher YARC : Dans la barre de recherche du Chrome Web Store, tapez
+   **YARC** ou **Yet Another REST Client** et appuyez sur Entrée.
+
+4. Installer YARC : Trouvez YARC dans les résultats de recherche et cliquez
+   sur le bouton **Ajouter** à Chrome à côté de l'extension. Confirmez
+   l'installation en cliquant sur Ajouter l'extension dans la fenêtre popup
+   qui apparaît.
+
+###### Utilisation de YARC
+
+Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
+requêtes à une API :
+
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+   en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
+   directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
+   toutes les extensions et épingler YARC à la barre d'outils.
+2. **Configurer la requête** :
+    1. **URL** : Entrez l'URL de l'API 'http://127.0.0.1:5000/api/etablissements'
+       dans le champ URL.
+    2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
+       déroulant à côté de l'URL.
+3. **Envoyer la requête** : Cliquez
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   apparaîtront
+   dans la section Response en bas de l'interface de YARC.
+4. ![img_112.png](img_112.png)
+
+
 
 ### C2 5xp - M.D.
 
