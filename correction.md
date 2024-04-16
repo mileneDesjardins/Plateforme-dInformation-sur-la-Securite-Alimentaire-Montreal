@@ -154,12 +154,13 @@ id_poursuite = 1523;`
 #### Comment tester :
 
 ###### Documentation avec RAML
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements'
-![img_113.png](img_113.png)
+   ![img_113.png](img_113.png)
 
 ###### Installation YARC
 
@@ -183,129 +184,138 @@ id_poursuite = 1523;`
 Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
 requêtes à une API :
 
-1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de
+   Chrome (
    en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
    directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
    toutes les extensions et épingler YARC à la barre d'outils.
 2. **Configurer la requête** :
-    1. **URL** : Entrez l'URL de l'API 'http://127.0.0.1:5000/api/etablissements'
+    1. **URL** : Entrez l'URL de l'
+       API 'http://127.0.0.1:5000/api/etablissements'
        dans le champ URL.
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
 3. **Envoyer la requête** : Cliquez
-   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-![img_114.png](img_114.png)
-
+   ![img_114.png](img_114.png)
 
 ### C2 5xp /api/etablissements/xml - M.D.
 
 #### Comment tester :
 
 ###### Documentation avec RAML
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements/xml'
-![img_114.png](img_114.png)
+   ![img_114.png](img_114.png)
 
 ###### Utilisation de YARC
 
 Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
 requêtes à une API :
 
-1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de
+   Chrome (
    en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
    directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
    toutes les extensions et épingler YARC à la barre d'outils.
 2. **Configurer la requête** :
-    1. **URL** : Entrez l'URL de l'API 
-   'http://127.0.0.1:5000/api/etablissements/xml'
+    1. **URL** : Entrez l'URL de l'API
+       'http://127.0.0.1:5000/api/etablissements/xml'
        dans le champ URL.
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
 3. **Envoyer la requête** : Cliquez
-   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-![img_115.png](img_115.png)
+   ![img_115.png](img_115.png)
 
 ### C3 5xp /api/etablissements/csv - M.D.
 
 #### Comment tester :
 
 ###### Documentation avec RAML
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements/csv'
-![img_117.png](img_117.png)
+   ![img_117.png](img_117.png)
 
 ###### Utilisation de YARC
 
 Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
 requêtes à une API :
 
-1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de
+   Chrome (
    en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
    directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
    toutes les extensions et épingler YARC à la barre d'outils.
 2. **Configurer la requête** :
-    1. **URL** : Entrez l'URL de l'API 
-   'http://127.0.0.1:5000/api/etablissements/csv'
+    1. **URL** : Entrez l'URL de l'API
+       'http://127.0.0.1:5000/api/etablissements/csv'
        dans le champ URL.
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
 3. **Envoyer la requête** : Cliquez
-   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-![img_116.png](img_116.png)
+   ![img_116.png](img_116.png)
 
 ### E1 15xp /api/new-user - M.D.
 
 #### Comment tester :
 
 ###### Documentation avec RAML
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/new-user'
-
+   ![img_118.png](img_118.png)
 
 ###### Utilisation de YARC
 
 Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
 requêtes à une API :
 
-1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de
+   Chrome (
    en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
    directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
    toutes les extensions et épingler YARC à la barre d'outils.
 2. **Configurer la requête** :
-    1. **URL** : Entrez l'URL de l'API 
-   'http://127.0.0.1:5000/api/new-user'
+    1. **URL** : Entrez l'URL de l'API
+       'http://127.0.0.1:5000/api/new-user'
        dans le champ URL.
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
+    3. **Corps de la requête** :
+       Sélectionnez 'Raw' pour le type de contenu.
+       Choisissez 'JSON' comme type de média.
+       Entrez les données suivantes dans le champ de texte pour le corps de la
+       requête :
+
+            {"nom_complet": "John Doe",
+            "courriel": "john.doe@example.com",
+            "choix_etablissements": [120681, 10327],
+            "mdp": "mot_de_passe_secret"}
+
 3. **Envoyer la requête** : Cliquez
-   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-
-###### Création de compte à partir du site
-1. Lancez l'application avec la commande suivante dans votre terminal : `$
-   make`
-2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
-   page d'accueil.
-2. Cliquer sur le bouton "Création de compte"
-3. Compléter tous les champs et cliquer sur "Créer un compte"
-   ![img_14.png](static/img/correction/img_14.png)
-   ![img_15.png](static/img/correction/img_15.png)
+   ![img_119.png](img_119.png)
 
 ### E2 15xp - M.D.
 
