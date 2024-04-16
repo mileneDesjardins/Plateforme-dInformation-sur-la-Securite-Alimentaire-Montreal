@@ -367,6 +367,15 @@ types:
                     "etablissement": "Autre Établissement",
                     "nbr_infractions": 3
                   }
+        404:
+          description: Aucun établissement trouvé.
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Aucun établissement trouvé"
     /xml:
       get:
         description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format XML.
@@ -379,14 +388,24 @@ types:
                   <?xml version="1.0" encoding="UTF-8"?>
                   <etablissements>
                       <etablissement>
-                          <nom>Nom Établissement</nom>
-                          <nbr_infractions>5</nbr_infractions>
+                          <nom>RESTAURANT BASHA</nom>
+                          <nbr_infractions>36</nbr_infractions>
                       </etablissement>
                       <etablissement>
-                          <nom>Autre Établissement</nom>
-                          <nbr_infractions>3</nbr_infractions>
+                          <nom>DOUBLE PIZZA</nom>
+                          <nbr_infractions>32</nbr_infractions>
                       </etablissement>
                   </etablissements>
+          404:
+            description: Aucun établissement trouvé.
+            body:
+              application/xml:
+                type: object
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <error>
+                      <message>Aucun établissement trouvé</message>
+                  </error>
     /csv:
       get:
         description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format CSV.

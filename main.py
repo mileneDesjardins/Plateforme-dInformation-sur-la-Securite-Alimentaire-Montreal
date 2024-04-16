@@ -2,14 +2,13 @@ import atexit
 import hashlib
 import json
 import sqlite3
-import subprocess
 import uuid
 import xml.etree.ElementTree as ET
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from flask import (jsonify, g, request, redirect, Response, session,
-                   url_for, render_template)
+                   url_for, render_template, make_response)
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
@@ -34,9 +33,10 @@ schema = JsonSchema(app)
 def start_scheduler():
     extract_and_update_data()
 
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
-                  trigger=CronTrigger(hour=11, minute=1, second=0))
+                  trigger=CronTrigger(hour=0, minute=0, second=0))
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
@@ -559,27 +559,42 @@ def delete_demande_inspection(id_demande):
 # C1
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
-    db = Database.get_db()
-    results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
-    else:
+    try:
+        db = Database.get_db()
+        results = db.get_etablissements_et_nbr_infractions()
+
+        if results is None or not results:
+            # Aucun établissement trouvé, renvoie d'une réponse HTTP 404 avec un message
+            return make_response(
+                jsonify({"error": "Aucun établissement trouvé"}), 404)
+
         return jsonify(results)
+
+    except Exception as e:
+        return make_response(jsonify(
+            {"error": "Erreur lors de l'accès à la base de données",
+             "message": str(e)}), 500)
 
 
 # C2
 @app.route('/api/etablissements/xml',
            methods=['GET'])
 def etablissements_xml():
-    db = Database.get_db()
-    results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
-    else:
-        # Créer l'élément racine du XML
-        root = ET.Element("etablissements")
+    try:
+        db = Database.get_db()
+        results = db.get_etablissements_et_nbr_infractions()
 
-        # Parcourir les résultats et les ajouter au XML
+        if results is None:
+            # Création d'un élément XML pour une réponse d'erreur
+            root = ET.Element("error")
+            message = ET.SubElement(root, "message")
+            message.text = "Aucun établissement trouvé"
+            xml_error_response = ET.tostring(root, encoding="utf-8")
+            return Response(xml_error_response, status=404,
+                            content_type="application/xml")
+
+        # Créer l'élément racine du XML pour les résultats valides
+        root = ET.Element("etablissements")
         for result in results:
             etablissement = ET.SubElement(root, "etablissement")
             nom = ET.SubElement(etablissement, "nom")
@@ -588,9 +603,18 @@ def etablissements_xml():
             nbr_infractions.text = str(
                 result[1])  # Insérer le nombre d'infractions
 
-        # Créer un objet Response contenant le XML
+        # Créer un objet Response contenant le XML des résultats
         xml_response = ET.tostring(root, encoding="utf-8")
         return Response(xml_response, content_type="application/xml")
+
+    except Exception as e:
+        # Gérer les exceptions non prévues, retourner une erreur 500 avec un message d'erreur générique
+        root = ET.Element("error")
+        message = ET.SubElement(root, "message")
+        message.text = f"Erreur interne du serveur: {str(e)}"
+        xml_error_response = ET.tostring(root, encoding="utf-8")
+        return Response(xml_error_response, status=500,
+                        content_type="application/xml")
 
 
 # C3

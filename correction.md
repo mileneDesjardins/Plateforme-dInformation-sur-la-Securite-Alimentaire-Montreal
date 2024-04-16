@@ -38,7 +38,7 @@ id_poursuite = 6119;`
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
-![img_1.png](img_1.png)
+![img_1.png](static/img/correction/img_111.png)
 
 ###### Mise à jour des dates :
 
@@ -52,11 +52,11 @@ id_poursuite = 1523;`
 ###### Mise à jour du CronTrigger :
 
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
-   ![img_2.png](img_2.png)
+   ![img_2.png](static/img/correction/img_211.png)
 6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
    après** l'heure actuelle.
    Exemple:
-![img_3.png](img_3.png)
+![img_3.png](static/img/correction/img_31.png)
 
 ### B1 5xp - M.D.
 
@@ -118,7 +118,7 @@ id_poursuite = 6119;`
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
-![img_1.png](img_1.png)
+![img_1.png](static/img/correction/img_111.png)
 
 ###### Mise à jour des dates :
 
@@ -132,7 +132,7 @@ id_poursuite = 1523;`
 ###### Mise à jour du CronTrigger :
 
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
-   ![img_2.png](img_2.png)
+   ![img_2.png](static/img/correction/img_211.png)
 6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
    l'heure d'importation des deux contraventions. Dans ce cas précis,
    il faudrait la fixer à '_2024-04-01 12:10:00:000_', étant donné que
@@ -285,7 +285,7 @@ id_poursuite = 1523;`
 ###### Mise à jour du CronTrigger :
 
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
-   ![img_2.png](img_2.png)
+   ![img_2.png](static/img/correction/img_211.png)
 6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
    l'heure d'importation des deux contraventions. Dans ce cas précis,
    il faudrait la fixer à '2024-04-01 12:10:00:000', étant donné que
