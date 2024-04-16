@@ -160,7 +160,7 @@ id_poursuite = 1523;`
 3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements'
-   ![img_113.png](img_113.png)
+   ![img_113.png](static/img/correction/img_113.png)
 
 ###### Installation YARC
 
@@ -199,7 +199,7 @@ requêtes à une API :
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-   ![img_114.png](img_114.png)
+   ![img_114.png](static/img/correction/img_114.png)
 
 ### C2 5xp /api/etablissements/xml - M.D.
 
@@ -212,7 +212,7 @@ requêtes à une API :
 3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements/xml'
-   ![img_114.png](img_114.png)
+   ![img_114.png](static/img/correction/img_114.png)
 
 ###### Utilisation de YARC
 
@@ -234,7 +234,7 @@ requêtes à une API :
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-   ![img_115.png](img_115.png)
+   ![img_115.png](static/img/correction/img_115.png)
 
 ### C3 5xp /api/etablissements/csv - M.D.
 
@@ -247,7 +247,7 @@ requêtes à une API :
 3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements/csv'
-   ![img_117.png](img_117.png)
+   ![img_117.png](static/img/correction/img_117.png)
 
 ###### Utilisation de YARC
 
@@ -269,7 +269,7 @@ requêtes à une API :
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-   ![img_116.png](img_116.png)
+   ![img_116.png](static/img/correction/img_116.png)
 
 ### E1 15xp /api/new-user - M.D.
 
@@ -282,7 +282,7 @@ requêtes à une API :
 3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/new-user'
-   ![img_118.png](img_118.png)
+   ![img_118.png](static/img/correction/img_118.png)
 
 ###### Utilisation de YARC
 
@@ -313,7 +313,25 @@ requêtes à une API :
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-   ![img_119.png](img_119.png)
+   ![img_119.png](static/img/correction/img_119.png)
+
+##### Création de compte à partir du site
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
+   page d'accueil.
+2. Cliquer sur le bouton "Création de compte"
+![img_18.png](static%2Fimg%2Fcorrection%2Fimg_18.png)
+3. Compléter tous les champs et cliquer sur "Créer un compte"
+![img_13.png](static%2Fimg%2Fcorrection%2Fimg_13.png)
+![img_14.png](static%2Fimg%2Fcorrection%2Fimg_14.png)
+![img_15.png](static%2Fimg%2Fcorrection%2Fimg_15.png)
+
+###### Vérification de la création de compte
+
+1. Pour valider la création de votre compte, veuillez vous connecter en utilisant l'adresse courriel "henri123@hotmail.com" et le mot de passe "henri123".
+![img_17.png](static%2Fimg%2Fcorrection%2Fimg_17.png)
+
 
 ### E2 15xp - M.D.
 
