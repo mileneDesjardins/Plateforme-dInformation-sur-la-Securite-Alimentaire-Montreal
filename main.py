@@ -120,19 +120,6 @@ def new_user():
         data = request.get_json()
         db = Database.get_db()
 
-        # Vérifier si le champ choix_etablissements est un tableau non vide
-        choix_etablissements = data.get("choix_etablissements", [])
-        if not isinstance(choix_etablissements, list) or len(
-                choix_etablissements) == 0:
-            return jsonify({
-                "error": "Le champ choix_etablissements est requis."}), 400
-
-        # Vérifier si les autres champs requis sont présents et non vides
-        if "" in (data.get("nom_complet", ""), data.get("courriel", ""),
-                  data.get("mdp", "")):
-            return jsonify(
-                {"error": "Tous les champs sont obligatoires."}), 400
-
         # Génération du sel de mot de passe
         mdp_salt = uuid.uuid4().hex
 
@@ -151,10 +138,6 @@ def new_user():
 
         db.create_user(new_user)
 
-        """
-        201 Created : Ce code est renvoyé lorsqu'une nouvelle ressource a été 
-        créée avec succès.
-        """
         return jsonify({"message": "Création de compte réussie"}), 201
 
     except Exception as e:

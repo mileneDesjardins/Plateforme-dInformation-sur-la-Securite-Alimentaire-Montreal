@@ -89,7 +89,7 @@ valider_new_user_schema = {
             "maxLength": 50},
         "courriel": {
             "type": "string",
-            "format": "email"
+            "pattern": "^[\\w\\.+-]+@([\\w-]+\\.)+[\\w-]{2,4}$"
         },
         "choix_etablissements": {
             "type": "array",
