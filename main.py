@@ -305,7 +305,7 @@ def confirmation_modifs_user():
     titre = 'Modifications enregistrées'
     return render_template('confirmation_modifs_user.html', titre=titre)
 
-
+# E4
 @app.route('/unsubscribe-page/<token>', methods=['GET'])
 def unsubscribe(token):
     titre = 'Désabonnement'
