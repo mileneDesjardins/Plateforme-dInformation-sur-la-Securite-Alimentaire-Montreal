@@ -301,8 +301,6 @@ requêtes à une API :
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
     3. **Corps de la requête** :
-       Sélectionnez 'Raw' pour le type de contenu.
-       Choisissez 'JSON' comme type de média.
        Entrez les données suivantes dans le champ de texte pour le corps de la
        requête :
 
