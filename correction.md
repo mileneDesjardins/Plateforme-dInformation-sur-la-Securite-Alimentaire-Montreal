@@ -88,7 +88,8 @@ id_poursuite = 1523;`
 ###### Mise à jour des dates :
 
 3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
-   configurant pour un **moment futur** (par exemple, **une minute après l'heure
+   configurant pour un **moment futur** (par exemple, **une minute après
+   l'heure
    courante**).
 
 ###### Validation des modifications
@@ -100,7 +101,8 @@ id_poursuite = 1523;`
 5. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
 
-6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la
+6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port
+   1080 de MailDev** pour confirmer la
    réception des notifications.
 
 ![img_5.png](static/img/correction/img_5.png)
@@ -142,7 +144,7 @@ id_poursuite = 1523;`
    page d'accueil.
 3. Cliquer sur "Se connecter" utiliser l'adresse courriel "henri123@hotmail.
    com" et le mot de passe "henri123".
-![img_16.png](static/img/correction/img_16.png)
+   ![img_16.png](static/img/correction/img_16.png)
 4. Cliquer sur l'onglet "Compte"
    ![img_18.png](static/img/correction/img_18.png)
 5. Voici à quoi ressemble le compte présentement :
@@ -155,7 +157,8 @@ id_poursuite = 1523;`
    bien enregistrés :
    ![img_22.png](static/img/correction/img_22.png)
 9. Ajouter une photo et cliquer sur enregistrez
-10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien enregistrée :
+10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien
+    enregistrée :
     ![img_24.png](static/img/correction/img_24.png)
 
 ### E3 5xp - M.D.
@@ -206,14 +209,17 @@ suivez ces étapes :
 Il est nécessaire d'ajuster les dates d'importation de deux contraventions afin
 de tester le scénario suivant : l'adresse email spécifiée sous "**monitoring**"
 dans le fichier YAML doit recevoir une notification contenant les détails des
-deux contraventions. Par ailleurs, l'utilisateur "**Manuel Roger**" doit uniquement
-recevoir une notification pour la contravention associée à **_id_business=116921_**,
+deux contraventions. Par ailleurs, l'utilisateur "**Manuel Roger**" doit
+uniquement
+recevoir une notification pour la contravention associée à *
+*_id_business=116921_**,
 étant donné que l'autre contravention ne figure pas parmi celles qu'il
 surveille.
 
 1. Ouvrez la console de gestion de votre base de données et accédez à la
    table des Contraventions.
-2. Inscrivez les commandes suivantes **sans les exécuter** pour ajuster les dates
+2. Inscrivez les commandes suivantes **sans les exécuter** pour ajuster les
+   dates
    d'importation :
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
@@ -228,19 +234,29 @@ id_poursuite = 1523;`
 ###### Mise à jour des dates :
 
 3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
-   configurant pour un **moment futur** (par exemple, **une minute après l'heure
+   configurant pour un **moment futur** (par exemple, **une minute après
+   l'heure
    courante**).
-
-###### Validation des modifications
 
 4. Enregistrez les changements dans la base de données.
 
+###### Mise à jour du CronTrigger :
+
+5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+![img_2.png](img_2.png)
+6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
+   l'heure d'importation des deux contraventions. Dans ce cas précis, 
+   il faudrait la fixer à '2024-04-01 12:10:00:000', étant donné que 
+   l'heure d'importation est '2024-04-01 12:08:00:000'.
+
+
 ###### Lancement de l'application
 
-5. Pour démarrer l'application et appliquer les modifications, utilisez la
+7. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
 
-6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port 1080 de MailDev** pour confirmer la
+8. Vérifiez les courriels reçus en accédant à l'onglet de navigation du
+   **port 1080 de MailDev** pour confirmer la
    réception des notifications.
 
 ![img_4.png](static/img/correction/img_4.png)
@@ -252,7 +268,8 @@ id_poursuite = 1523;`
 
 ###### Désabonnement
 
-1. Lancez l'application avec la commande suivante dans votre terminal : `$ make`
+1. Lancez l'application avec la commande suivante dans votre
+   terminal : `$ make`
 2. Veuillez répéter les étapes en E3
 3. Veuillez cliquer sur le lien "Se désabonner" relié à l'établissement en
    question
@@ -263,13 +280,16 @@ id_poursuite = 1523;`
 
 ###### Vérification du désabonnement
 
-Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour accéder à son compte et confirmer que le
+Nous pouvons désormais nous connecter en tant que "**Manuel Roger**" pour
+accéder à son compte et confirmer que le
 désabonnement via un lien reçu par courriel a été effectué avec succès.
 
 ![img_11.png](static/img/correction/img_11.png)
 
-Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé vers la page de désabonnement, où un
-message s'affichera pour l'informer qu'il est déjà désabonné de cet établissement.
+Si l'utilisateur clique de nouveau sur le lien du courriel, il sera redirigé
+vers la page de désabonnement, où un
+message s'affichera pour l'informer qu'il est déjà désabonné de cet
+établissement.
 ![img_12.png](static/img/correction/img_12.png)
 
 ### F1 15xp - M.D.
@@ -308,23 +328,25 @@ api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ### A5 10xp - A-S.A-L.
 
 1. Aller sur la page d'accueil
-2. Saisisser une date de début et une date de fin de recherche puis lancer une recherche
+2. Saisisser une date de début et une date de fin de recherche puis lancer une
+   recherche
 
 ![img_25.png](static/img/correction/img_25.png)
 
 ### A6 10xp - A-S.A-L.
 
 1. Aller sur la page d'accueil
-2. Saisisser une date de début et une date de fin de recherche puis lancer une recherche
+2. Saisisser une date de début et une date de fin de recherche puis lancer une
+   recherche
 
 ![img_26.png](static/img/correction/img_26.png)
-
 
 ### D1 15xp - A-S.A-L.
 
 #### Tester le service REST
 
-1- Effectuez une requête `POST` à la route `api/demande-inspection` via l'extension YARC (ou tout autre REST client). Voici
+1- Effectuez une requête `POST` à la route `api/demande-inspection` via
+l'extension YARC (ou tout autre REST client). Voici
 un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 ```json
@@ -338,27 +360,30 @@ un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 }
 ```
 
-2- Vérifier que la demande ait bien été insérée dans la base de données en 
-effectuant les commandes suivantes (remplacer le id par celui envoyé dans la réponse du serveur)
+2- Vérifier que la demande ait bien été insérée dans la base de données en
+effectuant les commandes suivantes (remplacer le id par celui envoyé dans la
+réponse du serveur)
 
 ```sh
 sqlite3 demande_inspection.db
 ```
+
 ```sqlite3
 SELECT * FROM DemandesInspection where id=1;
 ```
 
 #### Tester la fonctionnalité
+
 **TODO count ???**
 
 1- Cliquer sur l'onglet `Plainte` en haut à gauche de l'écran
 2- Remplissez et soumettez le formulaire
-3- 
-
+3-
 
 ### D2 5xp - A-S.A-L.
 
-1- Effectuez une requête `POST` à la route `api/demande-inspection` via l'extension YARC (ou tout autre REST client). Voici
+1- Effectuez une requête `POST` à la route `api/demande-inspection` via
+l'extension YARC (ou tout autre REST client). Voici
 un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 #### Comment tester reblabla
@@ -374,6 +399,7 @@ un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 Mettre user et mdp dans fichier .quelquechose
 
 ## B2 10xp A-S.A-L.
+
 TODO enlever photo
 
 @Inspection61614

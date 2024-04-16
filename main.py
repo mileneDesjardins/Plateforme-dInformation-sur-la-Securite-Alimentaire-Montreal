@@ -36,7 +36,7 @@ def start_scheduler():
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
-                  trigger=CronTrigger(hour=16, minute=39, second=0))
+                  trigger=CronTrigger(hour=0, minute=0, second=0))
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 

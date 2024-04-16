@@ -2,7 +2,6 @@ import sqlite3
 import uuid
 from datetime import datetime, timedelta
 
-
 class TokenManager:
     def __init__(self):
         self.token_connection = None
