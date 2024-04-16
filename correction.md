@@ -265,7 +265,7 @@ requêtes à une API :
    dans la section Response en bas de l'interface de YARC.
 ![img_116.png](img_116.png)
 
-### E1 15xp - M.D.
+### E1 15xp /api/new-user - M.D.
 
 #### Comment tester :
 
@@ -288,7 +288,7 @@ requêtes à une API :
    toutes les extensions et épingler YARC à la barre d'outils.
 2. **Configurer la requête** :
     1. **URL** : Entrez l'URL de l'API 
-   'http://127.0.0.1:5000/api/etablissements/csv'
+   'http://127.0.0.1:5000/api/new-user'
        dans le champ URL.
     2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
        déroulant à côté de l'URL.
@@ -297,6 +297,7 @@ requêtes à une API :
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
 
+###### Création de compte à partir du site
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
