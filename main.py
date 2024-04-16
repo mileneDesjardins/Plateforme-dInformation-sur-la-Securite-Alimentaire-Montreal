@@ -20,7 +20,7 @@ from database import Database
 from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
-    contrevenant_update_schema
+    contrevenant_update_schema, valider_unsubscribe_user_schema
 from token_manager import TokenManager
 from user import User
 from validations import validates_is_integer, is_incomplete, doesnt_exist, \
@@ -327,6 +327,7 @@ def unsubscribe(token):
 
 # E4
 @app.route('/api/unsubscribe', methods=['POST'])
+@schema.validate(valider_unsubscribe_user_schema)
 def unsubscribe_user():
     # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
     token = request.json.get('token')

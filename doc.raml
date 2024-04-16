@@ -201,6 +201,21 @@ types:
         "choix_etablissements": [14313, 46508],
         "mdp": "mot_de_passe_secret"
       }
+
+  UnsubscribeRequest:
+    type: object
+    properties:
+      token: string
+      id_business: integer
+      email: string
+    additionalProperties: false
+    example: |
+      {
+        "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345"
+        "id_business": 42
+        "email": "utilisateur@example.com"
+      }
+
 /api:
   /contrevenants:
     get:
@@ -566,31 +581,48 @@ types:
       description: Permet à un utilisateur de se désabonner d'un établissement surveillé.
       body:
         application/json:
-          type: object
-          properties:
-            token:
-              type: string
-              required: true
-              description: Token d'authentification de l'utilisateur.
-            id_business:
-              type: integer
-              required: true
-              description: Identifiant de l'établissement duquel l'utilisateur souhaite se désabonner.
-            email:
-              type: string
-              required: true
-              description: Adresse email de l'utilisateur qui demande le désabonnement.
-                example:
-                {
-                  "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345",
-                  "id_business": 42,
-                  "courriel": "utilisateur@example.com"
-                }
+          type: UnsubscribeRequest
+          example: |
+            {
+              "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345",
+              "id_business": 42,
+              "email": "utilisateur@example.com"
+            }
       responses:
         200:
           description: L'utilisateur a été désabonné avec succès de l'établissement.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Désabonnement réussi."
         400:
-          description: L'utilisateur tente de se désabonner d'un établissement qui n'est pas surveillé.
+          description: La requête n'est pas valide ou l'établissement n'est pas surveillé par l'utilisateur.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "L'établissement n'est pas surveillé par cet utilisateur ou les données sont invalides."
         404:
           description: L'adresse email fournie ne correspond à aucun utilisateur enregistré.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Utilisateur non trouvé."
 

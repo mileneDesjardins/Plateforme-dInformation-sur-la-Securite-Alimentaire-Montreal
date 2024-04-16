@@ -105,3 +105,22 @@ valider_new_user_schema = {
                  "mdp"],
     "additionalProperties": False
 }
+
+valider_unsubscribe_user_schema = {
+    "type": "object",
+    "properties": {
+        "token": {
+            "type": "string",
+            "minLength": 1
+        },
+        "id_business": {
+            "type": "integer"
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        }
+    },
+    "required": ["token", "id_business", "email"],
+    "additionalProperties": False
+}
