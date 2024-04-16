@@ -419,6 +419,18 @@ types:
                   Etablissement, Nbr_infractions
                   Nom Établissement, 5
                   Autre Établissement, 3
+          404:
+            description: Aucun établissement trouvé ou erreur dans la récupération des données.
+            body:
+              application/json:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example: |
+                  {
+                    "error": "Aucun établissement trouvé"
+                  }
 
   /demande-inspection:
     post:

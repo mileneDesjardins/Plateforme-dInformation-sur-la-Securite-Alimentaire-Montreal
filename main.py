@@ -622,8 +622,9 @@ def etablissements_xml():
 def etablissements_csv():
     db = Database.get_db()
     results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
+    if results is None or len(
+            results) == 0:  # Vérifie aussi si la liste est vide
+        return jsonify({'error': 'Aucun établissement trouvé'}), 404
     else:
         # Créer une liste de dictionnaires pour les résultats
         data = []
