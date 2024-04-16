@@ -289,9 +289,6 @@ class Database:
             '%Y-%m-%d %H:%M:%S.%f')
         new_import_time_str = new_import_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
-        print("Formatted last import time:", last_import_time_str)
-        print("Formatted new import time:", new_import_time_str)
-
         query = "SELECT * FROM Contravention WHERE date_importation > ? AND date_importation <= ?"
         cursor.execute(query, (last_import_time_str, new_import_time_str))
         rows = cursor.fetchall()

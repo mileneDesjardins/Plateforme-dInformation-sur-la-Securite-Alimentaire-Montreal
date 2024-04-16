@@ -23,6 +23,41 @@
 
 #### Comment tester :
 
+Pour tester si le BackgroundScheduler fonctionne sans attendre à minuit, 
+suivez ces étapes :
+
+###### Gestion des nouvelles dates d'importation
+
+1. Ouvrez la console de gestion de votre base de données et accédez à la
+   table des Contraventions.
+2. Inscrivez les commandes suivantes **sans les exécuter**, car il faut ajuster
+   les dates d'importation :
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 6119;`
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 1523;`
+![img_1.png](img_1.png)
+
+###### Mise à jour des dates :
+
+3. Ajustez les dates d'importation en les
+   configurant pour un **moment futur** (par exemple, **une minute après
+   l'heure
+   courante**).
+
+4. Enregistrez les changements dans la base de données.
+
+###### Mise à jour du CronTrigger :
+
+5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+   ![img_2.png](img_2.png)
+6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
+   après** l'heure actuelle.
+   Exemple:
+![img_3.png](img_3.png)
+
 ### B1 5xp - M.D.
 
 #### Comment tester :
@@ -83,18 +118,25 @@ id_poursuite = 6119;`
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
 id_poursuite = 1523;`
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 ###### Mise à jour des dates :
 
-3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
+3. Ajustez les dates d'importation en les
    configurant pour un **moment futur** (par exemple, **une minute après
    l'heure
    courante**).
 
-###### Validation des modifications
-
 4. Enregistrez les changements dans la base de données.
+
+###### Mise à jour du CronTrigger :
+
+5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+   ![img_2.png](img_2.png)
+6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
+   l'heure d'importation des deux contraventions. Dans ce cas précis,
+   il faudrait la fixer à '_2024-04-01 12:10:00:000_', étant donné que
+   l'heure d'importation est '_2024-04-01 12:08:00:000_'.
 
 ###### Lancement de l'application
 
@@ -233,7 +275,7 @@ id_poursuite = 1523;`
 
 ###### Mise à jour des dates :
 
-3. Ajustez les dates d'importation à la date et à l'heure actuelle, en les
+3. Ajustez les dates d'importation en les
    configurant pour un **moment futur** (par exemple, **une minute après
    l'heure
    courante**).
@@ -243,12 +285,11 @@ id_poursuite = 1523;`
 ###### Mise à jour du CronTrigger :
 
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
-![img_2.png](img_2.png)
+   ![img_2.png](img_2.png)
 6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
-   l'heure d'importation des deux contraventions. Dans ce cas précis, 
-   il faudrait la fixer à '2024-04-01 12:10:00:000', étant donné que 
+   l'heure d'importation des deux contraventions. Dans ce cas précis,
+   il faudrait la fixer à '2024-04-01 12:10:00:000', étant donné que
    l'heure d'importation est '2024-04-01 12:08:00:000'.
-
 
 ###### Lancement de l'application
 
