@@ -98,6 +98,7 @@ valider_new_user_schema = {
         },
         "mdp": {
             "type": "string",
+            "minLength": 5,
             "maxLength": 20}
     },
     "required": ["nom_complet", "courriel", "choix_etablissements",

@@ -269,6 +269,34 @@ requêtes à une API :
 
 #### Comment tester :
 
+###### Documentation avec RAML
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+   accéder à la documentation RAML.
+4. Sélectionner la route '/api/new-user'
+
+
+###### Utilisation de YARC
+
+Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
+requêtes à une API :
+
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+   en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
+   directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
+   toutes les extensions et épingler YARC à la barre d'outils.
+2. **Configurer la requête** :
+    1. **URL** : Entrez l'URL de l'API 
+   'http://127.0.0.1:5000/api/etablissements/csv'
+       dans le champ URL.
+    2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
+       déroulant à côté de l'URL.
+3. **Envoyer la requête** : Cliquez
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   apparaîtront
+   dans la section Response en bas de l'interface de YARC.
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la

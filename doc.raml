@@ -498,6 +498,68 @@ types:
           description: Le profil utilisateur a été créé avec succès.
         400:
           description: Les données fournies sont invalides ou manquantes.
+          body:
+            application/json:
+              type: object
+              properties:
+                error: ErrorResponse
+              example: |
+                {
+                  invalid_email_format:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'john.doe@example' does not match '^[\\\\w\\\\.+-]+@([\\\\w-]+\\\\.)+[\\\\w-]{2,4}$'"
+                        ]
+                      }
+                    description: "Le format de l'email est incorrect. Il doit inclure un '@' et correspondre au format défini."
+                  too_short_name:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'La' is too short"
+                        ]
+                      }
+                    description: "Le nom complet est trop court. Il doit être d'au moins 3 caractères."
+                  too_long_name:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'Pierre-Alexandre Victor Henri Charles Ferdinand Jean Marie de Montesquieu' is too long"
+                        ]
+                      }
+                    description: "Le nom complet est trop long. Il ne doit pas dépasser 50 caractères."
+                  invalid_password_length:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'pass' is too short"
+                        ]
+                      }
+                    description: "Le mot de passe est trop court. Il doit être d'au moins 5 caractères."
+                  excessive_password_length:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'password1234567890123456' is too long"
+                        ]
+                      }
+                    description: "Le mot de passe est trop long. Il ne doit pas dépasser 20 caractères."
+                  empty_institutions_choice:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'choix_etablissements' should not be empty"
+                        ]
+                      }
+                    description: "Le champ 'choix_etablissements' ne doit pas être vide et doit contenir au moins un élément."
+
 
   /unsubscribe:
     post:
