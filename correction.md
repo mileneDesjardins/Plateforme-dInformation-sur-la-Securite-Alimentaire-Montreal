@@ -159,7 +159,7 @@ id_poursuite = 1523;`
 3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
    accéder à la documentation RAML.
 4. Sélectionner la route '/api/etablissements'
-5. ![img_113.png](img_113.png)
+![img_113.png](img_113.png)
 
 ###### Installation YARC
 
@@ -196,17 +196,45 @@ requêtes à une API :
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
-4. ![img_112.png](img_112.png)
+![img_114.png](img_114.png)
 
 
+### C2 5xp /api/etablissements/xml - M.D.
 
-### C2 5xp - M.D.
+#### Comment tester :
 
-#### Comment tester reblabla
+###### Documentation avec RAML
+1. Lancez l'application avec la commande suivante dans votre terminal : `$
+   make`
+3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour 
+   accéder à la documentation RAML.
+4. Sélectionner la route '/api/etablissements/xml'
+![img_114.png](img_114.png)
+
+###### Utilisation de YARC
+
+Après l'installation, vous pouvez commencer à utiliser YARC pour envoyer des
+requêtes à une API :
+
+1. **Lancer YARC** : Cliquez sur l'icône de YARC dans la barre d'outils de Chrome (
+   en haut à droite, à côté de la barre d'adresse). Si l'icône n'apparaît pas
+   directement, vous pourriez devoir cliquer sur l'icône du puzzle pour voir
+   toutes les extensions et épingler YARC à la barre d'outils.
+2. **Configurer la requête** :
+    1. **URL** : Entrez l'URL de l'API 
+   'http://127.0.0.1:5000/api/etablissements/xml'
+       dans le champ URL.
+    2. **Méthode** : Sélectionnez la méthode HTTP 'GET' à partir du menu
+       déroulant à côté de l'URL.
+3. **Envoyer la requête** : Cliquez
+   sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête 
+   apparaîtront
+   dans la section Response en bas de l'interface de YARC.
+![img_115.png](img_115.png)
 
 ### C3 5xp - M.D.
 
-#### Comment tester reblabla
+#### Comment tester :
 
 ### E1 15xp - M.D.
 
