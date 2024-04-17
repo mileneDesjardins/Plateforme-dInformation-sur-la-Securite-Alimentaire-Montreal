@@ -4,23 +4,34 @@ inspection_insert_schema = {
                  'nom_complet_client', 'description'],
     'properties': {
         'etablissement': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'adresse': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'ville': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'date_visite': {
             'type': 'string',
-            'format': 'date-time'
+            'format': 'date-time',
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         'nom_complet_client': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'description': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 500,
         },
     },
     'additionalProperties': False
@@ -30,19 +41,29 @@ contrevenant_update_schema = {
     'type': 'object',
     'properties': {
         'adresse': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'etablissement': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'proprietaire': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2,
+            'maxLength': 50,
         },
         'ville': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 3,
+            'maxLength': 50,
         },
         'statut': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 5,
+            'maxLength': 50,
         },
         'date_statut': {
             'type': 'string',
