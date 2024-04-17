@@ -53,7 +53,7 @@ function getInfoEtablissement(idBusiness) {
         .then(response => response.text())
         .then(htmlContent => {
             document.getElementById('modal-etab').innerHTML = htmlContent;
-             let modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            let modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             modal.show(modal);
 
         })
@@ -78,7 +78,6 @@ function openModalModifier(id_business, startDate, endDate) {
             console.log("Erreur côté serveur");
         })
 }
-
 
 
 function OnSaveModificationSubmit() {
@@ -142,9 +141,6 @@ function getInfoContrevenant() {
     }
     return formData;
 }
-
-
-
 
 
 function OnDeleteContrevenant() {

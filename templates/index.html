@@ -25,7 +25,8 @@
                     {% else %}
                         <h1 class="display-4 fw-bold text-body-emphasis">
                             Bienvenue</h1>
-                        <div class="container" id="texte-accueil">
+                        <div class="container" id="texte-accueil"
+                             style="max-width: 20%; text-align: center;">
                             <a href="/connection"
                                class="btn btn-primary w-100 py-2 my-3">Se
                                 connecter</a>
@@ -132,9 +133,16 @@
                     </div>
                 </div>
 
-                <!-- Modal pour modifier/supprimer contrevenant -->
-                <div id="modal-dates">
+                     <!-- Modal pour modifier/supprimer contrevenant -->
+                <div class="modal fade modal-lg" id="modal-date"
+                     data-bs-backdrop="static" data-bs-keyboard="false"
+                     tabindex="-1"
+                     aria-labelledby="modal-dates" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+                        <div id="modal-content-modif" class="modal-content">
 
+                        </div>
+                    </div>
                 </div>
 
 

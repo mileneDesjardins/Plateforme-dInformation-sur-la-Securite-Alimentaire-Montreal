@@ -36,7 +36,7 @@ def start_scheduler():
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
-                  trigger=CronTrigger(hour=0, minute=0, second=0))
+                  trigger=CronTrigger(minute='*/20'))
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
@@ -353,6 +353,7 @@ def search_by_date(start, end):
 
 @app.route('/modal-dates/<id_business>/<start>/<end>', methods=['GET'])
 def modal_dates(start, end, id_business):
+    print(start, end, id_business)
     contrevenant = (Database.get_db().
                     get_contraventions_business_between(start, end,
                                                         id_business))

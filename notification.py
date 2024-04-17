@@ -23,8 +23,7 @@ def extract_and_update_data():
         if import_successful:
             # Mise à jour de la dernière heure d'importation seulement si de nouvelles données ont été importées
             db.update_last_import_time()
-
-        _ = detect_new_contraventions()
+            detect_new_contraventions()
 
 
 def detect_new_contraventions():
@@ -43,7 +42,6 @@ def detect_new_contraventions():
                 f"{num_new_contraventions} nouvelles contraventions détectées :")
             for contravention in new_contraventions:
                 print(f"- {contravention[6]}")
-
                 twitter_post(contravention[6])
 
 
