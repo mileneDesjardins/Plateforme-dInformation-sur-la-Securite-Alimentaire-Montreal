@@ -46,38 +46,11 @@ contrevenant_update_schema = {
         },
         'date_statut': {
             'type': 'string',
-            'format': 'date-time'
+            'format': 'date-time',
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         }
     },
     'additionalProperties': False
-}
-
-contravention_update_schema = {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "id_poursuite": {
-                "type": "number",
-            },
-            "date": {
-                "type": "string",
-                "format": "date-time"
-            },
-            "date_jugement": {
-                "type": "string",
-                "format": "date-time"
-            },
-            "montant": {
-                "type": "number"
-            },
-            "categorie": {
-                "type": "string"
-            }
-        },
-        "required": ["id_poursuite"],
-        'additionalProperties': False
-    }
 }
 
 valider_new_user_schema = {
