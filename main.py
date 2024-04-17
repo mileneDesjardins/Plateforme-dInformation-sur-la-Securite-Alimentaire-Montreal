@@ -12,7 +12,7 @@ from flask import (jsonify, g, request, redirect, Response, session,
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
-import IDRessourceNonTrouve
+import IDRessourceNonTrouveError
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
