@@ -23,7 +23,7 @@ from schema import inspection_insert_schema, valider_new_user_schema, \
     contrevenant_update_schema, valider_unsubscribe_user_schema
 from token_manager import TokenManager
 from user import User
-from validations import validates_is_integer, is_incomplete, doesnt_exist, \
+from validations import validates_is_integer, doesnt_exist, \
     validates_dates, is_empty
 
 load_dotenv()
@@ -171,7 +171,9 @@ def connection():
         mdp = request.form["mdp"]
 
         if courriel == "" or mdp == "":
-            return is_incomplete()
+            return render_template('connection.html',
+                                   erreur="Veuillez remplir tous les "
+                                          "champs", courriel=courriel)
 
         db = Database.get_db()
         user = db.get_user_login_infos(courriel)
@@ -186,7 +188,8 @@ def connection():
         else:
             return render_template('connection.html',
                                    erreur="Connexion impossible, veuillez "
-                                          "vérifier vos informations")
+                                          "vérifier vos informations",
+                                   courriel=courriel)
 
 
 # E2
