@@ -290,7 +290,6 @@ def photo(id_photo):
     if photo_data:
         return Response(photo_data, mimetype='application/octet-stream')
 
-
 # E2
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():
