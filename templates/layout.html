@@ -21,16 +21,9 @@
           rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* Ajoutez ce style pour créer un espace au-dessus du contenu */
-        body {
-            padding-top: 56px; /* hauteur de la navbar */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-    </style>
+
 </head>
+
 <body>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="container-fluid">
@@ -42,9 +35,8 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active d-flex align-items-center"
-                       aria-current="page"
-                       href="/" style="height: 100%;">
+                    <a class="nav-link active d-flex align-items-center h-100"
+                       aria-current="page">
                         <div class="container">
                             <div class="row justify-content-center">
                                 Accueil
@@ -54,9 +46,9 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center"
-                       href="/plainte"
-                       style="height: 100%;">
+                    <a class="nav-link d-flex align-items-center h-100"
+                       href="/plainte">
+
                         <div class="container">
                             <div class="row justify-content-center">
                                 Plainte
@@ -66,9 +58,8 @@
                 </li>
                 {% if 'id' in session %}
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center"
-                           href="{{ url_for('compte') }}"
-                           style="height: 100%;">
+                        <a class="nav-link d-flex align-items-center h-100"
+                           href="{{ url_for('compte') }}">
                             <div class="container">
                                 <div class="row justify-content-center">
                                     Compte
@@ -115,5 +106,6 @@
 {% if script is defined %}
     <script src="{{ script }}"></script>
 {% endif %}
+
 </body>
 </html>
