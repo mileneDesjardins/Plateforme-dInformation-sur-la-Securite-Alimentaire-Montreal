@@ -249,6 +249,7 @@ def compte():
 
         # Récupérer les informations soumises dans le formulaire
         new_etablissements = request.form.getlist('choix_etablissements')
+        print(new_etablissements)
 
         # Convertir les valeurs en entiers
         new_etablissements = [int(etablissement) for etablissement in
