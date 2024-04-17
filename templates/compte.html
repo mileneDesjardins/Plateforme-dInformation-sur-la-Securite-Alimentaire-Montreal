@@ -16,7 +16,10 @@
 
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Votre profil</h1>
-
+            <div id="error-message" class="alert alert-danger">Veuillez
+                sélectionner au moins un
+                établissement.
+            </div>
             <div class="container" style="max-width: 40%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
@@ -85,9 +88,6 @@
                 </div>
 
 
-                <div id="error-message">Veuillez sélectionner au moins un
-                    établissement.
-                </div>
                 <button type="submit" class="btn btn-primary my-4">Enregistrer
                     les modifications
                 </button>
@@ -100,7 +100,8 @@
             var select = document.getElementById('choix_etablissements');
             var errorMessage = document.getElementById('error-message');
             if (select.selectedOptions.length === 0) {
-                errorMessage.style.display = 'block'; // Affiche le message d'erreur
+                errorMessage.style.display = 'inline-block'; // Affiche le
+                // message d'erreur
                 return false; // Empêche la soumission du formulaire
             } else {
                 errorMessage.style.display = 'none'; // Cache le message d'erreur si tout est en ordre
