@@ -68,7 +68,6 @@ contrevenant_update_schema = {
         'date_statut': {
             'type': 'string',
             'format': 'date-time',
-            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         }
     },
     'additionalProperties': False
