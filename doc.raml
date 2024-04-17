@@ -359,6 +359,12 @@ types:
         responses:
           200:
             description: L'établissement a bien été supprimé de la base de données.
+            body:
+              application/json:
+              example: |
+                {
+                  "succes": "Le contrevenant `1` bien été supprimé."
+                }
           400:
             description: La requête est invalide ou le ID spécifié en paramètre n'est pas un entier valide.
           401:
