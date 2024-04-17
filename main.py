@@ -243,8 +243,6 @@ def compte():
         return render_template('compte.html', titre=titre,
                                user=user, etablissements=etablissements,
                                choix_etablissements=choix_etablissements)
-
-
     elif request.method == 'POST':
 
         # Récupérer les informations soumises dans le formulaire
@@ -268,16 +266,19 @@ def compte():
             db.update_user_etablissements(id_user, new_etablissements)
             session["choix_etablissements"] = new_etablissements
 
-        # Enregistrer la nouvelle photo dans la base de données et mettre à jour l'ID de la photo de l'utilisateur
+        # Enregistrer la nouvelle photo dans la base de données et
+        # mettre à jour l'ID de la photo de l'utilisateur
         if nouvelle_photo is not None and nouvelle_photo.filename:
             photo_data = nouvelle_photo.read()
             id_photo = db.create_photo(photo_data)
             if user[6]:
                 db.delete_photo(user[
-                                    6])  # Supprimer l'ancienne photo de la base de données
+                                    6])  # Supprimer l'ancienne photo de
+                # la base de données
             db.update_user_photo(id_user, id_photo)
 
-        # Rediriger vers la page de confirmation des modifications de l'utilisateur
+        # Rediriger vers la page de confirmation des modifications de
+        # l'utilisateur
         return redirect(url_for('confirmation_modifs_user'))
 
 
@@ -335,36 +336,6 @@ def unsubscribe(token):
 
 
 # E4
-@app.route('/api/unsubscribe', methods=['POST'])
-@schema.validate(valider_unsubscribe_user_schema)
-def unsubscribe_user():
-    # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
-    token = request.json.get('token')
-    id_business = request.json.get('id_business')
-    email = request.json.get('email')
-
-    # Instance de TokenManager pour gérer les opérations liées aux tokens
-    token_manager = TokenManager()
-
-    # Supprimer l'établissement surveillé par l'utilisateur de la base de données
-    db = Database.get_db()
-    user = db.get_user_by_email(email)
-    if user:
-        success = db.delete_user_choix_etablissements(email, id_business)
-        if success:
-            token_manager.delete_token(token)
-            # Retourner une réponse JSON indiquant le succès
-            return jsonify(
-                {"success": True, "message": "Désabonnement réussi."}), 200
-        else:
-            return jsonify({"success": False,
-                            "message": "L'établissement n'est pas surveillé par cet utilisateur."}), 400
-    else:
-        return jsonify(
-            {"success": False, "message": "Utilisateur non trouvé."}), 404
-
-
-# E4
 @app.route('/confirmation-unsubscribed-user', methods=['GET'])
 def confirmation_unsubscribed_user():
     titre = 'Désabonnement confirmé'
@@ -403,6 +374,51 @@ def count_contraventions(contraventions):
             'etablissement']} for item in
         contraventions}
     return occurrences
+
+
+@app.route('/dropdown_etablissement', methods=['GET'])
+def update_dropdown_etablissement():
+    try:
+        etablissements = Database.get_db().get_distinct_etablissements()
+        return jsonify(etablissements)
+    except Exception as e:
+        return jsonify({"error": "Une erreur est survenue, "
+                                 "veuillez réessayer plus tard."}, 500)
+
+
+# ----------- Servives REST -----------
+
+# E4
+@app.route('/api/unsubscribe', methods=['POST'])
+@schema.validate(valider_unsubscribe_user_schema)
+def unsubscribe_user():
+    # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur
+    # à partir du corps de la requête POST
+    token = request.json.get('token')
+    id_business = request.json.get('id_business')
+    email = request.json.get('email')
+
+    # Instance de TokenManager pour gérer les opérations liées aux tokens
+    token_manager = TokenManager()
+
+    # Supprimer l'établissement surveillé par l'utilisateur de
+    # la base de données
+    db = Database.get_db()
+    user = db.get_user_by_email(email)
+    if user:
+        success = db.delete_user_choix_etablissements(email, id_business)
+        if success:
+            token_manager.delete_token(token)
+            # Retourner une réponse JSON indiquant le succès
+            return jsonify(
+                {"success": True, "message": "Désabonnement réussi."}), 200
+        else:
+            return jsonify({"success": False,
+                            "message": "L'établissement n'est pas surveillé "
+                                       "par cet utilisateur."}), 400
+    else:
+        return jsonify(
+            {"success": False, "message": "Utilisateur non trouvé."}), 404
 
 
 # A4
@@ -461,7 +477,6 @@ def modify_contrevenant(id_business):
             "Veuillez réessayer plus tard.")
 
 
-# TODO deplacer?
 def update_contrevenant(id_business, modifs_request):
     validates_is_integer(id_business, "Le id_business")
     Database.get_db().update_contrevenant(id_business, modifs_request)
@@ -484,18 +499,6 @@ def delete_contrevenant(id_business):
         return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue", e), 500
-
-
-
-
-@app.route('/dropdown_etablissement', methods=['GET'])
-def update_dropdown_etablissement():
-    try:
-        etablissements = Database.get_db().get_distinct_etablissements()
-        return jsonify(etablissements)
-    except Exception as e:
-        return jsonify({"error": "Une erreur est survenue, "
-                                 "veuillez réessayer plus tard."}, 500)
 
 
 @app.route('/api/demande-inspection', methods=['POST'])
@@ -539,7 +542,6 @@ def supprimer_inspection(id_demande):
                   "réessayer plus tard"), 500
 
 
-# TODO deplacer
 def delete_demande_inspection(id_demande):
     validates_is_integer(id_demande, "Le id_demande")
     demande = Database.get_db().get_demande_inspection(id_demande)
@@ -559,7 +561,8 @@ def etablissements():
         results = db.get_etablissements_et_nbr_infractions()
 
         if results is None or not results:
-            # Aucun établissement trouvé, renvoie d'une réponse HTTP 404 avec un message
+            # Aucun établissement trouvé, renvoie d'une réponse HTTP 404
+            # avec un message
             return make_response(
                 jsonify({"error": "Aucun établissement trouvé"}), 404)
 
@@ -603,7 +606,8 @@ def etablissements_xml():
         return Response(xml_response, content_type="application/xml")
 
     except Exception as e:
-        # Gérer les exceptions non prévues, retourner une erreur 500 avec un message d'erreur générique
+        # Gérer les exceptions non prévues, retourner une erreur 500 avec
+        # un message d'erreur générique
         root = ET.Element("error")
         message = ET.SubElement(root, "message")
         message.text = f"Erreur interne du serveur: {str(e)}"
@@ -640,6 +644,7 @@ def etablissements_csv():
         return Response(csv_data, content_type="text/csv")
 
 
+# ----- Gestion erreur ----
 @app.errorhandler(404)
 def page_not_found(error):
     """
