@@ -146,7 +146,7 @@ class Database:
             g._database = Database()
         return g._database
 
-    def disconnect(self):  # TODO je pense quil manque des disconnect?
+    def disconnect(self):
         if self.contravention_connection is not None:
             self.contravention_connection.close()
         if self.user_connection is not None:
