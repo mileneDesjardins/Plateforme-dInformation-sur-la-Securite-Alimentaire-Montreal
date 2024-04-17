@@ -594,7 +594,7 @@ types:
 
 
   /unsubscribe:
-    post:
+    patch:
       description: Permet à un utilisateur de se désabonner d'un établissement surveillé.
       body:
         application/json:
@@ -619,7 +619,7 @@ types:
                   type: string
                   example: "Désabonnement réussi."
         400:
-          description: La requête n'est pas valide ou l'établissement n'est pas surveillé par l'utilisateur.
+          description: Le token est inexistant ou invalide.
           body:
             application/json:
               type: object

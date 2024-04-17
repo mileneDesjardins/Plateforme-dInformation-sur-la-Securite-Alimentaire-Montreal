@@ -9,7 +9,7 @@
 
 #### Comment tester :
 
-###### Importation des données avec la base de données "Contravention" déjà configurée.
+###### Importation des données avec la base de données "Contravention" déjà crée.
 
 1. Ouvrez le terminal dans le répertoire du projet.
 2. Exécutez la commande suivante : `$ python3 download.py`
@@ -18,6 +18,8 @@
 
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
+2. Double-cliquer sur le nouveau fichier **contravention.db** afin de créer 
+   la connexion.
 
 ### A3 5xp - M.D.
 
@@ -54,9 +56,11 @@ id_poursuite = 1523;`
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
    ![img_2.png](static/img/correction/img_211.png)
 6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
-   après** l'heure actuelle.
+   après** l'heure d'importation des contraventions.
    Exemple:
    ![img_3.png](static/img/correction/img_31.png)
+7. Pour démarrer l'application et appliquer les modifications, utilisez la
+   commande suivante dans votre terminal : `$ make`
 
 ### B1 5xp - M.D.
 
@@ -110,7 +114,7 @@ deux contraventions.
 
 1. Ouvrez la console de gestion de votre base de données et accédez à la
    table des Contraventions.
-2. Inscrivez les commandes suivantes **sans les exécuter**,car il faut ajuster
+2. Inscrivez les commandes suivantes **sans les exécuter**, car il faut ajuster
    les dates d'importation :
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
@@ -481,7 +485,7 @@ requêtes à une API :
     1. **URL** : Entrez l'URL de l'API
        'http://127.0.0.1:5000/api/unsubscribe'
        dans le champ URL.
-    2. **Méthode** : Sélectionnez la méthode HTTP 'POST' à partir du menu
+    2. **Méthode** : Sélectionnez la méthode HTTP 'PATCH' à partir du menu
        déroulant à côté de l'URL.
     3. **Corps de la requête** :
        Entrez les données suivantes dans le champ de texte pour le corps de la

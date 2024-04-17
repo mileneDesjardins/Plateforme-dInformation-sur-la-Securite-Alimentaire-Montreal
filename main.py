@@ -33,10 +33,9 @@ schema = JsonSchema(app)
 def start_scheduler():
     extract_and_update_data()
 
-
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
-                  trigger=CronTrigger(minute='*/20'))
+                  trigger=CronTrigger(minute='*/1', second=0))
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
@@ -353,7 +352,6 @@ def search_by_date(start, end):
 
 @app.route('/modal-dates/<id_business>/<start>/<end>', methods=['GET'])
 def modal_dates(start, end, id_business):
-    print(start, end, id_business)
     contrevenant = (Database.get_db().
                     get_contraventions_business_between(start, end,
                                                         id_business))
@@ -390,11 +388,11 @@ def update_dropdown_etablissement():
 # ----------- Servives REST -----------
 
 # E4
-@app.route('/api/unsubscribe', methods=['POST'])
-@schema.validate(valider_unsubscribe_user_schema)
+@app.route('/api/unsubscribe', methods=['PATCH'])
+# @schema.validate(valider_unsubscribe_user_schema)
 def unsubscribe_user():
     # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur
-    # à partir du corps de la requête POST
+    # à partir du corps de la requête PATCH
     token = request.json.get('token')
     id_business = request.json.get('id_business')
     email = request.json.get('email')
@@ -414,9 +412,9 @@ def unsubscribe_user():
             return jsonify(
                 {"success": True, "message": "Désabonnement réussi."}), 200
         else:
-            return jsonify({"success": False,
-                            "message": "L'établissement n'est pas surveillé "
-                                       "par cet utilisateur."}), 400
+            return (jsonify({"success": False,
+                            "message": "Le token est inexistant ou "
+                                       "invalide."}), 400)
     else:
         return jsonify(
             {"success": False, "message": "Utilisateur non trouvé."}), 404
