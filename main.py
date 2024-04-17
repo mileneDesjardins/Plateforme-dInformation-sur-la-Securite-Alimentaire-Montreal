@@ -290,6 +290,7 @@ def photo(id_photo):
     if photo_data:
         return Response(photo_data, mimetype='application/octet-stream')
 
+
 # E2
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():
@@ -490,7 +491,8 @@ def delete_contrevenant(id_business):
     try:
         validates_is_integer(id_business, "Le id_business")
         Database.get_db().delete_contrevenant(id_business)
-        return jsonify("Le contrevenant bien été supprimé"), 200
+        msg = "Le contrevenant `" + id_business + "` bien été supprimé."
+        return jsonify(succes=msg), 200
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
