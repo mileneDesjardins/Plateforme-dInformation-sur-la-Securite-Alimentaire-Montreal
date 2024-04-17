@@ -36,9 +36,7 @@ function onFastSearchSubmit() {
 
 function OnGetInfoEtablissementSubmit() {
     let idBusiness = document.getElementById('select-etablissement').value;
-    console.log(idBusiness == 0);
-    if (idBusiness == 0) {
-        console.log("devrait arreter")
+    if (!isValidSelectDropDown(idBusiness)) {
         return;
     }
     getInfoEtablissement(idBusiness);
@@ -55,7 +53,6 @@ function getInfoEtablissement(idBusiness) {
         .then(response => response.text())
         .then(htmlContent => {
             document.getElementById('modal-etab').innerHTML = htmlContent;
-            console.log(htmlContent);
              let modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             modal.show(modal);
 
@@ -210,7 +207,7 @@ function updateDropdown() {
             });
         })
         .catch(error => {
-            console.error('Erreur lors de la récupération des données :', error);
+            console.error('Erreur côté serveur');
         });
 }
 

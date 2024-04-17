@@ -34,7 +34,6 @@ function areValidDates(startDateID, endDateID) {
 }
 
 
-
 function isValidDate(dateID) {
     clearMessagesError();
     let plainteDate = document.getElementById(dateID).value;
@@ -75,6 +74,16 @@ function clearMessagesError() {
     for (let error of allErrors) {
         error.innerHTML = '';
     }
+}
+
+function isValidSelectDropDown(value) {
+    clearMessagesError();
+
+    if (value == 0) {
+        handleError("dropdown", "Veuillez sélectionner un établissement.");
+        return false;
+    }
+    return true;
 }
 
 
