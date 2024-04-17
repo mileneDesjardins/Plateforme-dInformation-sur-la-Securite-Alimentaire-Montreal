@@ -1,3 +1,8 @@
+import atexit
+import subprocess
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask import Flask
 import os
 
@@ -13,4 +18,3 @@ app.config['ACCESS_TOKEN'] = os.getenv('ACCESS_TOKEN')
 app.config['ACCESS_TOKEN_SECRET'] = os.getenv('ACCESS_TOKEN_SECRET')
 app.config['REDIRECT_URI'] = os.getenv('REDIRECT_URI')
 app.secret_key = os.urandom(50)
-

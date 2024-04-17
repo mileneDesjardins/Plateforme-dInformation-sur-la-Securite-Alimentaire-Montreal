@@ -138,6 +138,7 @@ class Database:
         self.last_import_time = None
         self.photo_connection = None
         self.token_connection = None
+        self.date_importation_connection = None
 
     @staticmethod
     def get_db():
@@ -145,19 +146,19 @@ class Database:
             g._database = Database()
         return g._database
 
-    def disconnect(self):  # TODO je pense quil manque des disconnect?
+    def disconnect(self):
         if self.contravention_connection is not None:
             self.contravention_connection.close()
         if self.user_connection is not None:
             self.user_connection.close()
         if self.demande_inspection_connection is not None:
             self.demande_inspection_connection.close()
-        if self.last_import_time is not None:
-            self.last_import_time.close()
         if self.photo_connection is not None:
             self.photo_connection.close()
         if self.token_connection is not None:
             self.token_connection.close()
+        if self.date_importation_connection is not None:
+            self.date_importation_connection.close()
 
     # CONTRAVENTION
     def get_contravention_connection(self):
@@ -277,33 +278,60 @@ class Database:
         return False
 
     def get_new_contraventions(self, last_import_time):
-        # Obtention de la connexion à la base de données des contraventions
         connection = self.get_contravention_connection()
-        # connection.set_trace_callback(print)
         cursor = connection.cursor()
+        new_import_time = datetime.now()  # Using full datetime precision including microseconds
 
-        # Utiliser l'heure actuelle comme new_import_time
-        new_import_time = datetime.now()
+        print("Last import time for query:", last_import_time)
+        print("New import time for query:", new_import_time)
 
-        print("last", last_import_time)
-        print("new", new_import_time)
+        last_import_time_str = last_import_time.strftime(
+            '%Y-%m-%d %H:%M:%S.%f')
+        new_import_time_str = new_import_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
-        # Requête pour récupérer les contraventions entre la dernière importation et l'heure actuelle
         query = "SELECT * FROM Contravention WHERE date_importation > ? AND date_importation <= ?"
-
-        # Exécution de la requête avec les paramètres
-        cursor.execute(query, (last_import_time, new_import_time))
-
-        # Récupération de toutes les lignes retournées par la requête
+        cursor.execute(query, (last_import_time_str, new_import_time_str))
         rows = cursor.fetchall()
+
+        print(f"Number of new contraventions fetched: {len(rows)}")
 
         return rows
 
-    def update_last_import_time(self):
-        self.last_import_time = datetime.now()
+    def get_date_importation_connection(self):
+        if self.date_importation_connection is None:
+            self.date_importation_connection = sqlite3.connect(
+                'db/date_importation.db')
+        return self.date_importation_connection
 
     def get_last_import_time(self):
-        return self.last_import_time
+        conn = self.get_date_importation_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT date FROM DATE_IMPORTATION WHERE id = 1")
+        result = cur.fetchone()
+
+        if result:
+            # Convertir la date obtenue en datetime
+            last_import_date = datetime.strptime(result[0],
+                                                 '%Y-%m-%d %H:%M:%S.%f')
+        else:
+            # S'il n'y a pas de date enregistrée, créer une entrée avec la date actuelle
+            now = datetime.now()
+            formatted_now = now.strftime('%Y-%m-%d %H:%M:%S.%f')
+            cur.execute(
+                "INSERT INTO DATE_IMPORTATION (id, date) VALUES (1, ?)",
+                (formatted_now,))
+            conn.commit()
+            last_import_date = now
+
+        return last_import_date
+
+    def update_last_import_time(self):
+        conn = self.get_date_importation_connection()
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        cur = conn.cursor()
+        cur.execute("UPDATE DATE_IMPORTATION SET date = ? WHERE id = 1",
+                    (now,))
+        conn.commit()
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()

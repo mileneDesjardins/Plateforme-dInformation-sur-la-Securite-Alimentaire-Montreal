@@ -12,11 +12,14 @@
     </div>
     <form action="{{ url_for('compte') }}"
           method="POST"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data" onsubmit="return validateForm()">
 
         <div class="container" style="max-width: 100%; text-align: center;">
             <h1 class="h3 mb-1 fw-normal">Votre profil</h1>
-
+            <div id="error-message" class="alert alert-danger">Veuillez
+                sélectionner au moins un
+                établissement.
+            </div>
             <div class="container" style="max-width: 40%; text-align: center;">
                 <div class="row g-3 py-1">
                     <div class="col">
@@ -38,33 +41,32 @@
                     </div>
                 </div>
                 <div class="row py-1">
-                    <label class="form-label" style="text-align:
-                        center; padding-left: 10px">Veuillez
-                        sélectionner au
-                        moins un
-                        établissements à surveiller</label>
                     <div class="col">
-                        <select name="choix_etablissements"
-                                id="choix_etablissements" multiple size="13"
-                                class="form-select custom-select"
-                                style="width: 100%;">
-                            {% for etablissement in etablissements %}
-                                {% if etablissement[0] is defined %}
-                                    {% if choix_etablissements is not none and etablissement[0] in choix_etablissements %}
-                                        <option value="{{ etablissement[0] }}"
-                                                selected>
-                                            {{ etablissement[1] }}
-                                            [{{ etablissement[2] }}]
-                                        </option>
-                                    {% else %}
-                                        <option value="{{ etablissement[0] }}">
-                                            {{ etablissement[1] }}
-                                            [{{ etablissement[2] }}]
-                                        </option>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </select>
+                        <label class="form-label" style="text-align:
+                        center; padding-left: 10px">Veuillez
+                            sélectionner au
+                            moins un
+                            établissements à surveiller</label><select
+                            name="choix_etablissements"
+                            id="choix_etablissements" multiple size="13"
+                            class="form-select custom-select"
+                            style="width: 100%;">
+                        {% for etablissement in etablissements %}
+                            {% if choix_etablissements is not none and etablissement[0] in choix_etablissements %}
+                                <option value="{{ etablissement[0] }}"
+                                        selected>
+                                    {{ etablissement[1] }}
+                                    [{{ etablissement[2] }}]
+                                </option>
+                            {% else %}
+                                <option value="{{ etablissement[0] }}">
+                                    {{ etablissement[1] }}
+                                    [{{ etablissement[2] }}]
+                                </option>
+                            {% endif %}
+
+                        {% endfor %}
+                    </select>
 
 
                     </div>
@@ -86,15 +88,25 @@
                 </div>
 
 
-                {% if erreur %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ erreur }}
-                    </div>
-                {% endif %}
                 <button type="submit" class="btn btn-primary my-4">Enregistrer
                     les modifications
                 </button>
             </div>
         </div>
     </form>
+
+    <script>
+        function validateForm() {
+            var select = document.getElementById('choix_etablissements');
+            var errorMessage = document.getElementById('error-message');
+            if (select.selectedOptions.length === 0) {
+                errorMessage.style.display = 'inline-block'; // Affiche le
+                // message d'erreur
+                return false; // Empêche la soumission du formulaire
+            } else {
+                errorMessage.style.display = 'none'; // Cache le message d'erreur si tout est en ordre
+            }
+            return true; // Permet la soumission du formulaire si tout est en ordre
+        }
+    </script>
 {% endblock %}

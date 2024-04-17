@@ -1,18 +1,18 @@
+import atexit
 import hashlib
 import json
-import os
 import sqlite3
-import threading
 import uuid
 import xml.etree.ElementTree as ET
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask import (jsonify, g, request, redirect, Response, session,
-                   url_for, render_template)
+                   url_for, render_template, make_response)
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
 import IDRessourceNonTrouve
-from token_manager import TokenManager
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -20,20 +20,27 @@ from database import Database
 from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
-    contrevenant_update_schema, contravention_update_schema
+    contrevenant_update_schema, valider_unsubscribe_user_schema
+from token_manager import TokenManager
 from user import User
-from validations import validates_is_integer, is_incomplete, doesnt_exist, \
+from validations import validates_is_integer, doesnt_exist, \
     validates_dates, is_empty
 
 load_dotenv()
 schema = JsonSchema(app)
 
-if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-    update_thread = threading.Thread(target=extract_and_update_data)
-    update_thread.start()
+
+def start_scheduler():
+    extract_and_update_data()
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=start_scheduler,
+                  trigger=CronTrigger(hour=0, minute=0, second=0))
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
-    app.secret_key = "AUTH_KWESI_SECRET"
     app.run()
 
 
@@ -42,8 +49,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.disconnect()
-    # Enregistrez la fermeture du planificateur à la sortie
-    # update_thread.join()
 
 
 @app.errorhandler(JsonValidationError)
@@ -115,19 +120,6 @@ def new_user():
         data = request.get_json()
         db = Database.get_db()
 
-        # Vérifier si le champ choix_etablissements est un tableau non vide
-        choix_etablissements = data.get("choix_etablissements", [])
-        if not isinstance(choix_etablissements, list) or len(
-                choix_etablissements) == 0:
-            return jsonify({
-                "error": "Le champ choix_etablissements est requis."}), 400
-
-        # Vérifier si les autres champs requis sont présents et non vides
-        if "" in (data.get("nom_complet", ""), data.get("courriel", ""),
-                  data.get("mdp", "")):
-            return jsonify(
-                {"error": "Tous les champs sont obligatoires."}), 400
-
         # Génération du sel de mot de passe
         mdp_salt = uuid.uuid4().hex
 
@@ -146,11 +138,11 @@ def new_user():
 
         db.create_user(new_user)
 
-        """
-        201 Created : Ce code est renvoyé lorsqu'une nouvelle ressource a été 
-        créée avec succès.
-        """
         return jsonify({"message": "Création de compte réussie"}), 201
+
+    except KeyError as e:
+        return jsonify(
+            {"error": f"Le champ {e.args[0]} est manquant ou invalide"}), 400
 
     except Exception as e:
         print(e)
@@ -179,7 +171,9 @@ def connection():
         mdp = request.form["mdp"]
 
         if courriel == "" or mdp == "":
-            return is_incomplete()
+            return render_template('connection.html',
+                                   erreur="Veuillez remplir tous les "
+                                          "champs", courriel=courriel)
 
         db = Database.get_db()
         user = db.get_user_login_infos(courriel)
@@ -194,7 +188,8 @@ def connection():
         else:
             return render_template('connection.html',
                                    erreur="Connexion impossible, veuillez "
-                                          "vérifier vos informations")
+                                          "vérifier vos informations",
+                                   courriel=courriel)
 
 
 # E2
@@ -254,6 +249,7 @@ def compte():
 
         # Récupérer les informations soumises dans le formulaire
         new_etablissements = request.form.getlist('choix_etablissements')
+        print(new_etablissements)
 
         # Convertir les valeurs en entiers
         new_etablissements = [int(etablissement) for etablissement in
@@ -301,6 +297,7 @@ def confirmation_modifs_user():
     return render_template('confirmation_modifs_user.html', titre=titre)
 
 
+# E4
 @app.route('/unsubscribe-page/<token>', methods=['GET'])
 def unsubscribe(token):
     titre = 'Désabonnement'
@@ -339,6 +336,7 @@ def unsubscribe(token):
 
 # E4
 @app.route('/api/unsubscribe', methods=['POST'])
+@schema.validate(valider_unsubscribe_user_schema)
 def unsubscribe_user():
     # Obtenir le token, l'id de l'établissement et l'email de l'utilisateur à partir du corps de la requête POST
     token = request.json.get('token')
@@ -511,7 +509,8 @@ def demande_inspection():
                                              demande["date_visite"],
                                              demande["nom_complet_client"],
                                              demande["description"])
-        id_demande = Database.get_db().insert_demande_inspection(nouvelle_demande)
+        id_demande = Database.get_db().insert_demande_inspection(
+            nouvelle_demande)
         demande_creee = Database.get_db().get_demande_inspection(id_demande)
         test = demande_creee.dictionnaire()
         response = {
@@ -555,27 +554,42 @@ def delete_demande_inspection(id_demande):
 # C1
 @app.route('/api/etablissements', methods=['GET'])
 def etablissements():
-    db = Database.get_db()
-    results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
-    else:
+    try:
+        db = Database.get_db()
+        results = db.get_etablissements_et_nbr_infractions()
+
+        if results is None or not results:
+            # Aucun établissement trouvé, renvoie d'une réponse HTTP 404 avec un message
+            return make_response(
+                jsonify({"error": "Aucun établissement trouvé"}), 404)
+
         return jsonify(results)
+
+    except Exception as e:
+        return make_response(jsonify(
+            {"error": "Erreur lors de l'accès à la base de données",
+             "message": str(e)}), 500)
 
 
 # C2
 @app.route('/api/etablissements/xml',
            methods=['GET'])
 def etablissements_xml():
-    db = Database.get_db()
-    results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
-    else:
-        # Créer l'élément racine du XML
-        root = ET.Element("etablissements")
+    try:
+        db = Database.get_db()
+        results = db.get_etablissements_et_nbr_infractions()
 
-        # Parcourir les résultats et les ajouter au XML
+        if results is None:
+            # Création d'un élément XML pour une réponse d'erreur
+            root = ET.Element("error")
+            message = ET.SubElement(root, "message")
+            message.text = "Aucun établissement trouvé"
+            xml_error_response = ET.tostring(root, encoding="utf-8")
+            return Response(xml_error_response, status=404,
+                            content_type="application/xml")
+
+        # Créer l'élément racine du XML pour les résultats valides
+        root = ET.Element("etablissements")
         for result in results:
             etablissement = ET.SubElement(root, "etablissement")
             nom = ET.SubElement(etablissement, "nom")
@@ -584,9 +598,18 @@ def etablissements_xml():
             nbr_infractions.text = str(
                 result[1])  # Insérer le nombre d'infractions
 
-        # Créer un objet Response contenant le XML
+        # Créer un objet Response contenant le XML des résultats
         xml_response = ET.tostring(root, encoding="utf-8")
         return Response(xml_response, content_type="application/xml")
+
+    except Exception as e:
+        # Gérer les exceptions non prévues, retourner une erreur 500 avec un message d'erreur générique
+        root = ET.Element("error")
+        message = ET.SubElement(root, "message")
+        message.text = f"Erreur interne du serveur: {str(e)}"
+        xml_error_response = ET.tostring(root, encoding="utf-8")
+        return Response(xml_error_response, status=500,
+                        content_type="application/xml")
 
 
 # C3
@@ -594,8 +617,9 @@ def etablissements_xml():
 def etablissements_csv():
     db = Database.get_db()
     results = db.get_etablissements_et_nbr_infractions()
-    if results is None:
-        return "", 404  # TODO gestion cas vide
+    if results is None or len(
+            results) == 0:  # Vérifie aussi si la liste est vide
+        return jsonify({'error': 'Aucun établissement trouvé'}), 404
     else:
         # Créer une liste de dictionnaires pour les résultats
         data = []

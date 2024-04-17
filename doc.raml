@@ -201,6 +201,21 @@ types:
         "choix_etablissements": [14313, 46508],
         "mdp": "mot_de_passe_secret"
       }
+
+  UnsubscribeRequest:
+    type: object
+    properties:
+      token: string
+      id_business: integer
+      email: string
+    additionalProperties: false
+    example: |
+      {
+        "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345"
+        "id_business": 42
+        "email": "utilisateur@example.com"
+      }
+
 /api:
   /contrevenants:
     get:
@@ -360,13 +375,23 @@ types:
               example: |
                 [
                   {
-                    "etablissement": "Nom Établissement",
-                    "nbr_infractions": 5
+                    "RESTAURANT BASHA",
+                    36
                   },
                   {
-                    "etablissement": "Autre Établissement",
-                    "nbr_infractions": 3
-                  }
+                    "DOUBLE PIZZA",
+                    32
+                  },
+                ...
+        404:
+          description: Aucun établissement trouvé.
+          body:
+            application/json:
+              type: object
+              properties:
+                error:
+                  type: string
+                  example: "Aucun établissement trouvé"
     /xml:
       get:
         description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format XML.
@@ -379,14 +404,24 @@ types:
                   <?xml version="1.0" encoding="UTF-8"?>
                   <etablissements>
                       <etablissement>
-                          <nom>Nom Établissement</nom>
-                          <nbr_infractions>5</nbr_infractions>
+                          <nom>RESTAURANT BASHA</nom>
+                          <nbr_infractions>36</nbr_infractions>
                       </etablissement>
                       <etablissement>
-                          <nom>Autre Établissement</nom>
-                          <nbr_infractions>3</nbr_infractions>
+                          <nom>DOUBLE PIZZA</nom>
+                          <nbr_infractions>32</nbr_infractions>
                       </etablissement>
                   </etablissements>
+          404:
+            description: Aucun établissement trouvé.
+            body:
+              application/xml:
+                type: object
+                example: |
+                  <?xml version="1.0" encoding="UTF-8"?>
+                  <error>
+                      <message>Aucun établissement trouvé</message>
+                  </error>
     /csv:
       get:
         description: Récupère la liste des établissements et on indique le nombre d'infractions connues. La liste est triée en ordre décroissant du nombre d'infractions et en format CSV.
@@ -399,6 +434,18 @@ types:
                   Etablissement, Nbr_infractions
                   Nom Établissement, 5
                   Autre Établissement, 3
+          404:
+            description: Aucun établissement trouvé ou erreur dans la récupération des données.
+            body:
+              application/json:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example: |
+                  {
+                    "error": "Aucun établissement trouvé"
+                  }
 
   /demande-inspection:
     post:
@@ -458,7 +505,7 @@ types:
             {
               "nom_complet": "John Doe",
               "courriel": "john.doe@example.com",
-              "choix_etablissements": [1234, 43546],
+              "choix_etablissements": [120681, 10327],
               "mdp": "mot_de_passe_secret"
             }
       responses:
@@ -466,37 +513,116 @@ types:
           description: Le profil utilisateur a été créé avec succès.
         400:
           description: Les données fournies sont invalides ou manquantes.
+          body:
+            application/json:
+              type: object
+              properties:
+                error: ErrorResponse
+              example: |
+                {
+                  invalid_email_format:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'john.doe@example' does not match '^[\\\\w\\\\.+-]+@([\\\\w-]+\\\\.)+[\\\\w-]{2,4}$'"
+                        ]
+                      }
+                    description: "Le format de l'email est incorrect. Il doit inclure un '@' et correspondre au format défini."
+                  too_short_name:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'La' is too short"
+                        ]
+                      }
+                    description: "Le nom complet est trop court. Il doit être d'au moins 3 caractères."
+                  too_long_name:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'Pierre-Alexandre Victor Henri Charles Ferdinand Jean Marie de Montesquieu' is too long"
+                        ]
+                      }
+                    description: "Le nom complet est trop long. Il ne doit pas dépasser 50 caractères."
+                  invalid_password_length:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'pass' is too short"
+                        ]
+                      }
+                    description: "Le mot de passe est trop court. Il doit être d'au moins 5 caractères."
+                  excessive_password_length:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'password1234567890123456' is too long"
+                        ]
+                      }
+                    description: "Le mot de passe est trop long. Il ne doit pas dépasser 20 caractères."
+                  empty_institutions_choice:
+                    value: |
+                      {
+                        "error": "Error validating against schema",
+                        "errors": [
+                          "'choix_etablissements' should not be empty"
+                        ]
+                      }
+                    description: "Le champ 'choix_etablissements' ne doit pas être vide et doit contenir au moins un élément."
+
 
   /unsubscribe:
     post:
       description: Permet à un utilisateur de se désabonner d'un établissement surveillé.
       body:
         application/json:
-          type: object
-          properties:
-            token:
-              type: string
-              required: true
-              description: Token d'authentification de l'utilisateur.
-            id_business:
-              type: integer
-              required: true
-              description: Identifiant de l'établissement duquel l'utilisateur souhaite se désabonner.
-            email:
-              type: string
-              required: true
-              description: Adresse email de l'utilisateur qui demande le désabonnement.
-                example:
-                {
-                  "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345",
-                  "id_business": 42,
-                  "courriel": "utilisateur@example.com"
-                }
+          type: UnsubscribeRequest
+          example: |
+            {
+              "token": "dfgdsfgh87w4rblkasdg9872q93-35-vw3r-fsdfs2345345",
+              "id_business": 42,
+              "email": "utilisateur@example.com"
+            }
       responses:
         200:
           description: L'utilisateur a été désabonné avec succès de l'établissement.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Désabonnement réussi."
         400:
-          description: L'utilisateur tente de se désabonner d'un établissement qui n'est pas surveillé.
+          description: La requête n'est pas valide ou l'établissement n'est pas surveillé par l'utilisateur.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "L'établissement n'est pas surveillé par cet utilisateur ou les données sont invalides."
         404:
           description: L'adresse email fournie ne correspond à aucun utilisateur enregistré.
+          body:
+            application/json:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Utilisateur non trouvé."
 

@@ -17,12 +17,16 @@ function createJson() {
 function validateJson(jsonData) {
     // Comparer avec le schéma de validation
     const errors = [];
-    if (typeof jsonData.nom_complet !== 'string' || jsonData.nom_complet.trim() === '') {
-        errors.push('Le nom complet est invalide');
+    // Validation pour le nom complet
+    if (typeof jsonData.nom_complet !== 'string' || jsonData.nom_complet.trim().length < 3 || jsonData.nom_complet.trim().length > 50) {
+        errors.push('Le nom complet doit contenir entre 3 et 50 caractères');
     }
-    if (typeof jsonData.courriel !== 'string' || jsonData.courriel.trim() === '') {
-        errors.push('L\'adresse courriel est invalide');
+    // Validation pour l'adresse courriel
+    const emailRegex = /^[\w.+-]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (typeof jsonData.courriel !== 'string' || !emailRegex.test(jsonData.courriel)) {
+        errors.push('L\'adresse courriel est invalide ou ne respecte pas le format attendu');
     }
+    // Validation pour les choix d'établissements
     if (!Array.isArray(jsonData.choix_etablissements) || jsonData.choix_etablissements.length === 0) {
         errors.push('Veuillez sélectionner au moins un établissement');
     } else {
@@ -32,8 +36,9 @@ function validateJson(jsonData) {
             }
         });
     }
-    if (typeof jsonData.mdp !== 'string' || jsonData.mdp.trim() === '') {
-        errors.push('Le mot de passe est invalide');
+    // Validation pour le mot de passe
+    if (typeof jsonData.mdp !== 'string' || jsonData.mdp.length < 5 || jsonData.mdp.length > 20) {
+        errors.push('Le mot de passe doit contenir entre 5 et 20 caractères');
     }
 
     return errors;
@@ -50,6 +55,7 @@ function onSubmitNewUser(event) {
     var validationErrors = validateJson(jsonData);
     if (validationErrors.length > 0) {
         console.error('Erreurs de validation:', validationErrors);
+        displayErrors(validationErrors); // Afficher les erreurs sur la page
         return;
     }
 
@@ -57,9 +63,7 @@ function onSubmitNewUser(event) {
     console.log('Envoi des données au serveur...');
     fetch('/api/new-user', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(jsonData)
     })
         .then(response => {
@@ -76,6 +80,7 @@ function onSubmitNewUser(event) {
         })
         .catch(error => {
             console.error('Erreur:', error.message);
+            displayErrors([error.message]); // Affiche les erreurs renvoyées par le serveur
         });
 }
 
@@ -83,3 +88,23 @@ document.addEventListener("DOMContentLoaded", function (event) {
     // Ajouter un écouteur d'événements au clic sur le bouton de soumission du formulaire
     document.getElementById('btn-submit-user').addEventListener("click", onSubmitNewUser);
 });
+
+function displayErrors(errors) {
+    const errorContainer = document.getElementById('error-container');
+    errorContainer.innerHTML = ''; // Clear previous errors
+    if (errors.length > 0) {
+        errorContainer.style.display = 'inline-block'; // Make sure the
+        // container is visible
+    } else {
+        errorContainer.style.display = 'none'; // Hide if no errors
+        return;
+    }
+
+    errors.forEach(error => {
+        const errorElement = document.createElement('p');
+        errorElement.textContent = error;
+        errorElement.style.margin = '0';  // Enlever la marge
+        errorContainer.appendChild(errorElement);
+    });
+}
+
