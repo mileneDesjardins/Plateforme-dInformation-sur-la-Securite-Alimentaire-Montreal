@@ -9,7 +9,7 @@ def basic_auth_required(f):
         if (auth and auth.username == current_app.config["SITE_USER"] and
                 auth.password == current_app.config["SITE_PASS"]):
             return f(*args, **kwargs)
-        return make_response("<H1>TODO Access denied </H1>"), 401, {
+        return make_response("<H1>Access denied </H1>"), 401, {
             'WWW-Authenticate': 'Basic realm="Login Required!"'}
 
     return decorated_function
