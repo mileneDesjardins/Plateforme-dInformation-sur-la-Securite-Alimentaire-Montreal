@@ -164,6 +164,7 @@ types:
         "date_statut": "2024-01-02",
         "categorie": "Restaurant"
       }
+
   DemandeInspectionQuery:
     type: object
     properties:
@@ -268,7 +269,7 @@ types:
                   }
                 ]
         400:
-            description: L'une ou les deux dates ne respectent pas le format ISO 8601 (AAAA-MM-JJ) ou la date end est inférieure à la date start.
+            description: La requête est invalide ou l'une ou les deux dates ne respectent pas le format ISO 8601 (AAAA-MM-JJ) ou la date end est inférieure à la date start.
         401:
             description: Le nom d'utilisateur et/ou le mot de passe donné lors de l'authentification est invalide. Accès non authorisé.
         404:
@@ -281,7 +282,7 @@ types:
     /{id_business}:
       uriParameters:
         id_business:
-          description: L'identifiant unique de l'établissement à modifier
+          description: L'identifiant unique de l'établissement à modifier/supprimer.
           type: integer
       get:
         description: Récupère l'établissement correspondant au ID spécifié en paramètre.
@@ -307,7 +308,7 @@ types:
                     "categorie": "Restaurant"
                     }
           400:
-            description: Le ID spécifié en paramètre n'est pas un entier valide.
+            description: La requête est invalide ou le ID spécifié en paramètre n'est pas un entier valide.
           404:
             description : Le id_business ne correspondent à aucun établissement.
             body:
@@ -341,7 +342,7 @@ types:
                       "categorie": "Restaurant"
                     }
           400:
-            description: Une erreur reliée au schéma JSON a été rencontrée.
+            description: La requête est invalide.
             body:
               application/json:
               example: |
@@ -359,7 +360,9 @@ types:
           200:
             description: L'établissement a bien été supprimé de la base de données.
           400:
-            description: Le ID spécifié en paramètre n'est pas un entier valide.
+            description: La requête est invalide ou le ID spécifié en paramètre n'est pas un entier valide.
+          401:
+            description: Le nom d'utilisateur et/ou le mot de passe donné lors de l'authentification est invalide. Accès non authorisé.
           404:
             description: Le id spécifié en paramètre n'est associé à aucun établissement de la base de données. Aucun contrevenant n'a été supprimé.
 
@@ -474,7 +477,7 @@ types:
                   "message": "Utilisateur ajouté"
                 }
         400:
-          description: Une erreur reliée au schéma JSON a été rencontrée.
+          description: La requête est invalide.
           body:
             application/json:
               example: |
@@ -491,8 +494,15 @@ types:
         responses:
           200:
             description : La demande d'inspection a bien été supprimée.
+            body:
+                application/json:
+                  type: DemandeInspection
+                  example: |
+                    {
+                      "succes": "La demande d'inspection `3` a bien été supprimée."
+                    }
           400:
-            description: Le ID spécifié en paramètre n'est pas un entier valide.
+            description: Le ID spécifié en paramètre n'est pas un entier valide ou la requête est invalide.
           404:
             description : Le ID spécifié ne correspond à aucune demande d'inspection.
 
@@ -513,7 +523,7 @@ types:
         201:
           description: Le profil utilisateur a été créé avec succès.
         400:
-          description: Les données fournies sont invalides ou manquantes.
+          description: La requête est invalide ou les données fournies sont invalides ou manquantes.
           body:
             application/json:
               type: object

@@ -627,6 +627,16 @@ un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 #### Comment tester reblabla
 
+Dans le  REST Client, ajouter les creditials  
+{
+  "etablissement": "Nom de l'établissement",
+  "adresse": "Adresse de l'établissement",
+  "ville": "Ville",
+  "date_visite": "2024-04-14",
+  "nom_complet_client": "Nom complet du client",
+  "description": "Description de la visite"
+}
+
 Mettre user et mdp dans fichier .quelquechose
 
 ## B2 10xp A-S.A-L.

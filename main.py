@@ -451,7 +451,7 @@ def info_etablissements(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify(e.message), 404
     except Exception as e:
         return jsonify("Une erreur est survenue sur le serveur. "
@@ -468,7 +468,7 @@ def modify_contrevenant(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
         return jsonify(
@@ -494,7 +494,7 @@ def delete_contrevenant(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue", e), 500
@@ -549,7 +549,8 @@ def delete_demande_inspection(id_demande):
             "Le ID " + id_demande + " ne correspond à aucune demande "
                                     "d\'inspection."), 404
     Database.get_db().delete_demande_inspection(id_demande)
-    return jsonify("La demande a bien été supprimée."), 200
+    msg = "La demande d'inspection `" + id_demande + "` a bien été supprimée."
+    return jsonify(succes=msg), 200
 
 
 # C1
