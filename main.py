@@ -33,10 +33,9 @@ schema = JsonSchema(app)
 def start_scheduler():
     extract_and_update_data()
 
-
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
-                  trigger=CronTrigger(hour=0, minute=0, second=0))
+                  trigger=CronTrigger(minute='*/1', second=0))
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 

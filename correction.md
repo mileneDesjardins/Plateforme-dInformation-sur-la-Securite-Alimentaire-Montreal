@@ -9,7 +9,7 @@
 
 #### Comment tester :
 
-###### Importation des données avec la base de données "Contravention" déjà configurée.
+###### Importation des données avec la base de données "Contravention" déjà crée.
 
 1. Ouvrez le terminal dans le répertoire du projet.
 2. Exécutez la commande suivante : `$ python3 download.py`
@@ -18,6 +18,8 @@
 
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
+2. Double-cliquer sur le nouveau fichier **contravention.db** afin de créer 
+   la connexion.
 
 ### A3 5xp - M.D.
 
@@ -54,9 +56,11 @@ id_poursuite = 1523;`
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
    ![img_2.png](static/img/correction/img_211.png)
 6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
-   après** l'heure actuelle.
+   après** l'heure d'importation des contraventions.
    Exemple:
    ![img_3.png](static/img/correction/img_31.png)
+7. Pour démarrer l'application et appliquer les modifications, utilisez la
+   commande suivante dans votre terminal : `$ make`
 
 ### B1 5xp - M.D.
 
