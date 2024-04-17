@@ -26,9 +26,48 @@
     margin-bottom: 10px;
 }
 
-#error-message{
+#error-message {
     color: red;
     display: none;
     text-align: center;
     width: 30%;
+}
+
+
+#texte-accueil {
+    max-width: 20%;
+    text-align: center;
+}
+
+#svg-compte {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin-top: 3%;
+    margin-bottom: 1%;
+}
+
+#svg-profil {
+    max-width: 100%;
+    text-align: center;
+}
+
+#svg-user {
+    max-width: 40%;
+    text-align: center;
+}
+
+#label-surveiller {
+    text-align: center;
+    padding-left: 10px;
+}
+
+.max-width {
+    width: 100%;
+}
+
+.width-200px {
+    max-width: 200px;
 }

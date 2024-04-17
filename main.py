@@ -640,6 +640,18 @@ def etablissements_csv():
         return Response(csv_data, content_type="text/csv")
 
 
+@app.errorhandler(404)
+def page_not_found(error):
+    """
+    Gère les erreurs 404 en affichant une page d'erreur personnalisée.
+
+    Cette fonction est appelée lorsque l'application rencontre une erreur 404,
+    c'est-à-dire lorsque la ressource demandée n'a pas été trouvée.
+    Elle renvoie alors une page HTML avec le code d'erreur 404.
+    """
+    return render_template('404.html', title="Error"), 404
+
+
 @app.route('/doc')
 def doc():
     return render_template('doc.html')
