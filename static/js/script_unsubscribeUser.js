@@ -11,7 +11,7 @@ function unsubscribeUser() {
     };
 
     fetch("/api/unsubscribe", {
-        method: "POST",
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json"
         },

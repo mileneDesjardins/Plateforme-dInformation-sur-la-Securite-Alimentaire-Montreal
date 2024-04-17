@@ -114,7 +114,7 @@ deux contraventions.
 
 1. Ouvrez la console de gestion de votre base de données et accédez à la
    table des Contraventions.
-2. Inscrivez les commandes suivantes **sans les exécuter**,car il faut ajuster
+2. Inscrivez les commandes suivantes **sans les exécuter**, car il faut ajuster
    les dates d'importation :
 
 `UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
@@ -485,7 +485,7 @@ requêtes à une API :
     1. **URL** : Entrez l'URL de l'API
        'http://127.0.0.1:5000/api/unsubscribe'
        dans le champ URL.
-    2. **Méthode** : Sélectionnez la méthode HTTP 'POST' à partir du menu
+    2. **Méthode** : Sélectionnez la méthode HTTP 'PATCH' à partir du menu
        déroulant à côté de l'URL.
     3. **Corps de la requête** :
        Entrez les données suivantes dans le champ de texte pour le corps de la
