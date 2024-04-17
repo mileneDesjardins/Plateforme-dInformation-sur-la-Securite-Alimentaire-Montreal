@@ -7,7 +7,7 @@ from enum import Enum
 
 from flask import g, json
 
-from IDRessourceNonTrouve import IDRessourceNonTrouve
+from IDRessourceNonTrouveError import IDRessourceNonTrouve
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 from validations import validates_format_iso

@@ -12,7 +12,7 @@ from flask import (jsonify, g, request, redirect, Response, session,
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
-import IDRessourceNonTrouve
+import IDRessourceNonTrouveError
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -289,6 +289,7 @@ def photo(id_photo):
     if photo_data:
         return Response(photo_data, mimetype='application/octet-stream')
 
+
 # E2
 @app.route('/confirmation-modifs-user', methods=['GET'])
 def confirmation_modifs_user():
@@ -450,7 +451,7 @@ def info_etablissements(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify(e.message), 404
     except Exception as e:
         return jsonify("Une erreur est survenue sur le serveur. "
@@ -467,7 +468,7 @@ def modify_contrevenant(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
         return jsonify(
@@ -489,11 +490,12 @@ def delete_contrevenant(id_business):
     try:
         validates_is_integer(id_business, "Le id_business")
         Database.get_db().delete_contrevenant(id_business)
-        return jsonify("Le contrevenant bien été supprimé"), 200
+        msg = "Le contrevenant `" + id_business + "` bien été supprimé."
+        return jsonify(succes=msg), 200
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouve as e:
+    except IDRessourceNonTrouveError as e:
         return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue", e), 500
@@ -548,7 +550,8 @@ def delete_demande_inspection(id_demande):
             "Le ID " + id_demande + " ne correspond à aucune demande "
                                     "d\'inspection."), 404
     Database.get_db().delete_demande_inspection(id_demande)
-    return jsonify("La demande a bien été supprimée."), 200
+    msg = "La demande d'inspection `" + id_demande + "` a bien été supprimée."
+    return jsonify(succes=msg), 200
 
 
 # C1
