@@ -390,6 +390,14 @@ def modal_dates(start, end, id_business):
     return render_template('modal_modifier.html', results=contrevenant)
 
 
+@app.route('/modal', methods=['POST'])
+def modal_etablissements():
+    """ NOTE pour documentation : Recoit JSON de l'etablissement'"""
+    infos_obtenues = request.get_json()
+    return render_template('modal_etablissement.html',
+                           results=infos_obtenues)
+
+
 def count_contraventions(contraventions):
     occurrences = {item['id_business']: {'count': sum(
         1 for c in contraventions if c['id_business'] == item['id_business']),
@@ -480,12 +488,6 @@ def delete_contrevenant(id_business):
         return jsonify("Une erreur est survenue", e), 500
 
 
-@app.route('/modal', methods=['POST'])
-def modal_etablissements():
-    """ NOTE pour documentation : Recoit JSON de l'etablissement'"""
-    infos_obtenues = request.get_json()
-    return render_template('modal_etablissement.html',
-                           results=infos_obtenues)
 
 
 @app.route('/dropdown_etablissement', methods=['GET'])

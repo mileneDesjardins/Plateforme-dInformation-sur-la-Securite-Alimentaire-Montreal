@@ -33,6 +33,8 @@ function areValidDates(startDateID, endDateID) {
     return isValid;
 }
 
+
+
 function isValidDate(dateID) {
     clearMessagesError();
     let plainteDate = document.getElementById(dateID).value;

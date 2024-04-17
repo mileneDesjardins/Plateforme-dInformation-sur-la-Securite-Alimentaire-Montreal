@@ -51,6 +51,7 @@
                             </div>
                         </div>
 
+
                         <div class="col-md-2 position-relative">
                             <div class="form-floating my-1">
                                 <input type="date" name="end-date"
@@ -83,7 +84,7 @@
                             <select name="etablissement"
                                     id="select-etablissement"
                                     class="form-control">
-                                <option value="" disabled selected>--
+                                <option value="0" disabled selected>--
                                     Sélectionner --
                                 </option>
                                 {% for etablissement in etablissements %}
@@ -98,9 +99,7 @@
                             <div class="form-floating my-1">
                                 <button type="button"
                                         id="btn-info-etablissement"
-                                        class="btn btn-primary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdrop">
+                                        class="btn btn-primary">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="16" height="16"
                                          fill="currentColor"
@@ -118,16 +117,11 @@
 
 
                 <!-- Modal recherche etablissement -->
-                <div class="modal fade" id="staticBackdrop"
-                     data-bs-backdrop="static" data-bs-keyboard="false"
-                     tabindex="-1"
-                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                        <div id="modal-content" class="modal-content">
+            <div id="modal-etab">
 
-                        </div>
-                    </div>
-                </div>
+
+            </div>
+
 
                 <!-- Resultat table recherche par dates -->
                 <div class="section text-center mt-5">

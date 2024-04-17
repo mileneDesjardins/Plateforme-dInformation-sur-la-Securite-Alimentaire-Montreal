@@ -33,10 +33,19 @@ function onFastSearchSubmit() {
         });
 }
 
-function OnGetInfoEtablissementSubmit() {
-    let id_business = document.getElementById('select-etablissement').value;
-    let apiUrl = `/api/contrevenant/${id_business}`;
 
+function OnGetInfoEtablissementSubmit() {
+    let idBusiness = document.getElementById('select-etablissement').value;
+    console.log(idBusiness == 0);
+    if (idBusiness == 0) {
+        console.log("devrait arreter")
+        return;
+    }
+    getInfoEtablissement(idBusiness);
+}
+
+function getInfoEtablissement(idBusiness) {
+    let apiUrl = `/api/contrevenant/${idBusiness}`;
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
@@ -45,12 +54,34 @@ function OnGetInfoEtablissementSubmit() {
         })
         .then(response => response.text())
         .then(htmlContent => {
-            document.getElementById('modal-content').innerHTML = htmlContent;
+            document.getElementById('modal-etab').innerHTML = htmlContent;
+            console.log(htmlContent);
+             let modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            modal.show(modal);
+
         })
         .catch(err => {
             console.log("Erreur côté serveur");
         });
 }
+
+
+function openModalModifier(id_business, startDate, endDate) {
+    let apiURL = `/modal-dates/${id_business}/${startDate}/${endDate}`;
+    fetch(apiURL)
+        .then(response => response.text())
+        .then(htmlContent => {
+            document.getElementById("modal-content-modif").innerHTML = htmlContent;
+            let modal = new bootstrap.Modal(document.getElementById('modal-date'));
+            modal.show(modal);
+            document.getElementById('btn-save-modifs-contrevenant').addEventListener('click', OnSaveModificationSubmit);
+            addEventListenerOnSVGDeletes();
+        })
+        .catch(err => {
+            console.log("Erreur côté serveur");
+        })
+}
+
 
 
 function OnSaveModificationSubmit() {
@@ -116,21 +147,7 @@ function getInfoContrevenant() {
 }
 
 
-function openModalModifier(id_business, startDate, endDate) {
-    let apiURL = `/modal-dates/${id_business}/${startDate}/${endDate}`;
-    fetch(apiURL)
-        .then(response => response.text())
-        .then(htmlContent => {
-            document.getElementById("modal-content-modif").innerHTML = htmlContent;
-            let modal = new bootstrap.Modal(document.getElementById('modal-date'));
-            modal.show(modal);
-            document.getElementById('btn-save-modifs-contrevenant').addEventListener('click', OnSaveModificationSubmit);
-            addEventListenerOnSVGDeletes();
-        })
-        .catch(err => {
-            console.log("Erreur côté serveur");
-        })
-}
+
 
 
 function OnDeleteContrevenant() {
@@ -154,7 +171,6 @@ function OnDeleteContrevenant() {
         }
     })
 }
-
 
 
 function sendPatch(URL, objectToSend) {
@@ -190,7 +206,7 @@ function updateDropdown() {
                 option.value = item[0];
                 option.textContent = item[1] + ' - ' + item[2];
                 dropdown.appendChild(option);
-                console.log( option.textContent);
+                console.log(option.textContent);
             });
         })
         .catch(error => {
