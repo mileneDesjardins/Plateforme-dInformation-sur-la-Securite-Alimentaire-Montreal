@@ -15,3 +15,13 @@
     margin: auto;
     text-align: center;
 }
+
+#error-container {
+    color: red;
+    font-size: 16px;
+    display: none;
+    width: 30%;
+    max-height: 80px;
+    margin: 0;
+    margin-bottom: 10px;
+}

@@ -140,6 +140,10 @@ def new_user():
 
         return jsonify({"message": "Création de compte réussie"}), 201
 
+    except KeyError as e:
+        return jsonify(
+            {"error": f"Le champ {e.args[0]} est manquant ou invalide"}), 400
+
     except Exception as e:
         print(e)
         # Si une erreur se produit, renvoyer les données saisies
