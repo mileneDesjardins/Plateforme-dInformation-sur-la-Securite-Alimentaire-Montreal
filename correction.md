@@ -307,7 +307,7 @@ requêtes à une API :
             {"nom_complet": "John Doe",
             "courriel": "john.doe@example.com",
             "choix_etablissements": [120681, 10327],
-            "mdp": "mot_de_passe_secret"}
+            "mdp": "john123"}
 
 3. **Envoyer la requête** : Cliquez
    sur le bouton 'Send Request' pour l'envoyer. Les résultats de la requête
@@ -316,22 +316,22 @@ requêtes à une API :
    ![img_119.png](static/img/correction/img_119.png)
 
 ##### Création de compte à partir du site
+
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
 2. Cliquer sur le bouton "Création de compte"
-![img_18.png](static%2Fimg%2Fcorrection%2Fimg_18.png)
+   ![img_18.png](static%2Fimg%2Fcorrection%2Fimg_18.png)
 3. Compléter tous les champs et cliquer sur "Créer un compte"
-![img_13.png](static%2Fimg%2Fcorrection%2Fimg_13.png)
-![img_14.png](static%2Fimg%2Fcorrection%2Fimg_14.png)
-![img_15.png](static%2Fimg%2Fcorrection%2Fimg_15.png)
+   ![img_122.png](img_122.png)
+   ![img_15.png](static%2Fimg%2Fcorrection%2Fimg_15.png)
 
 ###### Vérification de la création de compte
 
-1. Pour valider la création de votre compte, veuillez vous connecter en utilisant l'adresse courriel "henri123@hotmail.com" et le mot de passe "henri123".
-![img_17.png](static%2Fimg%2Fcorrection%2Fimg_17.png)
-
+1. Pour valider la création de votre compte, veuillez vous connecter en
+   utilisant l'adresse courriel et le mot de passe que vous avez utilisés
+   ![img_17.png](static%2Fimg%2Fcorrection%2Fimg_17.png)
 
 ### E2 15xp - M.D.
 
@@ -343,24 +343,17 @@ requêtes à une API :
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
-3. Cliquer sur "Se connecter" utiliser l'adresse courriel "henri123@hotmail.
-   com" et le mot de passe "henri123".
-   ![img_16.png](static/img/correction/img_16.png)
+3. Cliquer sur "Se connecter" utiliser l'adresse courriel et le mot de 
+   passe que vous avez créés.
 4. Cliquer sur l'onglet "Compte"
    ![img_18.png](static/img/correction/img_18.png)
-5. Voici à quoi ressemble le compte présentement :
-   ![img_19.png](static/img/correction/img_19.png)
-6. Nous allons sélectionner différents établissements à surveiller :
-   ![img_20.png](static/img/correction/img_20.png)
+
+6. Sélectionner différents établissements à surveiller
 7. Cliquer sur "Enregistrer les modifications"
-   ![img_21.png](static/img/correction/img_21.png)
-8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix se sont
-   bien enregistrés :
-   ![img_22.png](static/img/correction/img_22.png)
-9. Ajouter une photo et cliquer sur enregistrez
-10. Accéder à nouveau sur l'onglet "Compte" et la photo s'est bien
-    enregistrée :
-    ![img_24.png](static/img/correction/img_24.png)
+8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix afin de 
+   voir que l'enregistrement a fonctionné
+9. Ajouter une photo et cliquer sur enregistrer
+10. Accéder à nouveau sur l'onglet "Compte" et la photo y sera affichée
 
 ### E3 5xp - M.D.
 
@@ -395,11 +388,11 @@ affichant ensuite dans une interface web.
 
 ###### Démarrage de MailDev
 
-6. Lancez Docker et démarrez le conteneur contenant l'image de MailDev.
+4. Lancez Docker et démarrez le conteneur contenant l'image de MailDev.
 
 ###### Accéder à MailDev
 
-7. Ouvrez un navigateur et allez sur : http://localhost:1080/ pour accéder à
+5. Ouvrez un navigateur et allez sur : http://localhost:1080/ pour accéder à
    l'interface de MailDev.
 
 ##### Gestion des nouvelles dates d'importation
@@ -434,28 +427,27 @@ id_poursuite = 1523;`
 
 ###### Mise à jour des dates :
 
-3. Ajustez les dates d'importation en les
+1. Ajustez les dates d'importation en les
    configurant pour un **moment futur** (par exemple, **une minute après
    l'heure
    courante**).
 
-4. Enregistrez les changements dans la base de données.
+2. Enregistrez les changements dans la base de données.
 
 ###### Mise à jour du CronTrigger :
 
-5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+1. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
    ![img_2.png](static/img/correction/img_211.png)
-6. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
+2. Modifiez ensuite l'**heure du CronTrigger** pour qu'elle soit fixée après
    l'heure d'importation des deux contraventions. Dans ce cas précis,
    il faudrait la fixer à '2024-04-01 12:10:00:000', étant donné que
    l'heure d'importation est '2024-04-01 12:08:00:000'.
 
 ###### Lancement de l'application
 
-7. Pour démarrer l'application et appliquer les modifications, utilisez la
+1. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
-
-8. Vérifiez les courriels reçus en accédant à l'onglet de navigation du
+2. Vérifiez les courriels reçus en accédant à l'onglet de navigation du
    **port 1080 de MailDev** pour confirmer la
    réception des notifications.
 
@@ -470,10 +462,10 @@ id_poursuite = 1523;`
 
 1. Lancez l'application avec la commande suivante dans votre terminal : `$
    make`
-3. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
+2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/doc pour
    accéder à la documentation RAML.
-4. Sélectionner la route '/api/unsubscribe'
-![img_120.png](img_120.png)
+3. Sélectionner la route '/api/unsubscribe'
+   ![img_120.png](static/img/correction/img_120.png)
 
 ###### Utilisation de YARC
 
@@ -503,9 +495,7 @@ requêtes à une API :
    apparaîtront
    dans la section Response en bas de l'interface de YARC.
 
-
-![img_1.png](img_121.png)
-
+![img_1.png](static/img/correction/img_121.png)
 
 ###### Désabonnement
 
