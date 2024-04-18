@@ -55,7 +55,7 @@ id_poursuite = 1523;`
 
 5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
    ![img_2.png](static/img/correction/img_211.png)
-6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
+6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **2 minutes
    après** l'heure d'importation des contraventions.
    Exemple:
    ![img_3.png](static/img/correction/img_31.png)
@@ -127,7 +127,7 @@ id_poursuite = 1523;`
 ###### Mise à jour des dates :
 
 3. Ajustez les dates d'importation en les
-   configurant pour un **moment futur** (par exemple, **une minute après
+   configurant pour un **moment futur** (par exemple, **2 minutes après
    l'heure
    courante**).
 
@@ -432,7 +432,7 @@ id_poursuite = 1523;`
 ###### Mise à jour des dates :
 
 1. Ajustez les dates d'importation en les
-   configurant pour un **moment futur** (par exemple, **une minute après
+   configurant pour un **moment futur** (par exemple, **2 minutes après
    l'heure
    courante**).
 
@@ -729,7 +729,7 @@ Si vous avez testé la fonctionnalité `A3`, les contraventions ayant été mise
 3. Partez l'application (par exemple en effectuant la commande `make`.)
 4. Dans le terminal `sqlite3`, effectuer un `Update` sur une date d'importation 
 pour simuler une nouvelle importation. Ajustez la date d'importation en la
-   configurant pour un **moment futur** (par exemple, **une minute après
+   configurant pour un **moment futur** (par exemple, **2 minutes après
    l'heure courante**). Par exemple :
 
 ```sh
