@@ -738,11 +738,14 @@ sqlite3 contravention.db
 
 ```sqlite3
 UPDATE Contravention SET date_importation = '2024-04-18 15:10:00:000' WHERE
-id_poursuite = 6119;
+id_poursuite = 10703;
 ```
 
 4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
 
 **NOTE**
 Twitter n'accepte pas les posts identiques envoyés l'un après autre. 
-Si vous recevez un code 409, essayez à nouveau la commande mais en changeant le `id_poursuite`. 
+Si vous recevez un code 409 en ligne de commande, essayez à nouveau la commande mais en changeant le `id_poursuite`.
+
+Si vous recevez un code 429, il y a eu trop de requête sur le compte dans les dernières 24 heures. (Le compte Twitter utilisé
+est la version gratuite qui supporte 50 requêtes `POST` par 24 heures.)
