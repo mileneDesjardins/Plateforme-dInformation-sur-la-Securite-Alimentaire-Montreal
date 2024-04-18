@@ -18,7 +18,7 @@
 
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
-2. Double-cliquer sur le nouveau fichier **contravention.db** afin de créer 
+2. Double-cliquer sur le nouveau fichier **contravention.db** afin de créer
    la connexion.
 
 ### A3 5xp - M.D.
@@ -347,14 +347,14 @@ requêtes à une API :
    make`
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
-3. Cliquer sur "Se connecter" utiliser l'adresse courriel et le mot de 
+3. Cliquer sur "Se connecter" utiliser l'adresse courriel et le mot de
    passe que vous avez créés.
 4. Cliquer sur l'onglet "Compte"
    ![img_18.png](static/img/correction/img_18.png)
 
 6. Sélectionner différents établissements à surveiller
 7. Cliquer sur "Enregistrer les modifications"
-8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix afin de 
+8. Accéder à nouveau sur l'onglet "Compte" et les nouveaux choix afin de
    voir que l'enregistrement a fonctionné
 9. Ajouter une photo et cliquer sur enregistrer
 10. Accéder à nouveau sur l'onglet "Compte" et la photo y sera affichée
@@ -536,9 +536,11 @@ Voici le lien vers le site : https://projet-session.fly.dev/
 ### A2 10xp - A-S.A-L.
 
 1. Lancez l'application avec la commande suivante dans votre terminal :
+
 ```sh
 make
 ```
+
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
 
@@ -546,6 +548,7 @@ make
 4. Effectuer une recherche par nom, établissement et/ou rue
 
 ![barre_recherche.png](static/img/correction/barre_recherche.png)
+
 ### A4 10xp - A-S.A-L.
 
 Effectuez une requête `GET` à la
@@ -556,7 +559,7 @@ dates que vous souhaitez testés.
 Un exemple de requête valide :
 
 ```text
-api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
+http://127.0.0.1:5000/api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 ```
 
 ### A5 10xp - A-S.A-L.
@@ -564,16 +567,17 @@ api/contrevenants?start-date=2022-12-12&end-date=2024-12-12
 1. Aller sur la page d'accueil
 2. Saisisser une date de début et une date de fin de recherche puis lancer une
    recherche
-
-![img_25.png](static/img/correction/img_25.png)
+   ![img_25.png](static/img/correction/img_25.png)
+3. La liste des contrevenants ainsi que leur nombre de contraventions durant cette période s'affichera dans un tableau
+   sous le formulaire.
 
 ### A6 10xp - A-S.A-L.
 
 1. Aller sur la page d'accueil
-2. Saisisser une date de début et une date de fin de recherche puis lancer une
-   recherche
-
-![img_26.png](static/img/correction/img_26.png)
+2. Choisissez un établissement dans la liste déroulante
+3. ![img_26.png](static/img/correction/img_26.png)
+3. Cliquez sur l'icone de recherche
+4. Un modal avec les différentes informations sur les infractions de l'établiassement va apparaitre.
 
 ### D1 15xp - A-S.A-L.
 
@@ -596,7 +600,7 @@ un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
 
 2- Vérifier que la demande ait bien été insérée dans la base de données en
 effectuant les commandes suivantes (remplacer le id par celui envoyé dans la
-réponse du serveur)
+réponse du serveur) :
 
 ```sh
 sqlite3 demande_inspection.db
@@ -608,42 +612,134 @@ SELECT * FROM DemandesInspection where id=1;
 
 #### Tester la fonctionnalité
 
-**TODO count ???**
+1. Cliquer sur l'onglet `Plainte` en haut à gauche de l'écran
+   ![plainte.png](static/img/correction/plainte.png)
+2. Remplissez et soumettez le formulaire
+3. Effectuer les commandes ci-dessous et vérifier que votre demande ait bien été insérée dans la base de données:
 
-1- Cliquer sur l'onglet `Plainte` en haut à gauche de l'écran
-2- Remplissez et soumettez le formulaire
-3-
+```sh
+sqlite3 demande_inspection.db
+```
+
+```sqlite3
+SELECT * FROM DemandesInspection;
+```
 
 ### D2 5xp - A-S.A-L.
 
-1- Effectuez une requête `POST` à la route `api/demande-inspection` via
-l'extension YARC (ou tout autre REST client). Voici
-un exemmple de `JSON` valide que vous pouvez utiliser pour les tests :
+1. Effectuez une requête `DELETE` à la route `api/demande-inspection/<id>` via
+   l'extension YARC (ou tout autre REST client). Remplacer `<id>` par un des id présents dans la base de données. Pour
+   trouver un id valide, faites les commandes suivantes :
 
-#### Comment tester reblabla
+```sh
+sqlite3 demande_inspection.db
+```
+
+```sqlite3
+SELECT * FROM DemandesInspection;
+```
+
+2. Une fois la requête envoyée, vérifier que la demande ait bien été supprimée dans la base de données avec la commande
+   suivante (en remplaçant le id par celui utilisé dans la requête) :
+
+```sqlite3
+SELECT * FROM DemandesInspection where id=1;
+```
 
 ### D3 15xp - A-S.A-L.
 
-#### Comment tester reblabla
+#### Tester les services REST
+
+1. Dans YARC (ou tout autre REST client), entrez les `Credentials` suivants :
+
+- Username = `user`
+- Password = `mdp`
+
+![img_1.png](static/img/correction/delete.png)
+
+![img_1.png](static/img/correction/basicAuth.png)
+
+2. Effectuez une requête `PATCH` à la route `/api/contrevenant/{id_business}` via
+   l'extension YARC (ou tout autre REST client). Remplacez le id par un `id_business` existant dans la base de donnée
+   (exemple, 1). Voici
+   un exemmple de `JSON` valide que vous pouvez utiliser pour ce test :
+
+```json
+{
+  "ville": "Laval",
+  "statut": "Fermé"
+}
+```
+
+Vous pouvez essayer différentes variations de json, en incluant et excluant d'autres champs.
+
+2. Effectuez une requête `DELETE` à la route `/api/contrevenant/{id_business}` via
+   l'extension YARC (ou tout autre REST client). Remplacez le id par un `id_business` existant dans la base de données
+   (exemple, 1).
+
+#### Tester la fonctionnalité
+
+1. Aller sur la page d'accueil
+2. Saisisser une date de début et une date de fin de recherche puis lancer une
+   recherche
+   ![img_25.png](static/img/correction/img_25.png)
+3. La liste des contrevenants ainsi que leur nombre de contraventions durant cette période s'affichera dans un tableau
+   sous le formulaire.
+4. Cliquer sur un établissement
+5. Tester la modification et la suppresion. Lorsque vous cliquerez sur l'icone de la suppression ou
+   sur `Enregistrer les modifications`, vous devrez vous authentifié. Reprenez les mêmes informations utilisées
+   précemment :
+
+- Username = `user`
+- Password = `mdp`
 
 ### D4 15xp - A-S.A-L.
 
-#### Comment tester reblabla
+Le `Basic Auth` a été appliqué aux services REST permettant la modification et la suppression de contrevenant au point
+précédent.
+Il vous est possible de retester l'authentification en allant modifier le nom d'utilisateur et le mot de passe utilisé
+dans le
+fichier `.env`. Pour ce faire, modidier les champs suivants :
 
-Dans le  REST Client, ajouter les creditials  
-{
-  "etablissement": "Nom de l'établissement",
-  "adresse": "Adresse de l'établissement",
-  "ville": "Ville",
-  "date_visite": "2024-04-14",
-  "nom_complet_client": "Nom complet du client",
-  "description": "Description de la visite"
-}
-
-Mettre user et mdp dans fichier .quelquechose
+```txt
+SITE_USER="user"
+SITE_PASS="mdp"
+```
 
 ## B2 10xp A-S.A-L.
 
-TODO enlever photo
+Le nom des établissements recevant de nouvelles contraventions sont publiées sur le compte Twitter suivant :
+`https://twitter.com/Inspection61614`.
 
-@Inspection61614
+Deux façons de tester la fonctionnalité :
+
+**Option 1**
+Si vous avez testé la fonctionnalité `A3`, les contraventions ayant été mises à jour devraient
+   se retrouver dans les `posts`.
+
+**Option 2**
+1. Sinon, ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+   ![img_2.png](static/img/correction/img_211.png)
+2. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
+   après** l'heure d'importation des contraventions.
+   Exemple:
+   ![img_3.png](static/img/correction/img_31.png)
+3. Dans le terminal `sqlite3`, effectuer un `Update` sur une date d'importation 
+4. pour simuler une nouvelle importation. Ajustez la date d'importation en la
+   configurant pour un **moment futur** (par exemple, **une minute après
+   l'heure courante**). Par exemple :
+
+```sh
+sqlite3 contravention.db
+```
+
+```sqlite3
+UPDATE Contravention SET date_importation = '2024-04-18 15:10:00:000' WHERE
+id_poursuite = 6119;
+```
+3. Partez l'application (par exemple en effectuant la commande `make`.)
+
+4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
+
+**NOTE**
+Twitter n'accepte pas les posts identiques envoyés l'un après autre. Si vous recevez un code 409, essayez à nouveau la commande mais en changeant le id_poursuite. 
