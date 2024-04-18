@@ -1,87 +1,107 @@
-<div class="modal-header">
-    <div id="modal-dates">
+<div class="modal fade modal-lg" id="modal-date"
+     data-bs-backdrop="static" data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="modal-dates" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+        <div id="modal-content-modif" class="modal-content">
 
-    </div>
-    <div class="row">
-        <form class="col-md-8" id="form-nom-etablissement">
-            <div class="form-group row mb-2">
-                <div class="col-md-2 d-flex justify-content-center align-items-center">
-                    <svg id="svg-delete-contrevenant" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                         fill="red" class="bi bi-trash3 cursor-pointer" viewBox="0 0 16 16">
-                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                    </svg>
+            <div class="modal-header">
+                <div id="modal-dates">
+
                 </div>
-                <div class="col-md-10">
-                    <input class="form-control input-lg fs-5" type="text" id="modif-etablissement"
-                           placeholder="{{ results[0].etablissement }}">
+                <div class="row">
+                    <form class="col-md-8" id="form-nom-etablissement">
+                        <div class="form-group row mb-2">
+                            <div class="col-md-2 d-flex justify-content-center align-items-center">
+                                <svg id="svg-delete-contrevenant" xmlns="http://www.w3.org/2000/svg" width="25"
+                                     height="25"
+                                     fill="red" class="bi bi-trash3 cursor-pointer" viewBox="0 0 16 16">
+                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                </svg>
+                            </div>
+                            <div class="col-md-10">
+                                <input class="form-control input-lg fs-5" type="text" id="modif-etablissement"
+                                       placeholder="{{ results[0].etablissement }}">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-4">
+                        <h6 id="reponse-requete" class="text-center fs-5 hiding"></h6>
+                    </div>
+                </div>
+
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Fermé"></button>
+
+            </div>
+            <div id="modal-body-etablissement" class="modal-body">
+
+                <form class="form-inline" id="form-modif-contrevenant">
+                    <style>
+                        /* Custom CSS to center the labels */
+                        .center-label {
+                            display: flex;
+                            justify-content: flex-end;
+                            align-items: center;
+                            height: 100%;
+                        }
+                    </style>
+                    <div class="form-group row mb-2">
+                        <label class="control-label col-sm-3 col-md-2 text-sm-end center-label"
+                               for="modif-proprietaire">Propriétaire
+                            :</label>
+                        <div class="col-sm-9 col-md-10">
+                            <input class="form-control input-lg" type="text" id="modif-proprietaire"
+                                   placeholder="{{ results[0].proprietaire }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-adresse">Adresse
+                            :</label>
+                        <div class="col-sm-9 col-md-10">
+                            <input class="form-control input-lg" type="text" id="modif-adresse"
+                                   placeholder="{{ results[0].adresse }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-statut">Statut
+                            :</label>
+                        <div class="col-sm-9 col-md-10">
+                            <input class="form-control input-lg" type="text" id="modif-statut"
+                                   placeholder="{{ results[0].statut }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
+                        <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-date_statut">Date
+                            :</label>
+                        <div class="col-sm-9 col-md-10">
+                            <input class="form-control input-lg" type="date" id="modif-date_statut"
+                                   value="{{ results[0].date_statut }}">
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="modif-id-business" value="{{ results[0].id_business }}">
+                </form>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="btn-save-modifs-contrevenant" type="button" class="btn btn-primary">Enregistrer
+                        modifications
+                    </button>
+
                 </div>
             </div>
-        </form>
-        <div class="col-md-4">
-            <h6 id="reponse-requete" class="text-center fs-5 hiding"></h6>
+
+
         </div>
     </div>
-
-
-    <button type="button" class="btn-close" data-bs-dismiss="modal"
-            aria-label="Fermé"></button>
-
 </div>
-<div id="modal-body-etablissement" class="modal-body">
-
-    <form class="form-inline" id="form-modif-contrevenant">
-        <style>
-            /* Custom CSS to center the labels */
-            .center-label {
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                height: 100%;
-            }
-        </style>
-        <div class="form-group row mb-2">
-            <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-proprietaire">Propriétaire
-                :</label>
-            <div class="col-sm-9 col-md-10">
-                <input class="form-control input-lg" type="text" id="modif-proprietaire"
-                       placeholder="{{ results[0].proprietaire }}">
-            </div>
-        </div>
-
-        <div class="form-group row mb-2">
-            <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-adresse">Adresse
-                :</label>
-            <div class="col-sm-9 col-md-10">
-                <input class="form-control input-lg" type="text" id="modif-adresse"
-                       placeholder="{{ results[0].adresse }}">
-            </div>
-        </div>
-
-        <div class="form-group row mb-2">
-            <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-statut">Statut :</label>
-            <div class="col-sm-9 col-md-10">
-                <input class="form-control input-lg" type="text" id="modif-statut"
-                       placeholder="{{ results[0].statut }}">
-            </div>
-        </div>
-
-        <div class="form-group row mb-2">
-            <label class="control-label col-sm-3 col-md-2 text-sm-end center-label" for="modif-date_statut">Date
-                :</label>
-            <div class="col-sm-9 col-md-10">
-                <input class="form-control input-lg" type="date" id="modif-date_statut"
-                       value="{{ results[0].date_statut }}">
-            </div>
-        </div>
-
-        <input type="hidden" id="modif-id-business" value="{{ results[0].id_business }}">
-    </form>
 
 
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button id="btn-save-modifs-contrevenant" type="button" class="btn btn-primary">Enregistrer modifications
-        </button>
 
-    </div>
-</div>
+

@@ -68,7 +68,7 @@ function openModalModifier(id_business, startDate, endDate) {
     fetch(apiURL)
         .then(response => response.text())
         .then(htmlContent => {
-            document.getElementById("modal-content-modif").innerHTML = htmlContent;
+            document.getElementById("show-modal-dates").innerHTML = htmlContent;
             let modal = new bootstrap.Modal(document.getElementById('modal-date'));
             modal.show(modal);
             document.getElementById('btn-save-modifs-contrevenant').addEventListener('click', OnSaveModificationSubmit);
