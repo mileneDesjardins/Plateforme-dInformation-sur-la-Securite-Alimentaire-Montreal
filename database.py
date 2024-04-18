@@ -302,17 +302,14 @@ class Database:
     def get_last_import_time(self):
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
-        cur.execute("SELECT date FROM DATE_IMPORTATION WHERE id = 1")
+        cur.execute("SELECT date FROM DATE_IMPORTATION")
         result = cur.fetchone()
         if result is not None:
             # Extraire la date du tuple et la convertir en objet datetime
             last_import_date = datetime.strptime(result[0],
                                                  '%Y-%m-%d %H:%M:%S.%f')
             return last_import_date
-        else:
-            # Gérer le cas où il n'y a pas encore de date d'importation enregistrée
-            # Potentiellement retourner une date par défaut ou gérer ce cas en amont
-            return None
+
 
     def is_first_import(self):
         """Check if this is the first import by looking for existing records in the DATE_IMPORTATION table."""
@@ -320,7 +317,6 @@ class Database:
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM DATE_IMPORTATION")
         count = cur.fetchone()[0]
-        conn.close()
         return count == 0
 
     def create_first_importation_date(self):
@@ -330,7 +326,6 @@ class Database:
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         cur.execute("INSERT INTO DATE_IMPORTATION (date) VALUES (?)", (now,))
         conn.commit()
-        conn.close()
         print("First importation date created:", now)
 
     def update_importation_date(self):
@@ -339,10 +334,9 @@ class Database:
         cur = conn.cursor()
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         cur.execute(
-            "UPDATE DATE_IMPORTATION SET date = ? WHERE id = (SELECT id FROM DATE_IMPORTATION ORDER BY id DESC LIMIT 1)",
+            "UPDATE DATE_IMPORTATION SET date = ?",
             (now,))
         conn.commit()
-        conn.close()
         print("Importation date updated:", now)
 
     def search(self, keywords):

@@ -26,5 +26,7 @@ def import_csv():
         # Clean up the temporary file
         os.unlink(temp_file.name)
 
+        return True
+
 if __name__ == "__main__":
     import_csv()
