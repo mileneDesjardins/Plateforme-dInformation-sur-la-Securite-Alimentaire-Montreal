@@ -535,18 +535,17 @@ Voici le lien vers le site : https://projet-session.fly.dev/
 
 ### A2 10xp - A-S.A-L.
 
-1. Lancez l'application avec la commande suivante dans votre terminal : `$
-   make`
+1. Lancez l'application avec la commande suivante dans votre terminal :
+```sh
+make
+```
 2. Ouvrez votre navigateur et accédez à http://127.0.0.1:5000/ pour voir la
    page d'accueil.
 
-3. Aller sur la page d'accueil (la barre de recherche est également accessible
-   partout sur le site)
-4. Cliquer sur la barre de recherche en haut à droite de la page
-5. Effectuer une recherche
-    - Par nom et/ou établissement et/ou rue
-    - vide (envoyer une requête vide)
+3. Cliquer sur la barre de recherche en haut à droite de la page
+4. Effectuer une recherche par nom, établissement et/ou rue
 
+![barre_recherche.png](static/img/correction/barre_recherche.png)
 ### A4 10xp - A-S.A-L.
 
 Effectuez une requête `GET` à la
