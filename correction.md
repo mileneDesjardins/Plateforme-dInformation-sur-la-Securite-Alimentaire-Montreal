@@ -328,7 +328,7 @@ requêtes à une API :
 2. Cliquer sur le bouton "Création de compte"
    ![img_18.png](static%2Fimg%2Fcorrection%2Fimg_18.png)
 3. Compléter tous les champs et cliquer sur "Créer un compte"
-   ![img_122.png](img_122.png)
+   ![img_122.png](static/img/correction/img_122.png)
    ![img_15.png](static%2Fimg%2Fcorrection%2Fimg_15.png)
 
 ###### Vérification de la création de compte

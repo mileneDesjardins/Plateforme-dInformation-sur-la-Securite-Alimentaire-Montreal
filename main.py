@@ -20,7 +20,7 @@ from database import Database
 from demande_inspection import DemandeInspection
 from notification import extract_and_update_data
 from schema import inspection_insert_schema, valider_new_user_schema, \
-    contrevenant_update_schema, valider_unsubscribe_user_schema
+    contrevenant_update_schema
 from token_manager import TokenManager
 from user import User
 from validations import validates_is_integer, doesnt_exist, \
@@ -32,6 +32,7 @@ schema = JsonSchema(app)
 
 def start_scheduler():
     extract_and_update_data()
+
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=start_scheduler,
@@ -413,8 +414,8 @@ def unsubscribe_user():
                 {"success": True, "message": "Désabonnement réussi."}), 200
         else:
             return (jsonify({"success": False,
-                            "message": "Le token est inexistant ou "
-                                       "invalide."}), 400)
+                             "message": "Le token est inexistant ou "
+                                        "invalide."}), 400)
     else:
         return jsonify(
             {"success": False, "message": "Utilisateur non trouvé."}), 404

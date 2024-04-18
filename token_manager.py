@@ -2,6 +2,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timedelta
 
+
 class TokenManager:
     def __init__(self):
         self.token_connection = None
@@ -15,15 +16,18 @@ class TokenManager:
         # Générer un token unique
         token_value = str(uuid.uuid4())
 
-        # Insérer le token dans la base de données avec une expiration initialisée à NULL
+        # Insérer le token dans la base de données avec une expiration
+        # initialisée à NULL
         try:
             connection = self.get_token_connection().cursor()
 
             # Insérer le token dans la table Token
             connection.execute(
                 "INSERT INTO Token (token_value, courriel, id_business, "
-                "etablissement, adresse, expiration_timestamp) VALUES (?, ?, ?, ?, ?, NULL)",
-                (token_value, courriel, id_business, etablissement, adresse))
+                "etablissement, adresse, expiration_timestamp) VALUES "
+                "(?, ?, ?, ?, ?, NULL)",
+                (token_value, courriel, id_business, etablissement,
+                 adresse))
 
             connection.connection.commit()
             connection.close()
@@ -64,7 +68,8 @@ class TokenManager:
             # Si expiration_timestamp est None, mettre à jour le timestamp
             if result and result[0] is None:
                 connection.execute(
-                    "UPDATE Token SET expiration_timestamp = ? WHERE token_value = ?",
+                    "UPDATE Token SET expiration_timestamp = ? WHERE "
+                    "token_value = ?",
                     (datetime.now() + timedelta(minutes=30), token)
                 )
 
@@ -72,7 +77,8 @@ class TokenManager:
                 print("Expiration du token mise à jour avec succès.")
             else:
                 print(
-                    "Le token a déjà un timestamp d'expiration, mise à jour non nécessaire.")
+                    "Le token a déjà un timestamp d'expiration, mise à jour "
+                    "non nécessaire.")
 
             connection.close()
             return True
@@ -108,18 +114,22 @@ class TokenManager:
                         print("Le token n'est pas encore expiré.")
                         return False
                 else:
-                    # expiration_timestamp est None, le token n'est pas considéré comme expiré
+                    # expiration_timestamp est None, le token n'est pas
+                    # considéré comme expiré
                     print(
-                        "Le timestamp d'expiration n'est pas défini, le token n'est pas considéré comme expiré.")
+                        "Le timestamp d'expiration n'est pas défini, le token "
+                        "n'est pas considéré comme expiré.")
                     return False
             else:
                 # Aucun token correspondant trouvé dans la base de données.
                 print(
-                    "Aucun token correspondant trouvé dans la base de données.")
+                    "Aucun token correspondant trouvé dans la base de "
+                    "données.")
                 return False
         except sqlite3.Error as e:
             print(
-                "Erreur lors de la tentative de vérification de l'expiration du token :",
+                "Erreur lors de la tentative de vérification de l'expiration "
+                "du token :",
                 e)
             return False
 

@@ -23,5 +23,5 @@ class Contravention:
 
     def etablissement(self):
         return {
-            'etablissement' : self.etablissement,
+            'etablissement': self.etablissement,
         }

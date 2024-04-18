@@ -34,4 +34,5 @@ conn.commit()
 cursor.close()
 conn.close()
 
-print("La table CONTRAVENTION a été créée avec succès dans le fichier 'contravention.db'.")
+print("La table CONTRAVENTION a été créée avec succès dans le "
+      "fichier 'contravention.db'.")

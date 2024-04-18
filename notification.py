@@ -1,14 +1,13 @@
 import smtplib
-import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 import yaml
 
-from token_manager import TokenManager
 from app import app
 from database import Database
 from download import import_csv
+from token_manager import TokenManager
 from twitter import twitter_post
 
 
@@ -17,7 +16,8 @@ def extract_and_update_data():
         db = Database.get_db()
 
         print("Extraction et mise à jour des données en cours...")
-        import_successful = import_csv()  # Assurez-vous que cette fonction retourne un booléen indiquant le succès ou l'échec
+        import_successful = import_csv()  # Assurez-vous que cette fonction
+        # retourne un booléen indiquant le succès ou l'échec
 
         print("Extraction et mise à jour des données terminées.")
 
@@ -41,15 +41,17 @@ def detect_new_contraventions():
         if new_contraventions:
             num_new_contraventions = len(new_contraventions)
             print(
-                f"{num_new_contraventions} nouvelles contraventions détectées :")
+                f"{num_new_contraventions} nouvelles contraventions "
+                f"détectées :")
             for contravention in new_contraventions:
                 print(f"- {contravention[6]}")
                 twitter_post(contravention[6])
 
-
-            # Include a message mentioning the number of contraventions detected
+            # Include a message mentioning the number of contraventions
+            # detected
             print(
-                f"Nombre total de nouvelles contraventions détectées : {num_new_contraventions}")
+                f"Nombre total de nouvelles contraventions détectées : "
+                f"{num_new_contraventions}")
 
             notify(new_contraventions)
         db.update_importation_date()
@@ -79,7 +81,8 @@ def notify(new_contraventions):
 
         except Exception as e:
             print(
-                f"Une erreur s'est produite lors de la lecture du fichier YAML : {e}")
+                f"Une erreur s'est produite lors de la lecture du fichier "
+                f"YAML : {e}")
 
         # Parcourir chaque utilisateur
         token_manager = TokenManager()
@@ -96,7 +99,8 @@ def notify(new_contraventions):
                 etablissement = contravention[6]
                 adresse = contravention[4]
 
-                # Vérifier si cette contravention est surveillée par l'utilisateur
+                # Vérifier si cette contravention est surveillée par
+                # l'utilisateur
                 if id_business in choix_etablissements:
                     contraventions_surveillees.add(contravention)
 
@@ -109,7 +113,8 @@ def notify(new_contraventions):
                         f"http://localhost:5000/unsubscribe-page/{token}")
 
             if contraventions_surveillees:
-                # Ajouter l'utilisateur et ses contraventions surveillées à la liste
+                # Ajouter l'utilisateur et ses contraventions surveillées
+                # à la liste
                 destinataires_users[courriel] = contraventions_surveillees
 
         # Envoyer l'e-mail à chaque utilisateur
@@ -133,14 +138,16 @@ def send_courriel(sender_email, receiver_email, new_contraventions,
             server.sendmail(sender_email, [receiver_email],
                             message_content.as_string())
 
-            # Envoyer un courriel à chaque destinataire utilisateur pour ses contraventions
+            # Envoyer un courriel à chaque destinataire utilisateur pour ses
+            # contraventions
             for email_destinataire, contraventions in destinataires_users.items():
                 # Initialiser un message global pour cet utilisateur
                 global_message_body = ""
                 for contravention in contraventions:
                     id_business = contravention[
                         1]
-                    # Générer le corps du message pour chaque contravention, incluant le lien de désinscription
+                    # Générer le corps du message pour chaque contravention,
+                    # incluant le lien de désinscription
                     individual_message_body = prepare_email_body(
                         [contravention], unsubscribe_link=True,
                         link_token=link_tokens.get(

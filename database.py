@@ -58,7 +58,8 @@ def _build_contravention_dict(query_result):
 
 
 def _build_contravention(modifs_request):
-    """NOTE : permet de retourner NONE si l'element nest pas dans la requete """
+    """NOTE : permet de retourner NONE si l'element nest pas
+    dans la requete """
     contrevenant = Contravention(
         id_poursuite=modifs_request.get("id_poursuite"),
         id_business=modifs_request.get('id_business'),
@@ -187,7 +188,8 @@ class Database:
         return contraventions
 
     def insert_contraventions_from_csv(self, csv_file):
-        new_data_inserted = False  # Variable pour suivre si de nouvelles données ont été insérées
+        new_data_inserted = False  # Variable pour suivre si de nouvelles
+        # données ont été insérées
         with open(csv_file, 'r', encoding='utf-8') as file:
             contenu = csv.reader(file)
             cursor = self.get_contravention_connection().cursor()
@@ -224,7 +226,8 @@ class Database:
                         row[7],
                         row[8], row[9], row[10], date_statut, row[12],
                         date_importation, timestamp_csv, deleted))
-                    new_data_inserted = True  # Marquer qu'une nouvelle donnée a été insérée
+                    new_data_inserted = True  # Marquer qu'une nouvelle
+                    # donnée a été insérée
                 except sqlite3.IntegrityError:
                     # Essaie de mettre a jour la base de donnees
                     if (self.can_be_updated(row[Cols.ID_POURSUITE.value],
@@ -254,7 +257,8 @@ class Database:
         cursor.execute(
             "UPDATE Contravention SET date=?, description=?, adresse=?, "
             "date_jugement=?, etablissement=?, montant=?, proprietaire=?, "
-            "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, deleted=0 "
+            "ville=?, statut=?, date_statut=?, categorie=?, timestamp_csv=?, "
+            "deleted=0 "
             "WHERE id_poursuite=? AND id_business=?",
             (date, row[3], row[4], date_jugement, row[6],
              row[7], row[8], row[9],
@@ -285,7 +289,8 @@ class Database:
             '%Y-%m-%d %H:%M:%S.%f')
         new_import_time_str = new_import_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
-        query = "SELECT * FROM Contravention WHERE date_importation > ? AND date_importation <= ?"
+        query = ("SELECT * FROM Contravention WHERE date_importation > ? AND "
+                 "date_importation <= ?")
         cursor.execute(query, (last_import_time_str, new_import_time_str))
         rows = cursor.fetchall()
 
@@ -310,9 +315,7 @@ class Database:
                                                  '%Y-%m-%d %H:%M:%S.%f')
             return last_import_date
 
-
     def is_first_import(self):
-        """Check if this is the first import by looking for existing records in the DATE_IMPORTATION table."""
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM DATE_IMPORTATION")
@@ -320,7 +323,6 @@ class Database:
         return count == 0
 
     def create_first_importation_date(self):
-        """Inserts the initial importation date into the database."""
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -329,7 +331,6 @@ class Database:
         print("First importation date created:", now)
 
     def update_importation_date(self):
-        """Updates the existing importation date in the database."""
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -612,7 +613,8 @@ class Database:
         try:
             choix_etablissements_json = json.dumps(user.choix_etablissements)
             cursor.execute(
-                "INSERT INTO User (nom_complet, courriel, choix_etablissements, mdp_hash, mdp_salt)"
+                "INSERT INTO User (nom_complet, courriel, "
+                "choix_etablissements, mdp_hash, mdp_salt)"
                 "VALUES (?, ?, ?, ?, ?)",
                 (user.nom_complet, user.courriel, choix_etablissements_json,
                  user.mdp_hash, user.mdp_salt)
@@ -671,11 +673,13 @@ class Database:
             )
             connection.commit()
             print(
-                "Liste des établissements mise à jour avec succès pour l'utilisateur",
+                "Liste des établissements mise à jour avec succès pour "
+                "l'utilisateur",
                 id_user)
         except Exception as e:
             print(
-                "Erreur lors de la mise à jour des établissements pour l'utilisateur",
+                "Erreur lors de la mise à jour des établissements pour "
+                "l'utilisateur",
                 id_user)
             print("Erreur détaillée:", e)
 
@@ -695,7 +699,8 @@ class Database:
             if user_data:
                 choix_etablissements = json.loads(user_data[0])
 
-                # Vérifier si l'établissement est dans la liste de l'utilisateur et le supprimer
+                # Vérifier si l'établissement est dans la liste de
+                # l'utilisateur et le supprimer
                 if id_business in choix_etablissements:
                     choix_etablissements.remove(id_business)
                     cursor.execute(
@@ -707,7 +712,8 @@ class Database:
                     return True
         except Exception as e:
             print(
-                f"Erreur lors de la suppression de l'établissement {id_business} pour l'utilisateur {email}: {e}")
+                f"Erreur lors de la suppression de l'établissement "
+                f"{id_business} pour l'utilisateur {email}: {e}")
             return False
         finally:
             cursor.close()
