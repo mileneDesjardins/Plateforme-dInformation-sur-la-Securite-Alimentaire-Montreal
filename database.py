@@ -7,7 +7,7 @@ from enum import Enum
 
 from flask import g, json
 
-from IDRessourceNonTrouveError import IDRessourceNonTrouve
+from IDResourceNotFoundError import IDResourceNotFoundError
 from contravention import Contravention
 from demande_inspection import DemandeInspection
 from validations import validates_format_iso
@@ -424,7 +424,7 @@ class Database:
         count = cursor.fetchone()
 
         if count[0] == 0:
-            raise IDRessourceNonTrouve(
+            raise IDResourceNotFoundError(
                 "Le id_poursuite `" + str(id_poursuite) +
                 "` ne correspond à aucune ressource dans la base de données.")
 
@@ -436,7 +436,7 @@ class Database:
         count = cursor.fetchone()
 
         if count[0] == 0:
-            raise IDRessourceNonTrouve(
+            raise IDResourceNotFoundError(
                 "Le id_business `" + id_business +
                 "` ne correspond à aucune ressource dans la base de données.")
 

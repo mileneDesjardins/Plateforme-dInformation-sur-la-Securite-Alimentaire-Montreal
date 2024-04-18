@@ -12,7 +12,7 @@ from flask import (jsonify, g, request, redirect, Response, session,
 from flask.cli import load_dotenv
 from flask_json_schema import JsonValidationError, JsonSchema
 
-import IDRessourceNonTrouveError
+from IDResourceNotFoundError import IDResourceNotFoundError
 from app import app
 from authorization_decorator import login_required
 from basic_auth_decorator import basic_auth_required
@@ -451,7 +451,7 @@ def info_etablissements(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouveError as e:
+    except IDResourceNotFoundError as e:
         return jsonify(e.message), 404
     except Exception as e:
         return jsonify("Une erreur est survenue sur le serveur. "
@@ -468,7 +468,7 @@ def modify_contrevenant(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouveError as e:
+    except IDResourceNotFoundError as e:
         return jsonify("La ressource n'a pu être modifiée.", e.message), 404
     except Exception as e:
         return jsonify(
@@ -495,7 +495,7 @@ def delete_contrevenant(id_business):
     except ValueError as e:
         error_msg = {"error": str(e)}
         return json.dumps(error_msg), 400
-    except IDRessourceNonTrouveError as e:
+    except IDResourceNotFoundError as e:
         return jsonify(e.message), 404
     except sqlite3.Error as e:
         return jsonify("Une erreur est survenue", e), 500
