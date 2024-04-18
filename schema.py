@@ -42,27 +42,22 @@ contrevenant_update_schema = {
     'properties': {
         'adresse': {
             'type': 'string',
-            'minLength': 3,
             'maxLength': 50,
         },
         'etablissement': {
             'type': 'string',
-            'minLength': 3,
             'maxLength': 50,
         },
         'proprietaire': {
             'type': 'string',
-            'minLength': 2,
             'maxLength': 50,
         },
         'ville': {
             'type': 'string',
-            'minLength': 3,
             'maxLength': 50,
         },
         'statut': {
             'type': 'string',
-            'minLength': 5,
             'maxLength': 50,
         },
         'date_statut': {
