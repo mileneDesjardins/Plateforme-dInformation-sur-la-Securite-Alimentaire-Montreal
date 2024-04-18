@@ -24,6 +24,11 @@ def extract_and_update_data():
         if import_successful:
             # Mise à jour de la dernière heure d'importation seulement si de nouvelles données ont été importées
             db.update_or_create_importation_date()
+<<<<<<< Updated upstream
+=======
+
+        _ = detect_new_contraventions()
+>>>>>>> Stashed changes
 
 
 def detect_new_contraventions():
