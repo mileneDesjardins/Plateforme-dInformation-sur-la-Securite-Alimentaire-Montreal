@@ -8,7 +8,7 @@ from database import Database
 app = Flask(__name__)
 
 def import_csv():
-    with app.app_context():
+    with app.app_context():  # This creates a Flask application context
         db = Database.get_db()
         url = 'https://data.montreal.ca/dataset/05a9e718-6810-4e73-8bb9-5955efeb91a0/resource/7f939a08-be8a-45e1-b208-d8744dca8fc6/download/violations.csv'
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -25,7 +25,6 @@ def import_csv():
 
         # Clean up the temporary file
         os.unlink(temp_file.name)
-        return True  # Return True when the operation completes successfully
 
 if __name__ == "__main__":
     import_csv()
