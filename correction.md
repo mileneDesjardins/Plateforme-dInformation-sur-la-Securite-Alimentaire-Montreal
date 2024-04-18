@@ -724,8 +724,10 @@ Si vous avez testé la fonctionnalité `A3`, les contraventions ayant été mise
    après** l'heure d'importation des contraventions.
    Exemple:
    ![img_3.png](static/img/correction/img_31.png)
-3. Dans le terminal `sqlite3`, effectuer un `Update` sur une date d'importation 
-4. pour simuler une nouvelle importation. Ajustez la date d'importation en la
+
+3. Partez l'application (par exemple en effectuant la commande `make`.)
+4. Dans le terminal `sqlite3`, effectuer un `Update` sur une date d'importation 
+pour simuler une nouvelle importation. Ajustez la date d'importation en la
    configurant pour un **moment futur** (par exemple, **une minute après
    l'heure courante**). Par exemple :
 
@@ -737,9 +739,9 @@ sqlite3 contravention.db
 UPDATE Contravention SET date_importation = '2024-04-18 15:10:00:000' WHERE
 id_poursuite = 6119;
 ```
-3. Partez l'application (par exemple en effectuant la commande `make`.)
 
 4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
 
 **NOTE**
-Twitter n'accepte pas les posts identiques envoyés l'un après autre. Si vous recevez un code 409, essayez à nouveau la commande mais en changeant le id_poursuite. 
+Twitter n'accepte pas les posts identiques envoyés l'un après autre. 
+Si vous recevez un code 409, essayez à nouveau la commande mais en changeant le `id_poursuite`. 
