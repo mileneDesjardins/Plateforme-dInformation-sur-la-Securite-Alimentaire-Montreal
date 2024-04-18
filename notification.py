@@ -22,8 +22,8 @@ def extract_and_update_data():
         print("Extraction et mise à jour des données terminées.")
 
         if import_successful:
-            # Mise à jour de la dernière heure d'importation seulement si de nouvelles données ont été importées
-            db.update_or_create_importation_date()
+            if db.is_first_import():
+                db.create_first_importation_date()
 
         _ = detect_new_contraventions()
 
@@ -52,6 +52,9 @@ def detect_new_contraventions():
                 f"Nombre total de nouvelles contraventions détectées : {num_new_contraventions}")
 
             notify(new_contraventions)
+
+        # Mettre à jour le temps de la dernière importation
+        db.update_importation_date()
 
         return new_contraventions
     except Exception as e:
