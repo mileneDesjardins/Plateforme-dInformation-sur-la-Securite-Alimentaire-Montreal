@@ -325,13 +325,41 @@ class Database:
 
         return last_import_date
 
-    def update_last_import_time(self):
+    def update_or_create_importation_date(self):
         conn = self.get_date_importation_connection()
-        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         cur = conn.cursor()
-        cur.execute("UPDATE DATE_IMPORTATION SET date = ? WHERE id = 1",
-                    (now,))
+
+        # Obtenir le timestamp actuel
+        now = datetime.now()
+        formatted_now = now.strftime('%Y-%m-%d %H:%M:%S.%f')
+
+        # Vérifier si un enregistrement existe
+        cur.execute("SELECT id FROM DATE_IMPORTATION ORDER BY id DESC LIMIT 1")
+        result = cur.fetchone()
+
+        if result:
+            # Mise à jour de la date existante
+            cur.execute("UPDATE DATE_IMPORTATION SET date = ? WHERE id = ?",
+                        (formatted_now, result[0]))
+            print("Date d'importation mise à jour: ", formatted_now)
+        else:
+            # Création d'une nouvelle date d'importation
+            cur.execute("INSERT INTO DATE_IMPORTATION (date) VALUES (?)",
+                        (formatted_now,))
+            print("Première date d'importation créée: ", formatted_now)
+
+        # Valider les modifications
         conn.commit()
+        # Fermer la connexion
+        conn.close()
+
+    # def update_last_import_time(self):
+    #     conn = self.get_date_importation_connection()
+    #     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+    #     cur = conn.cursor()
+    #     cur.execute("UPDATE DATE_IMPORTATION SET date = ? WHERE id = 1",
+    #                 (now,))
+    #     conn.commit()
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()

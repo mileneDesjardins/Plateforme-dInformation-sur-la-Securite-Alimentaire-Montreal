@@ -18,12 +18,14 @@ def extract_and_update_data():
 
         print("Extraction et mise à jour des données en cours...")
         import_successful = import_csv()  # Assurez-vous que cette fonction retourne un booléen indiquant le succès ou l'échec
+
         print("Extraction et mise à jour des données terminées.")
 
         if import_successful:
             # Mise à jour de la dernière heure d'importation seulement si de nouvelles données ont été importées
-            db.update_last_import_time()
-            detect_new_contraventions()
+            db.update_or_create_importation_date()
+
+        _ = detect_new_contraventions()
 
 
 def detect_new_contraventions():
@@ -51,8 +53,8 @@ def detect_new_contraventions():
 
             notify(new_contraventions)
 
-        # Mettre à jour le temps de la dernière importation
-        db.update_last_import_time()
+        # # Mettre à jour le temps de la dernière importation
+        # db.update_last_import_time()
 
         return new_contraventions
     except Exception as e:
