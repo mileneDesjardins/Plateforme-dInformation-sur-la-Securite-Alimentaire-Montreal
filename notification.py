@@ -53,9 +53,6 @@ def detect_new_contraventions():
 
             notify(new_contraventions)
 
-        # # Mettre à jour le temps de la dernière importation
-        # db.update_last_import_time()
-
         return new_contraventions
     except Exception as e:
         print(f"Une erreur s'est produite : {e}")
