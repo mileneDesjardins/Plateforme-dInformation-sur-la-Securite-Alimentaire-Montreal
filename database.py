@@ -233,10 +233,6 @@ class Database:
                         self.sync_row(cursor, date, date_jugement, date_statut,
                                       row, timestamp_csv)
 
-                    # Gérer les erreurs d'unicité en les ignorant
-                    # print(
-                    #     f"Ignorer l'insertion pour id_poursuite existant: "
-                    #     f"{row[0]}")
                     continue
                 except Exception as e:
                     # Gérer les autres erreurs
@@ -280,7 +276,7 @@ class Database:
     def get_new_contraventions(self, last_import_time):
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
-        new_import_time = datetime.now()  # Using full datetime precision including microseconds
+        new_import_time = datetime.now()
 
         print("Last import time for query:", last_import_time)
         print("New import time for query:", new_import_time)
@@ -348,18 +344,8 @@ class Database:
                         (formatted_now,))
             print("Première date d'importation créée: ", formatted_now)
 
-        # Valider les modifications
         conn.commit()
-        # Fermer la connexion
         conn.close()
-
-    # def update_last_import_time(self):
-    #     conn = self.get_date_importation_connection()
-    #     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-    #     cur = conn.cursor()
-    #     cur.execute("UPDATE DATE_IMPORTATION SET date = ? WHERE id = 1",
-    #                 (now,))
-    #     conn.commit()
 
     def search(self, keywords):
         cursor = self.get_contravention_connection().cursor()
@@ -591,7 +577,6 @@ class Database:
                                    id_poursuite))
             connection.commit()
 
-    # TODO si delete, retourner true ?
     def update_contrevenant(self, id_business, modif_request):
         contrevenant = _build_contravention(modif_request)
         self.update_adresse(id_business, contrevenant)
@@ -600,7 +585,6 @@ class Database:
         self.update_statut(id_business, contrevenant)
         self.update_date_statut(id_business, contrevenant)
 
-    # TODO si delete, retourner true ?
     def update_contravention(self, id_poursuite,
                              modif_request):
         contravention = _build_contravention(modif_request)
@@ -698,16 +682,14 @@ class Database:
                 "Liste des établissements mise à jour avec succès pour l'utilisateur",
                 id_user)
         except Exception as e:
-            # Gérer les erreurs éventuelles
             print(
                 "Erreur lors de la mise à jour des établissements pour l'utilisateur",
                 id_user)
             print("Erreur détaillée:", e)
 
     def delete_user_choix_etablissements(self, email, id_business):
-        # Convertir id_business en entier pour s'assurer de la compatibilité de type
         id_business = int(
-            id_business)  # Assurez-vous que cette ligne est placée ici
+            id_business)
         connection = self.get_user_connection()
         cursor = connection.cursor()
         try:
