@@ -706,6 +706,7 @@ SITE_USER="user"
 SITE_PASS="mdp"
 ```
 
+Redémarrer l'application et tester à nouveau la modification/suppression d'un contrevenant.
 ## B2 10xp A-S.A-L.
 
 Le nom des établissements recevant de nouvelles contraventions sont publiées sur le compte Twitter suivant :
