@@ -1,6 +1,6 @@
 # Correction projet INF5190-H24 | ABEA05619105, DESM31559704
 
-### Autrices:
+### Auteures:
 
 * Anne-Sophie Abel-Levesque - ABEA05619105
 * Milene Desjardins - DESM31559704
