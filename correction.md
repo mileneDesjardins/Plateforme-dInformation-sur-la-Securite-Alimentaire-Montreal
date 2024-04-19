@@ -213,7 +213,7 @@ id_poursuite = 1523;`
 ### B2 10xp A-S.A-L.
 
 Le nom des établissements recevant de nouvelles contraventions sont publiées sur le compte Twitter suivant :
-`https://twitter.com/Inspection61614`.
+https://twitter.com/Inspection61614.
 
 Deux façons de tester la fonctionnalité :
 
@@ -260,6 +260,7 @@ id_poursuite = 1523;`
 ![img135.png](static/img/correction/img135.png)
 
 4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
+![img136.png](static/img/correction/img136.png)
 
 **NOTE**
 Twitter n'accepte pas les posts identiques envoyés l'un après autre. 
