@@ -9,17 +9,16 @@
 
 #### Comment tester :
 
-###### Importation des données avec la base de données "Contravention" déjà crée.
 
-1. Ouvrez le terminal dans le répertoire du projet.
-2. Exécutez la commande suivante : `$ python3 download.py`
 
-###### Création de la base de données "Contravention"
+###### Création de la base de données "Contravention" et importation des données de la ville de Montréal
 
 1. Lancez la création de la table en exécutant : `$ python3
    create_table_contravention.py`
 2. Double-cliquer sur le nouveau fichier **contravention.db** afin de créer
    la connexion.
+3. Exécutez la commande suivante pour importer les données manuellement: `$ 
+   python3 download.py`
 
 ### A2 10xp - A-S.A-L.
 
