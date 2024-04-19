@@ -117,3 +117,6 @@ body {
     min-height: 100vh;
 }
 
+#photo_display {
+    max-width: 200px;
+}
