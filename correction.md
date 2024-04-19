@@ -78,6 +78,9 @@ id_poursuite = 1523;`
    ![img_3.png](static/img/correction/img_31.png)
 7. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
+8. Veuillez attendre une 2e exécution dans la console afin de voir un 
+   changement au niveau des dates.
+![img_134.png](static/img/correction/img_134.png)
 
 ### A4 10xp - A-S.A-L.
 
@@ -196,6 +199,9 @@ id_poursuite = 1523;`
 
 5. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
+6. Veuillez attendre une 2e exécution dans le terminal afin de voir les 
+   nouvelles contraventions:
+![img_134.png](static/img/correction/img_134.png)
 
 6. Vérifiez les courriels reçus en accédant à l'onglet de navigation du **port
    1080 de MailDev** pour confirmer la
@@ -212,7 +218,8 @@ Le nom des établissements recevant de nouvelles contraventions sont publiées s
 Deux façons de tester la fonctionnalité :
 
 **Option 1**
-Si vous avez testé la fonctionnalité `A3`, les contraventions ayant été mises à jour devraient
+Si vous avez testé la fonctionnalité `B1`, les contraventions ayant été 
+mises à jour devraient
    se retrouver dans les posts du compte Twitter.
 
 **Option 2**
@@ -249,6 +256,8 @@ id_poursuite = 1523;`
    ![img_3.png](static/img/correction/img_31.png)
 7. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
+8. Veuillez attendre une 2e exécution dans le terminal.
+![img135.png](static/img/correction/img135.png)
 
 4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
 
@@ -574,8 +583,7 @@ requêtes à une API :
 ###### Vérification de la création de compte
 
 1. Pour valider la création de votre compte, veuillez vous connecter en
-   utilisant l'adresse courriel et le mot de passe que vous avez utilisés
-   ![img_17.png](static%2Fimg%2Fcorrection%2Fimg_17.png)
+   utilisant l'adresse courriel et le mot de passe que vous avez utilisés.
 
 ### E2 15xp - M.D.
 
@@ -691,7 +699,10 @@ id_poursuite = 1523;`
 
 1. Pour démarrer l'application et appliquer les modifications, utilisez la
    commande suivante dans votre terminal : `$ make`
-2. Vérifiez les courriels reçus en accédant à l'onglet de navigation du
+2. Veuillez attendre une 2e exécution dans le terminal afin de voir les 
+   nouvelles contraventions.
+![img_134.png](static/img/correction/img_134.png)
+3. Vérifiez les courriels reçus en accédant à l'onglet de navigation du
    **port 1080 de MailDev** pour confirmer la
    réception des notifications.
 
