@@ -213,30 +213,42 @@ Deux façons de tester la fonctionnalité :
 
 **Option 1**
 Si vous avez testé la fonctionnalité `A3`, les contraventions ayant été mises à jour devraient
-   se retrouver dans les `posts`.
+   se retrouver dans les posts du compte Twitter.
 
 **Option 2**
-1. Sinon, ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
+###### Gestion des nouvelles dates d'importation
+
+1. Ouvrez la console de gestion de votre base de données et accédez à la
+   table des Contraventions.
+2. Inscrivez les commandes suivantes **sans les exécuter**, car il faut ajuster
+   les dates d'importation :
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 6119;`
+
+`UPDATE Contravention SET date_importation = '2024-04-01 12:08:00:000' WHERE
+id_poursuite = 1523;`
+![img_1.png](static/img/correction/img_111.png)
+
+###### Mise à jour des dates :
+
+3. Ajustez les dates d'importation en les
+   configurant pour un **moment futur** (par exemple, **une minute après
+   l'heure
+   courante**).
+
+4. Enregistrez les changements dans la base de données.
+
+###### Mise à jour du CronTrigger :
+
+5. Ouvrez le fichier 'main.py' et localisez la fonction 'start_scheduler()'.
    ![img_2.png](static/img/correction/img_211.png)
-2. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **une minute
+6. Ajustez l'**heure du CronTrigger** pour qu'elle soit réglée à **2 minutes
    après** l'heure d'importation des contraventions.
    Exemple:
    ![img_3.png](static/img/correction/img_31.png)
-
-3. Partez l'application (par exemple en effectuant la commande `make`.)
-4. Dans le terminal `sqlite3`, effectuer un `Update` sur une date d'importation 
-pour simuler une nouvelle importation. Ajustez la date d'importation en la
-   configurant pour un **moment futur** (par exemple, **2 minutes après
-   l'heure courante**). Par exemple :
-
-```sh
-sqlite3 contravention.db
-```
-
-```sqlite3
-UPDATE Contravention SET date_importation = '2024-04-18 15:10:00:000' WHERE
-id_poursuite = 10703;
-```
+7. Pour démarrer l'application et appliquer les modifications, utilisez la
+   commande suivante dans votre terminal : `$ make`
 
 4. Un post Twitter devrait apparaitre à lors de la prochaine mise à jour.
 
