@@ -1,4 +1,8 @@
 class Contravention:
+    """
+    Représente une contravention.
+    """
+
     def __init__(self, id_poursuite, id_business, date, description,
                  adresse, date_jugement, etablissement, montant,
                  proprietaire, ville, statut, date_statut, categorie,

@@ -1,4 +1,7 @@
 class DemandeInspection:
+    """
+    Représente une Demande d'inspection.
+    """
     def __init__(self, id, etablissement, adresse, ville, date_visite,
                  nom_complet_client, description):
         self.id = id

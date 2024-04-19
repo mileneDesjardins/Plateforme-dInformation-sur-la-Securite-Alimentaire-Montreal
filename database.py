@@ -1,3 +1,8 @@
+"""
+Module database : Fournit des fonctions pour valider, ajouter, et mettre
+a jour les donnes d'une base de donnees.
+"""
+
 import csv
 import datetime
 import sqlite3
@@ -38,6 +43,10 @@ class Cols(Enum):
 
 
 def _build_contravention_dict(query_result):
+    """
+      Construit un dictionnaire représentant une contravention à
+      partir du résultat d'une requête SQL.
+      """
     contravention = {
         "id_poursuite": query_result[0],
         "id_business": query_result[1],
@@ -80,6 +89,10 @@ def _build_contravention(modifs_request):
 
 
 def can_be_update(timestamp_modif, timestamp_csv):
+    """
+    Vérifie si une entrée de la base de données peut être mise à jour
+    en fonction des horodatages.
+    """
     if timestamp_modif is None:
         return True
     if isinstance(timestamp_modif, str):
@@ -93,6 +106,10 @@ def can_be_update(timestamp_modif, timestamp_csv):
 
 def update_record(cursor, date, date_jugement, date_statut,
                   existing_data, row):
+    """
+    Met à jour un enregistrement dans la table Contravention si
+     cela est possible.
+    """
     if can_be_update(existing_data[Cols.TSP_MOD.value],
                      existing_data[Cols.TSP_CSV.value]):
         current_time = datetime.now()
@@ -113,6 +130,9 @@ def update_record(cursor, date, date_jugement, date_statut,
 
 def insert_new_record(cursor, date, date_jugement,
                       date_statut, row):
+    """
+    Insère un nouvel enregistrement dans la table Contravention.
+    """
     current_time = datetime.now()
     query = ("INSERT INTO Contravention(id_poursuite, id_business, date, "
              "description, adresse, date_jugement, etablissement, montant, "
@@ -143,11 +163,18 @@ class Database:
 
     @staticmethod
     def get_db():
+        """
+        Récupère ou crée une connexion à la base de données.
+        """
         if not hasattr(g, '_database'):
             g._database = Database()
         return g._database
 
     def disconnect(self):
+        """
+        Ferme toutes les connexions aux différentes tables de la
+        base de données.
+        """
         if self.contravention_connection is not None:
             self.contravention_connection.close()
         if self.user_connection is not None:
@@ -163,12 +190,19 @@ class Database:
 
     # CONTRAVENTION
     def get_contravention_connection(self):
+        """
+        Récupère la connexion à la table Contravention dans la base de
+        données. Si la connexion n'existe pas, elle est créée.
+        """
         if self.contravention_connection is None:
             self.contravention_connection = sqlite3.connect(
                 'db/contravention.db')
         return self.contravention_connection
 
     def get_contraventions(self):
+        """
+        Récupère toutes les contraventions à partir de la base de données.
+        """
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM Contravention")
@@ -188,6 +222,10 @@ class Database:
         return contraventions
 
     def insert_contraventions_from_csv(self, csv_file):
+        """
+        Insère des contraventions à partir d'un fichier
+        CSV dans la base de données.
+        """
         new_data_inserted = False  # Variable pour suivre si de nouvelles
         # données ont été insérées
         with open(csv_file, 'r', encoding='utf-8') as file:
@@ -252,6 +290,10 @@ class Database:
 
     def sync_row(self, cursor, date, date_jugement, date_statut,
                  row, timestamp_csv):
+        """
+        Met à jour une ligne existante dans la table Contravention avec
+        les données fournies.
+        """
 
         # Mettre à jour les données existantes dans la base de données
         cursor.execute(
@@ -267,6 +309,10 @@ class Database:
         )
 
     def can_be_updated(self, id_poursuite, id_business, cursor):
+        """
+        Vérifie si une contravention peut être mise à jour dans la
+        base de données.
+        """
         params = (id_poursuite, id_business)
         cursor.execute(
             "SELECT * FROM Contravention WHERE id_poursuite=? "
@@ -278,6 +324,10 @@ class Database:
         return False
 
     def get_new_contraventions(self, last_import_time):
+        """
+        Récupère les nouvelles contraventions importées depuis le dernier
+        import.
+        """
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         new_import_time = datetime.now()
@@ -299,12 +349,20 @@ class Database:
         return rows
 
     def get_date_importation_connection(self):
+        """
+        Récupère la connexion à la table date_importation dans la base
+        de données. Si la connexion n'existe pas, elle est créée.
+        """
         if self.date_importation_connection is None:
             self.date_importation_connection = sqlite3.connect(
                 'db/date_importation.db')
         return self.date_importation_connection
 
     def get_last_import_time(self):
+        """
+         Récupère la date et l'heure du dernier import depuis la
+         table DATE_IMPORTATION dans la base de données.
+         """
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         cur.execute("SELECT date FROM DATE_IMPORTATION")
@@ -316,6 +374,10 @@ class Database:
             return last_import_date
 
     def is_first_import(self):
+        """
+        Vérifie si c'est le premier import en vérifiant s'il y a des
+        données dans la table DATE_IMPORTATION.
+        """
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         cur.execute("SELECT COUNT(*) FROM DATE_IMPORTATION")
@@ -323,6 +385,10 @@ class Database:
         return count == 0
 
     def create_first_importation_date(self):
+        """
+        Crée une date d'importation initiale dans la table
+        DATE_IMPORTATION si c'est le premier import.
+        """
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -331,6 +397,10 @@ class Database:
         print("First importation date created:", now)
 
     def update_importation_date(self):
+        """
+        Met à jour la date d'importation dans la table DATE_IMPORTATION
+        avec la date actuelle.
+        """
         conn = self.get_date_importation_connection()
         cur = conn.cursor()
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -341,6 +411,10 @@ class Database:
         print("Importation date updated:", now)
 
     def search(self, keywords):
+        """
+        Recherche des contraventions correspondant aux mots-clés fournis
+        dans le nom de l'établissement, l'adresse ou le propriétaire.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE deleted=0 AND "
                  "etablissement LIKE ? OR "
@@ -351,6 +425,10 @@ class Database:
         return [_build_contravention_dict(item) for item in all_data]
 
     def get_contraventions_between(self, date1, date2):
+        """
+        Récupère les contraventions dont la date est comprise
+        entre deux dates spécifiées.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ? "
                  "AND deleted=0")
@@ -360,6 +438,10 @@ class Database:
         return [_build_contravention_dict(item) for item in all_data]
 
     def get_contraventions_business_between(self, date1, date2, id_business):
+        """
+        Récupère les contraventions dont la date est comprise entre deux
+        dates spécifiées et associées à un identifiant d'entreprise donné.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT * FROM Contravention WHERE date >= ? AND date <= ? "
                  "AND id_business=? AND deleted=0")
@@ -369,6 +451,9 @@ class Database:
         return [_build_contravention_dict(item) for item in all_data]
 
     def get_etablissements_et_nbr_infractions(self):
+        """
+        Récupère le nombre d'infractions par établissement.
+        """
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
 
@@ -386,6 +471,10 @@ class Database:
         return results
 
     def get_distinct_etablissements(self):
+        """
+        Récupère les établissements distincts avec leurs identifiants
+        d'entreprise et adresses associées.
+        """
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = (
@@ -397,6 +486,10 @@ class Database:
         return results
 
     def get_info_contrevenant_by_name(self, etablissement):
+        """
+         Récupère les informations sur les contrevenants associés à
+         un établissement donné.
+         """
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
         query = ("SELECT * FROM Contravention WHERE etablissement = ?"
@@ -406,6 +499,10 @@ class Database:
         return [_build_contravention_dict(item) for item in contraventions]
 
     def get_info_poursuite(self, id_poursuite):
+        """
+        Récupère les informations sur une poursuite donnée à partir
+        de son identifiant.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = "SELECT * FROM Contravention WHERE id_poursuite=?"
         cursor.execute(query, (id_poursuite,))
@@ -415,6 +512,10 @@ class Database:
         return _build_contravention_dict(info_poursuite)
 
     def get_info_contrevenant(self, id_business):
+        """
+        Récupère les informations sur un contrevenant donné à partir
+        de son identifiant d'entreprise.
+        """
         self.validates_business_exists(id_business)
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
@@ -424,6 +525,9 @@ class Database:
         return [_build_contravention_dict(item) for item in info_etablissement]
 
     def validates_poursuite_exists(self, id_poursuite):
+        """
+        Valide l'existence d'une poursuite dans la base de données.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT COUNT(*)  FROM Contravention WHERE id_poursuite=? "
                  "AND deleted=0")
@@ -436,6 +540,9 @@ class Database:
                 "` ne correspond à aucune ressource dans la base de données.")
 
     def validates_business_exists(self, id_business):
+        """
+        Valide l'existence d'une entreprise dans la base de données.
+        """
         cursor = self.get_contravention_connection().cursor()
         query = ("SELECT COUNT(*)  FROM Contravention WHERE id_business=? "
                  "AND deleted=0")
@@ -448,6 +555,9 @@ class Database:
                 "` ne correspond à aucune ressource dans la base de données.")
 
     def update_date(self, id_poursuite, contrevenant):
+        """
+        Met à jour la date d'une poursuite dans la base de données.
+        """
         if contrevenant.date is not None:
             self.validates_poursuite_exists(id_poursuite)
             validates_format_iso(contrevenant.date)
@@ -461,6 +571,9 @@ class Database:
             connection.commit()
 
     def update_description(self, id_poursuite, contrevenant):
+        """
+        Met à jour la description d'une poursuite dans la base de données.
+        """
         if contrevenant.description is not None:
             self.validates_poursuite_exists(id_poursuite)
             connection = self.get_contravention_connection()
@@ -472,6 +585,9 @@ class Database:
             connection.commit()
 
     def update_adresse(self, id_business, contrevenant):
+        """
+        Met à jour l'adresse d'une entreprise dans la base de données.
+        """
         if contrevenant.adresse is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -483,6 +599,9 @@ class Database:
             connection.commit()
 
     def update_date_jugement(self, id_poursuite, contrevenant):
+        """
+        Met à jour la date de jugement d'une poursuite dans la base de données.
+        """
         if contrevenant.date_jugement is not None:
             self.validates_poursuite_exists(id_poursuite)
             connection = self.get_contravention_connection()
@@ -494,6 +613,10 @@ class Database:
             connection.commit()
 
     def update_nom_etablissement(self, id_business, contrevenant):
+        """
+        Met à jour le nom de l'établissement d'une entreprise dans la
+        base de données.
+        """
         if contrevenant.etablissement is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -505,6 +628,9 @@ class Database:
             connection.commit()
 
     def update_montant(self, id_poursuite, contravention):
+        """
+        Met à jour le montant d'une contravention dans la base de données.
+        """
         if contravention.montant is not None:
             self.validates_poursuite_exists(id_poursuite)
             connection = self.get_contravention_connection()
@@ -516,6 +642,9 @@ class Database:
             connection.commit()
 
     def update_proprietaire(self, id_business, contravention):
+        """
+        Met à jour le propriétaire d'une contravention dans la base de données.
+        """
         if contravention.proprietaire is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -527,6 +656,10 @@ class Database:
             connection.commit()
 
     def update_ville(self, id_business, contravention):
+        """
+        Met à jour la ville associée à une contravention dans la base
+        de données.
+        """
         if contravention.ville is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -538,6 +671,9 @@ class Database:
             connection.commit()
 
     def update_statut(self, id_business, contravention):
+        """
+         Met à jour le statut d'une contravention dans la base de données.
+         """
         if contravention.statut is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -549,6 +685,11 @@ class Database:
             connection.commit()
 
     def update_date_statut(self, id_business, contravention):
+        """
+        Met à jour la date de statut d'une contravention dans la base
+        de données.
+
+        """
         if contravention.date_statut is not None:
             self.validates_business_exists(id_business)
             connection = self.get_contravention_connection()
@@ -560,6 +701,9 @@ class Database:
             connection.commit()
 
     def update_categorie(self, id_poursuite, contravention):
+        """
+        Met à jour la catégorie d'une contravention dans la base de données.
+        """
         if contravention.categorie is not None:
             self.validates_poursuite_exists(id_poursuite)
             connection = self.get_contravention_connection()
@@ -571,6 +715,9 @@ class Database:
             connection.commit()
 
     def update_contrevenant(self, id_business, modif_request):
+        """
+        Met à jour les informations d'un contrevenant dans la base de données.
+        """
         contrevenant = _build_contravention(modif_request)
         self.update_adresse(id_business, contrevenant)
         self.update_nom_etablissement(id_business, contrevenant)
@@ -580,6 +727,10 @@ class Database:
 
     def update_contravention(self, id_poursuite,
                              modif_request):
+        """
+        Met à jour les informations d'une contravention dans la
+        base de données.
+        """
         contravention = _build_contravention(modif_request)
         self.update_date(id_poursuite, contravention)
         self.update_description(id_poursuite, contravention)
@@ -588,6 +739,9 @@ class Database:
         self.update_categorie(id_poursuite, contravention)
 
     def delete_contrevenant(self, id_business):
+        """
+        Supprime un contrevenant de la base de données.
+        """
         self.validates_business_exists(id_business)
         connection = self.get_contravention_connection()
         cursor = connection.cursor()
@@ -603,11 +757,17 @@ class Database:
 
     # USER
     def get_user_connection(self):
+        """
+        Obtient la connexion à la base de données des utilisateurs.
+        """
         if self.user_connection is None:
             self.user_connection = sqlite3.connect('db/user.db')
         return self.user_connection
 
     def create_user(self, user):
+        """
+        Crée un nouvel utilisateur dans la base de données.
+        """
         connection = self.get_user_connection()
         cursor = connection.cursor()
         try:
@@ -628,6 +788,10 @@ class Database:
             connection.close()
 
     def get_user_login_infos(self, courriel):
+        """
+        Récupère les informations de connexion de l'utilisateur à partir
+        de son adresse e-mail.
+        """
         cursor = self.get_user_connection().cursor()
         cursor.execute((
             "SELECT * FROM user "
@@ -636,6 +800,10 @@ class Database:
         return cursor.fetchone()
 
     def get_user_by_email(self, email):
+        """
+        Récupère les informations de l'utilisateur à partir de
+        son adresse e-mail.
+        """
         cursor = self.get_user_connection().cursor()
         cursor.execute(
             "SELECT * FROM User WHERE courriel = ?",
@@ -644,6 +812,9 @@ class Database:
         return cursor.fetchone()
 
     def get_user_by_id(self, id_user):
+        """
+        Récupère les informations de l'utilisateur à partir de son identifiant.
+        """
         connection = self.get_user_connection()
         cursor = connection.cursor()
         cursor.execute(
@@ -653,12 +824,19 @@ class Database:
         return cursor.fetchone()
 
     def get_all_users(self):
+        """
+        Récupère toutes les informations sur les utilisateurs enregistrés
+        dans la base de données.
+        """
         connection = self.get_user_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM User")
         return cursor.fetchall()
 
     def update_user_etablissements(self, id_user, new_etablissements):
+        """
+        Met à jour la liste des établissements choisis par un utilisateur.
+        """
         connection = self.get_user_connection()
         cursor = connection.cursor()
 
@@ -684,6 +862,10 @@ class Database:
             print("Erreur détaillée:", e)
 
     def delete_user_choix_etablissements(self, email, id_business):
+        """
+        Supprime un établissement de la liste des choix d'établissements
+        d'un utilisateur.
+        """
         id_business = int(
             id_business)
         connection = self.get_user_connection()
@@ -720,16 +902,25 @@ class Database:
             connection.close()
 
     def get_demandes_inspection_connection(self):
+        """
+        Récupère la connexion à la base de données des demandes d'inspection.
+        """
         if self.demande_inspection_connection is None:
             self.demande_inspection_connection = sqlite3.connect(
                 'db/demande_inspection.db')
         return self.demande_inspection_connection
 
     def disconnect_demandes_inspection(self):
+        """
+        Déconnecte de la base de données des demandes d'inspection.
+        """
         if self.demande_inspection_connection is not None:
             self.demande_inspection_connection.close()
 
     def insert_demande_inspection(self, demande_inspection):
+        """
+        Insère une demande d'inspection dans la base de données.
+        """
         cursor = self.get_demandes_inspection_connection().cursor()
         query = (
             "INSERT INTO DemandesInspection (etablissement, adresse, ville, "
@@ -746,6 +937,9 @@ class Database:
         return cursor.lastrowid
 
     def get_demande_inspection(self, id_demande):
+        """
+        Récupère une demande d'inspection à partir de son identifiant.
+        """
         cursor = self.get_demandes_inspection_connection().cursor()
         query = "SELECT * FROM DemandesInspection WHERE id = ?"
         cursor.execute(query, (id_demande,))
@@ -759,6 +953,9 @@ class Database:
                                      demande[6])
 
     def delete_demande_inspection(self, id_demande):
+        """
+        Supprime une demande d'inspection de la base de données.
+        """
         connection = self.get_demandes_inspection_connection()
         query = "DELETE FROM DemandesInspection WHERE id = ?"
         connection.execute(query, (id_demande,))
@@ -766,11 +963,17 @@ class Database:
 
     # PHOTO
     def get_photo_connection(self):
+        """
+        Récupère ou établit une connexion à la base de données des photos.
+        """
         if self.photo_connection is None:
             self.photo_connection = sqlite3.connect('db/photo.db')
         return self.photo_connection
 
     def get_photo(self, id_photo):
+        """
+        Récupère les données d'une photo à partir de son identifiant.
+        """
         connection = self.get_photo_connection()
         cursor = connection.cursor()
         cursor.execute("SELECT data FROM Photo WHERE id_photo=?",
@@ -782,6 +985,9 @@ class Database:
             return None
 
     def create_photo(self, photo_data):
+        """
+        Ajoute une nouvelle photo à la base de données.
+        """
         id_photo = str(uuid.uuid4())
         connection = self.get_photo_connection()
         connection.execute("insert into Photo(id_photo, data) values(?, ?)",
@@ -790,6 +996,10 @@ class Database:
         return id_photo
 
     def update_user_photo(self, id_user, nouveau_id_photo):
+        """
+        Met à jour l'identifiant de la photo associée à un utilisateur
+        dans la base de données.
+        """
         connection = self.get_user_connection()
         connection.execute(
             "UPDATE User SET id_photo=? WHERE id_user=?",
@@ -798,6 +1008,10 @@ class Database:
         connection.commit()
 
     def delete_photo(self, id_photo):
+        """
+        Supprime une photo de la base de données en fonction de
+        son identifiant.
+        """
         connection = self.get_photo_connection()
         connection.execute("DELETE FROM Photo WHERE id_photo = ?",
                            (id_photo,))

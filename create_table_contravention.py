@@ -1,3 +1,7 @@
+"""
+Crée la table Contravention.
+"""
+
 import sqlite3
 
 conn = sqlite3.connect('db/contravention.db')

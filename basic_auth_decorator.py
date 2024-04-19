@@ -3,6 +3,11 @@ from functools import wraps
 
 
 def basic_auth_required(f):
+    """
+    Décorateur pour vérifier si l'authentification de base est requise
+     pour accéder à une route.
+    """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         auth = request.authorization

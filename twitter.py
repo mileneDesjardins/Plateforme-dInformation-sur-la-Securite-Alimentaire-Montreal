@@ -1,3 +1,7 @@
+"""
+Gère les requêtes Twitter
+"""
+
 import tweepy
 
 from flask import (current_app)
@@ -11,6 +15,10 @@ with app.app_context():
 
 
 def twitter_post(etablissement_name):
+    """
+    Publie un tweet sur Twitter pour informer qu'une nouvelle contravention
+    a été détectée.
+    """
     client = tweepy.Client(consumer_key=consumer_key,
                            consumer_secret=consumer_secret,
                            access_token=access_token,

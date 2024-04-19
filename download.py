@@ -1,3 +1,8 @@
+"""
+Script permettant de telecharger un fichier CSV depuis une URL puis d'insérer
+son contenu dans une base de données.
+"""
+
 import csv
 import os
 import tempfile
@@ -11,6 +16,10 @@ app = Flask(__name__)
 
 
 def import_csv():
+    """
+     Importe des données à partir d'un fichier CSV situé à une
+    URL spécifiée dans la base de données.
+    """
     with app.app_context():  # This creates a Flask application context
         db = Database.get_db()
         url = ('https://data.montreal.ca/dataset/05a9e718-6810-4e73-8bb9-'

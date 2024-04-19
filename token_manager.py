@@ -1,3 +1,7 @@
+"""
+Gère les tokens des courriels
+"""
+
 import sqlite3
 import uuid
 from datetime import datetime, timedelta
@@ -8,11 +12,17 @@ class TokenManager:
         self.token_connection = None
 
     def get_token_connection(self):
+        """
+        Récupère la connexion à la base de données des tokens.
+        """
         if self.token_connection is None:
             self.token_connection = sqlite3.connect('db/token.db')
         return self.token_connection
 
     def generate_token(self, id_business, courriel, etablissement, adresse):
+        """
+        Génère un token unique et l'insère dans la base de données.
+        """
         # Générer un token unique
         token_value = str(uuid.uuid4())
 
@@ -38,6 +48,9 @@ class TokenManager:
             return None
 
     def get_token_data(self, token):
+        """
+        Récupère les données associées à un token spécifique.
+        """
         try:
             conn = self.get_token_connection().cursor()
 
@@ -55,6 +68,9 @@ class TokenManager:
             return None
 
     def update_token_expiration(self, token):
+        """
+        Met à jour le timestamp d'expiration d'un token.
+        """
         try:
             connection = self.get_token_connection().cursor()
 
@@ -88,6 +104,9 @@ class TokenManager:
             return False
 
     def is_token_expired(self, token):
+        """
+        Vérifie si un token est expiré.
+        """
         try:
             connection = self.get_token_connection().cursor()
 
@@ -134,6 +153,9 @@ class TokenManager:
             return False
 
     def delete_token(self, token):
+        """
+        Supprime un token de la base de données.
+        """
         try:
             connection = self.get_token_connection().cursor()
 

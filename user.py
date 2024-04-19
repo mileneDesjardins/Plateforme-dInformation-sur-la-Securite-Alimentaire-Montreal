@@ -1,4 +1,7 @@
 class User:
+    """
+    Représente un user.
+    """
     def __init__(self, nom_complet, courriel, choix_etablissements,
                  mdp_hash, mdp_salt, id_photo=None):
         self.nom_complet = nom_complet

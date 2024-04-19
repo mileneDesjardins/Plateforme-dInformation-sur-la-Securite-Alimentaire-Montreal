@@ -30,6 +30,7 @@ Si vous avez Make, vous pouvez exécuter le programme avec la commande :
 make
 ```
 
+
 ## PREREQUIS
 
 - Python 3.12+
